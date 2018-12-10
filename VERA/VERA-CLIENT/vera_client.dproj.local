@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.260,=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.787,=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2018.12.10 19:38:18.038,=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2018.12.10 19:38:46.017,D:\MyDelphi\VERA\VERA-CLIENT\FmMain.pas=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2018.12.10 19:38:46.017,D:\MyDelphi\VERA\VERA-CLIENT\FmMain.dfm=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit2.dfm</Transaction>
+    <Transaction>2018.12.10 19:39:26.183,D:\MyDelphi\VERA\VERA-CLIENT\vera_client.dproj=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+  </Transactions>
+</BorlandProject>
