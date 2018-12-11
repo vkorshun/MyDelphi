@@ -6,6 +6,9 @@
         <Projects Include="VERA-SERVER\vera_server.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="VERA-CLIENT\vera_client.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -23,14 +26,23 @@
     <Target Name="vera_server:Make">
         <MSBuild Projects="VERA-SERVER\vera_server.dproj" Targets="Make"/>
     </Target>
+    <Target Name="vera_client">
+        <MSBuild Projects="VERA-CLIENT\vera_client.dproj"/>
+    </Target>
+    <Target Name="vera_client:Clean">
+        <MSBuild Projects="VERA-CLIENT\vera_client.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="vera_client:Make">
+        <MSBuild Projects="VERA-CLIENT\vera_client.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="vera_server"/>
+        <CallTarget Targets="vera_server;vera_client"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="vera_server:Clean"/>
+        <CallTarget Targets="vera_server:Clean;vera_client:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="vera_server:Make"/>
+        <CallTarget Targets="vera_server:Make;vera_client:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

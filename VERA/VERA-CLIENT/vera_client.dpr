@@ -2,13 +2,13 @@ program vera_client;
 
 uses
   Vcl.Forms,
-  FmMain in 'FmMain.pas' {Form2};
+  FmMain in 'FmMain.pas' {MainFm};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TForm2, Form2);
+  Application.CreateForm(TMainFm, MainFm);
   Application.Run;
 end.
