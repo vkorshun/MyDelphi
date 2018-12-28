@@ -9,6 +9,15 @@
         <Projects Include="VERA-CLIENT\vera_client.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="..\FLEXOPRINT\flexoprint.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\FLEXOPRINT\HOPECERTCENTER\hopecertcenter.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="VERA-DESKTOP\CLIENTS\FLEXOPRINT\flexoprint_dt.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +44,41 @@
     <Target Name="vera_client:Make">
         <MSBuild Projects="VERA-CLIENT\vera_client.dproj" Targets="Make"/>
     </Target>
+    <Target Name="flexoprint">
+        <MSBuild Projects="..\FLEXOPRINT\flexoprint.dproj"/>
+    </Target>
+    <Target Name="flexoprint:Clean">
+        <MSBuild Projects="..\FLEXOPRINT\flexoprint.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="flexoprint:Make">
+        <MSBuild Projects="..\FLEXOPRINT\flexoprint.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="hopecertcenter">
+        <MSBuild Projects="..\FLEXOPRINT\HOPECERTCENTER\hopecertcenter.dproj"/>
+    </Target>
+    <Target Name="hopecertcenter:Clean">
+        <MSBuild Projects="..\FLEXOPRINT\HOPECERTCENTER\hopecertcenter.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="hopecertcenter:Make">
+        <MSBuild Projects="..\FLEXOPRINT\HOPECERTCENTER\hopecertcenter.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="flexoprint_dt">
+        <MSBuild Projects="VERA-DESKTOP\CLIENTS\FLEXOPRINT\flexoprint_dt.dproj"/>
+    </Target>
+    <Target Name="flexoprint_dt:Clean">
+        <MSBuild Projects="VERA-DESKTOP\CLIENTS\FLEXOPRINT\flexoprint_dt.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="flexoprint_dt:Make">
+        <MSBuild Projects="VERA-DESKTOP\CLIENTS\FLEXOPRINT\flexoprint_dt.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="vera_server;vera_client"/>
+        <CallTarget Targets="vera_server;vera_client;flexoprint;hopecertcenter;flexoprint_dt"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="vera_server:Clean;vera_client:Clean"/>
+        <CallTarget Targets="vera_server:Clean;vera_client:Clean;flexoprint:Clean;hopecertcenter:Clean;flexoprint_dt:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="vera_server:Make;vera_client:Make"/>
+        <CallTarget Targets="vera_server:Make;vera_client:Make;flexoprint:Make;hopecertcenter:Make;flexoprint_dt:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

@@ -1,13 +1,13 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{C3043F3D-768A-4E8D-A520-9C37C4F5B238}</ProjectGuid>
+        <ProjectGuid>{D6C708BB-C420-4B84-9377-B07EE64082F2}</ProjectGuid>
         <ProjectVersion>18.5</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
-        <MainSource>vera_server.dpr</MainSource>
+        <MainSource>flexoprint_dt.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
-        <TargetedPlatforms>3</TargetedPlatforms>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
@@ -34,21 +34,18 @@
         <Cfg_1>true</Cfg_1>
         <Base>true</Base>
     </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win64)'!=''">
-        <Cfg_1_Win64>true</Cfg_1_Win64>
-        <CfgParent>Cfg_1</CfgParent>
-        <Cfg_1>true</Cfg_1>
-        <Base>true</Base>
-    </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
         <Cfg_2>true</Cfg_2>
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
-        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
-        <SanitizedProjectName>vera_server</SanitizedProjectName>
         <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
         <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
@@ -56,28 +53,23 @@
         <DCC_S>false</DCC_S>
         <DCC_F>false</DCC_F>
         <DCC_K>false</DCC_K>
+        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
+        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
+        <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
+        <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
+        <SanitizedProjectName>flexoprint_dt</SanitizedProjectName>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <DCC_UsePackage>DBXSqliteDriver;RESTComponents;DBXInterBaseDriver;vclactnband;vclFireDAC;EhLibADODataDrivers260;tethering;svnui;FireDACADSDriver;vcltouch;vcldb;bindcompfmx;svn;inetdb;CEF4Delphi;FmxTeeUI;fmx;FireDACIBDriver;fmxdae;frxTee26;fs26;dbexpress;IndyCore;vkdialogs_xe260;vclx;frxIntIO26;dsnap;FireDACCommon;RESTBackendComponents;vkfib260;VCLRESTComponents;soapserver;fsTee26;EhLibDBXDataDrivers260;vclie;bindengine;DBXMySQLDriver;CloudService;FireDACMySQLDriver;frx26;FireDACCommonODBC;FireDACCommonDriver;frxIntIOIndy26;inet;IndyIPCommon;bindcompdbx;vcl;IndyIPServer;EhLib260;frxDB26;IndySystem;fsADO26;frxDBX26;dsnapcon;VirtualTreesR;FireDACMSAccDriver;fmxFireDAC;fsDB26;vclimg;dbgridehvkd260;TeeDB;FireDAC;frxe26;FireDACSqliteDriver;FireDACPgDriver;vkcomponents_xe260;FMXTee;FIBPlus_D26;soaprtl;DbxCommonDriver;Tee;xmlrtl;soapmidas;rtcSDK260;fmxobj;vclwinx;vklib_xe260;rtl;DbxClientDriver;frxADO26;CustomIPTransport;vcldsnap;bindcomp;appanalytics;IndyIPClient;bindcompvcl;SynEdit_R;TeeUI;dbxcds;VclSmp;adortl;superobjects_xe260;rtcSDK_DBA260;dsnapxml;dbrtl;IndyProtocols;inetdbxpress;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_UsePackage>frxe20;frxIBX20;FireDACSqliteDriver;FlexCel_Core;FireDACDSDriver;xf40_d_xe6;DBXSqliteDriver;FireDACPgDriver;fmx;IndySystem;TeeDB;tethering;inetdbbde;vclib;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;VCL_FlexCel_Components_DESIGN;DbxCommonDriver;VCL_FlexCel_Components;vclimg;dbxcds;MetropolisUILiveTile;vklib_xe6;SynEdit_RXE6;tmsscripter_xe6;vcldb;vcldsnap;fmxFireDAC;CustomIPTransport;vclribbon;dsnap;IndyIPServer;dbgridehvkd_xe6;fmxase;vcl;IndyCore;IndyIPCommon;CloudService;CodeSiteExpressPkg;FmxTeeUI;FireDACIBDriver;DataSnapFireDAC;FireDACDBXDriver;soapserver;inetdbxpress;frxTee20;fsTee20;fsIBX20;dsnapxml;FireDACInfxDriver;FireDACDb2Driver;EhLib200;adortl;FireDACASADriver;superobjects_xe6;rtcSDKXE6;bindcompfmx;fsADO20;vcldbx;frxIntIO20;FireDACODBCDriver;RESTBackendComponents;rtl;dbrtl;DbxClientDriver;FireDACCommon;bindcomp;inetdb;Tee;ControlsCepEx_xe6;vclFireDAC;FlexCel_Render;frxDBX20;xmlrtl;svnui;ibxpress;IndyProtocols;DBXMySQLDriver;FireDACCommonDriver;bindengine;vclactnband;bindcompdbx;soaprtl;FMXTee;TeeUI;bindcompvcl;VCL_FlexCel_Core;FlexCel_Pdf;vkdialogs_xe6;vclie;FireDACADSDriver;vcltouch;VclSmp;FireDACMSSQLDriver;FireDAC;VCLRESTComponents;Intraweb;rtcSDK_DBAXE6;vkcomponents_xe6;tmsscripterfmx_xe6;tmsscriptervcl_xe6;frxIntIOIndy20;dsnapcon;fsDB20;inet;fmxobj;FireDACMySQLDriver;soapmidas;vclx;fs20;svn;FireDACOracleDriver;fmxdae;RESTComponents;synapseXE6;FlexCel_XlsAdapter;bdertl;FireDACMSAccDriver;dbexpress;frxADO20;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
+        <BT_BuildType>Debug</BT_BuildType>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
-        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
-        <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
-        <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
-        <VerInfo_Locale>1033</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
-        <DCC_UsePackage>FireDACSqliteDriver;FlexCel_Core;FireDACDSDriver;xf40_d_xe6;DBXSqliteDriver;FireDACPgDriver;fmx;IndySystem;TeeDB;tethering;vclib;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;VCL_FlexCel_Components_DESIGN;DbxCommonDriver;VCL_FlexCel_Components;vclimg;dbxcds;MetropolisUILiveTile;vklib_xe6;SynEdit_RXE6;vcldb;vcldsnap;fmxFireDAC;CustomIPTransport;vclribbon;dsnap;IndyIPServer;dbgridehvkd_xe6;fmxase;vcl;IndyCore;IndyIPCommon;CloudService;FmxTeeUI;FireDACIBDriver;DataSnapFireDAC;FireDACDBXDriver;soapserver;inetdbxpress;dsnapxml;FireDACInfxDriver;FireDACDb2Driver;adortl;FireDACASADriver;rtcSDKXE6;bindcompfmx;FireDACODBCDriver;RESTBackendComponents;rtl;dbrtl;DbxClientDriver;FireDACCommon;bindcomp;inetdb;Tee;vclFireDAC;FlexCel_Render;xmlrtl;ibxpress;IndyProtocols;DBXMySQLDriver;FireDACCommonDriver;bindengine;vclactnband;bindcompdbx;soaprtl;FMXTee;TeeUI;bindcompvcl;VCL_FlexCel_Core;FlexCel_Pdf;vkdialogs_xe6;vclie;FireDACADSDriver;vcltouch;VclSmp;FireDACMSSQLDriver;FireDAC;VCLRESTComponents;Intraweb;vkcomponents_xe6;dsnapcon;inet;fmxobj;FireDACMySQLDriver;soapmidas;vclx;FireDACOracleDriver;fmxdae;RESTComponents;FlexCel_XlsAdapter;FireDACMSAccDriver;dbexpress;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
-        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
-        <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
-        <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
+        <DCC_UsePackage>DBXSqliteDriver;RESTComponents;DBXInterBaseDriver;vclactnband;vclFireDAC;EhLibADODataDrivers260;tethering;FireDACADSDriver;vcltouch;vcldb;bindcompfmx;inetdb;CEF4Delphi;FmxTeeUI;fmx;FireDACIBDriver;fmxdae;dbexpress;IndyCore;vkdialogs_xe260;vclx;dsnap;FireDACCommon;RESTBackendComponents;VCLRESTComponents;soapserver;EhLibDBXDataDrivers260;vclie;bindengine;DBXMySQLDriver;CloudService;FireDACMySQLDriver;FireDACCommonODBC;FireDACCommonDriver;inet;IndyIPCommon;bindcompdbx;vcl;IndyIPServer;EhLib260;IndySystem;dsnapcon;VirtualTreesR;FireDACMSAccDriver;fmxFireDAC;vclimg;TeeDB;FireDAC;FireDACSqliteDriver;FireDACPgDriver;vkcomponents_xe260;FMXTee;FIBPlus_D26;soaprtl;DbxCommonDriver;Tee;xmlrtl;soapmidas;rtcSDK260;fmxobj;vclwinx;vklib_xe260;rtl;DbxClientDriver;CustomIPTransport;vcldsnap;bindcomp;appanalytics;IndyIPClient;bindcompvcl;SynEdit_R;TeeUI;dbxcds;VclSmp;adortl;dsnapxml;dbrtl;IndyProtocols;inetdbxpress;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -89,15 +81,12 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
-        <BT_BuildType>Debug</BT_BuildType>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
-        <DCC_ExeOutput>..\RUN\VERA_SERVER\$(Platform)\$(Config)</DCC_ExeOutput>
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
+        <DCC_UnitSearchPath>C:\THIRDLIB.XE260\VKLIB\VKVARIABLES;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_DcuOutput>..\RUN\VERA_SERVER\DCU\$(Platform)\$(Config)</DCC_DcuOutput>
-        <BT_BuildType>Debug</BT_BuildType>
-        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <Debugger_RunParams>ADMIN ADMIN</Debugger_RunParams>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -105,20 +94,42 @@
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
+    </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="FmMain.pas">
-            <Form>MainFm</Form>
+            <Form>Form3</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="DmMain.pas">
+        <DCCReference Include="..\..\COMMON\DmMain.pas">
             <Form>MainDm</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\LIB\SettingsStorage.pas"/>
+        <DCCReference Include="..\..\..\..\LIB\menustructure.pas"/>
+        <DCCReference Include="..\..\..\..\LIB\SettingsStorage.pas"/>
+        <DCCReference Include="..\..\..\..\LIB\uLog.pas"/>
+        <DCCReference Include="..\..\..\..\LIB\FORMS\fmhopedialogform.pas">
+            <Form>HopeDialogFormFm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\..\..\..\LIB\FORMS\fmLogin.pas">
+            <Form>LoginFm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\..\..\..\LIB\FORMS\FmSelectDbAlias.pas">
+            <Form>SelectDbAliasFm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\..\..\..\LIB\FORMS\fmhopeform.pas">
+            <Form>HopeFormFm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -133,11 +144,11 @@
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Delphi.Personality.12</Borland.Personality>
-        <Borland.ProjectType/>
+        <Borland.ProjectType>Application</Borland.ProjectType>
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">vera_server.dpr</Source>
+                    <Source Name="MainSource">flexoprint_dt.dpr</Source>
                 </Source>
                 <Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
@@ -147,15 +158,9 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\RUN\VERA_SERVER\Win64\Debug\vera_server.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win64">
-                        <RemoteName>vera_server.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\RUN\VERA_SERVER\Win64\Debug\vera_server.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win64">
-                        <RemoteName>vera_server.rsm</RemoteName>
+                <DeployFile LocalName="Win32\Debug\flexoprint_dt.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>flexoprint_dt.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -630,7 +635,7 @@
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>
-                <Platform value="Win64">True</Platform>
+                <Platform value="Win64">False</Platform>
             </Platforms>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>

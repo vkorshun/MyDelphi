@@ -1,9 +1,9 @@
-object MainFm: TMainFm
+object HopeFormFm: THopeFormFm
   Left = 0
   Top = 0
-  Caption = 'VERA Client'
-  ClientHeight = 336
-  ClientWidth = 635
+  Caption = 'HopeFormFm'
+  ClientHeight = 243
+  ClientWidth = 527
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,7 +11,6 @@ object MainFm: TMainFm
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  Position = poScreenCenter
   PixelsPerInch = 96
   TextHeight = 13
 end
