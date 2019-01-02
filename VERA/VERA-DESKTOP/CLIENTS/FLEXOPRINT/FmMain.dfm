@@ -13,6 +13,7 @@ object MainFm: TMainFm
   OldCreateOrder = False
   Position = poDesktopCenter
   WindowState = wsMaximized
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object ActionMainMenuBar1: TActionMainMenuBar
@@ -33,6 +34,38 @@ object MainFm: TMainFm
     Font.Name = 'Segoe UI'
     Font.Style = []
     Spacing = 0
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Top = 490
+    Width = 689
+    Height = 19
+    Panels = <>
+  end
+  object MainTabs: TATTabs
+    Left = 0
+    Top = 29
+    Width = 689
+    Height = 30
+    Align = alTop
+    Tabs = <>
+    DoubleBuffered = True
+    OptButtonLayout = '<>,v'
+    OptTabHeight = 20
+    OptShowAngleTangent = 2.599999904632568000
+    OptShowPlusTab = False
+    OptShowModifiedText = '*'
+    OptMouseDoubleClickClose = False
+    OptHintForX = 'Close tab'
+    OptHintForPlus = 'Add tab'
+    OptHintForArrowLeft = 'Scroll tabs left'
+    OptHintForArrowRight = 'Scroll tabs right'
+    OptHintForArrowMenu = 'Show tabs list'
+    OptHintForUser0 = '0'
+    OptHintForUser1 = '1'
+    OptHintForUser2 = '2'
+    OptHintForUser3 = '3'
+    OptHintForUser4 = '4'
   end
   object ActionManager2: TActionManager
     ActionBars = <
@@ -60,6 +93,7 @@ object MainFm: TMainFm
     object aExit: TAction
       Category = #1044#1086#1082#1091#1084#1077#1085#1090#1099
       Caption = #1042#1099#1093#1086#1076
+      OnExecute = aExitExecute
     end
     object aViewOAU: TAction
       Category = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082#1080
@@ -86,5 +120,15 @@ object MainFm: TMainFm
     object aCertLoad: TAction
       Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1089#1077#1088#1090#1080#1092#1080#1082#1072#1090#1099
     end
+  end
+  object ActionManager1: TActionManager
+    ActionBars = <
+      item
+      end>
+    LargeImages = ImageList1
+    Images = ImageList1
+    Left = 352
+    Top = 272
+    StyleName = 'Platform Default'
   end
 end

@@ -1,0 +1,2 @@
+inherited AttributesOfGroupFrame: TAttributesOfGroupFrame
+end

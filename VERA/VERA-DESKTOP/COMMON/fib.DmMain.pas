@@ -1,11 +1,11 @@
-﻿unit DmMain;
+﻿unit fib.DmMain;
 
 interface
 
 uses
   System.SysUtils, System.Classes, FIBDatabase, pFIBDatabase, FIBQuery,
-  pFIBQuery, pFIBQueryVk, Data.DB, FIBDataSet, pFIBDataSet, pFIBDataSetVk,
-  pFIBDatabaseVk, pFIBProps, vkvariable, Variants, SettingsStorage, Forms;
+  pFIBQuery, pFIBQueryVk, Data.DB, FIBDataSet, pFIBDataSet, pFIBDataSetVk, datevk,
+  pFIBDatabaseVk, pFIBProps, vkvariable, Variants, SettingsStorage, Forms, u_xmlinit;
 
 type
   PUserInfo = ^RUserInfo;
@@ -19,10 +19,12 @@ type
     g_rolename   :string;
   end;
 
+  TOnRequest = reference to procedure(AQuery: TpFIBQuery );
+
   TMainDm = class(TDataModule)
-    pFIBDatabaseVera: TpFIBDatabaseVk;
+    pFIBDatabaseMain: TpFIBDatabaseVk;
     pFIBDataSetVk1: TpFIBDataSetVk;
-    pFIBQueryVk1: TpFIBQueryVk;
+    pFIBQueryVkSelect: TpFIBQueryVk;
     pFIBTransactionReadOnly: TpFIBTransaction;
     pFIBTransactionUpdate: TpFIBTransaction;
     procedure DataModuleCreate(Sender: TObject);
@@ -30,12 +32,19 @@ type
     { Private declarations }
     FCurrentUser: RUserInfo;
     FStorage: TSettingsStorage;
+    FXmlIni : TXmlIni;
+    FUsersAccessType: TVkVariableCollection;
+    FUsersAccessValues: TVkVariableCollection;
     function CheckValidPassword(const aPassword: String): boolean;
     function CheckRequiredPassword(const aUserName:String):Boolean;
     function ValidUser(const AUserName, APassword:String):Boolean;
     procedure DoAfterLogin;
+    procedure InitConstsList(var AVarList: TVkVariableCollection;const ATableName,AIdName:String);
+    procedure InternalPrepareQuery(AUIBQuery:TpFIBQuery;const ASql:String;const AParams: array of variant );
   public
     { Public declarations }
+    function GetRootKey(bCurrentUser:Boolean = true):String;
+
     procedure LinkWithDataSet(fib_ds: TpFIBDataSetVk; TrRead,
        TrUpdate: TpFIBTransaction; aTableName:String; aKeyFields:String; aGenName:String);
     procedure LinkWithQuery(fib_qr: TpFIBQueryVk; aTr: TpFIBTransaction);
@@ -46,7 +55,17 @@ type
     function login(const userName, password:String):Boolean;
     function getAliasesList: TVkVariableCollection;
     function selectAlias: boolean;
+    function GenId(const AID: String): Int64;
+    function GetTypeGroup( AId: LargeInt):LargeInt;
+    procedure DoRequest(const ASql:String;const AParams: array of variant;
+       ATransaction:TpFIBTransaction = nil; AOnRequest: TOnRequest = nil);
+
+    property XmlInit:TXmlIni read FXmlIni;
+    property CurrentUser:RUserInfo read FCurrentUser;
+    property UsersAccessType: TVkVariableCollection read FUsersAccessType;
+    property UsersAccessValues: TVkVariableCollection read FUsersAccessValues;
   end;
+
 
 var
   MainDm: TMainDm;
@@ -59,23 +78,68 @@ uses FmSelectDbAlias;
 
 procedure TMainDm.DataModuleCreate(Sender: TObject);
 begin
-  pFIBDatabaseVera.SetTransactionReadOnly(pFIBTransactionReadOnly);
-  pFIBDatabaseVera.SetTransactionConcurency(pFIBTransactionUpdate );
-  LinkWithQuery(pFIBQueryVk1, pFIBTransactionReadOnly);
+  pFIBDatabaseMain.SetTransactionReadOnly(pFIBTransactionReadOnly);
+  pFIBDatabaseMain.SetTransactionConcurency(pFIBTransactionUpdate );
+  LinkWithQuery(pFIBQueryVkSelect, pFIBTransactionReadOnly);
   FStorage := TSettingsStorage.Create(ChangeFileExt(Application.ExeName,'.ini'));
   FStorage.Read;
-  with pFIBDataBaseVera do
+  with pFIBDataBaseMain do
   begin
     ConnectParams.UserName     := 'task';
     ConnectParams.Password := 'vksoft123';
     ConnectParams.CharSet  := 'UTF8';
     ConnectParams.RoleName := 'RHOPE';
   end;
+  FXmlIni := TXmlIni.Create(self,ChangeFileExt(Application.ExeName,'.xml'));
+
 end;
 
 procedure TMainDm.DoAfterLogin;
 begin
+  InitConstsList(FUsersAccessType,'USERSACCESSTYPE','IDUATYPE');
+  InitConstsList(FUsersAccessValues,'USERSACCESSVALUES','IDUAVALUE');
+end;
 
+procedure TMainDm.DoRequest(const ASql: String; const AParams: array of variant;
+  ATransaction: TpFIBTransaction; AOnRequest: TOnRequest);
+var
+  bTransactionOwner: Boolean;
+begin
+  if not Assigned(AOnRequest) then
+    Raise Exception.Create('ON Request not defined!');
+//  Assert(AOnRequest,'ON Request not defined!');
+  with pFIBQueryVkSelect do
+  begin
+    Close();
+    if Assigned(ATransaction) then
+      Transaction := ATransaction
+    else
+      Transaction := pFIBTRansactionReadOnly;
+    InternalPrepareQuery(pFIBQueryVkSelect,ASql,AParams);
+//    SQL.Clear;
+//    SQL.Text := ASql;
+    bTransactionOwner := not Transaction.InTransaction;
+    if bTransactionOwner then
+      Transaction.StartTransaction;
+    try
+      ExecQuery;
+{      if not Eof then
+        Result := Fields.AsVariant[0]
+      else
+        Result := null;}
+      AOnRequest(pFIBQueryVkSelect);
+    finally
+      if bTransactionOwner then
+        Transaction.Commit;
+    end;
+  end;
+
+
+end;
+
+function TMainDm.GenId(const AID: String): Int64;
+begin
+  Result := CoalEsce(QueryValue(Format('SELECT Gen_Id(%s,1) AS ID FROM RDB$DATABASE',[AId]),[]),0);
 end;
 
 function TMainDm.getAliasesList: TVkVariableCollection;
@@ -88,6 +152,85 @@ begin
     Result := nil;
 end;
 
+function TMainDm.GetRootKey(bCurrentUser: Boolean): String;
+begin
+  Result := Format('\Software\VK Soft\%s\%d',[Application.ExeName,FCurrentUser.iduser]);
+end;
+
+function TMainDm.GetTypeGroup(AId: LargeInt): LargeInt;
+var id : LargeInt;
+begin
+  id := -1;
+  Result := -1;
+  pFIBQueryVkSelect.Close;
+  pFIBQueryVkSelect.SQL.Clear;
+  pFIBQueryVkSelect.SQL.Add('SELECT idgroup, idobject FROM objects WHERE idobject=:idobject');
+  pFIBQueryVkSelect.ParamByName('idobject').AsInt64 := AId;
+  while id<>0 do
+  begin
+    pFIBQueryVkSelect.ExecQuery;
+    if not pFIBQueryVkSelect.IsEmpty then
+    begin
+      id := pFIBQueryVkSelect.FieldByName('idgroup').AsInt64;
+      if id = 0 then
+      begin
+        Result := pFIBQueryVkSelect.FieldByName('idobject').AsInt64;
+        Break;
+      end
+      else
+      begin
+        pFIBQueryVkSelect.Close;
+        pFIBQueryVkSelect.ParamByName('idobject').AsInt64 := Id;
+      end;
+    end
+    else
+      raise Exception.Create('Error group');
+  end;
+  pFIBQueryVkSelect.Close;
+
+end;
+
+procedure TMainDm.InitConstsList(var AVarList: TVkVariableCollection;
+  const ATableName, AIdName: String);
+begin
+  if Assigned(AVarList) then
+    AVarList.Clear
+  else
+    AVarList := TVkVariableCollection.Create(self);
+  with pFIBQueryVkSelect do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('SELECT * FROM '+ATableName);
+    ExecQuery;
+    try
+      while not Eof  do
+      begin
+        AVarList.CreateVkVariable(FieldByName('CONSTNAME').AsString,FieldByName(AIdName).Value);
+        Next;
+      end;
+    finally
+      Close;
+    end;
+  end;
+
+end;
+
+procedure TMainDm.InternalPrepareQuery(AUIBQuery: TpFIBQuery;
+  const ASql: String; const AParams: array of variant);
+var i: Integer;
+begin
+  with AUIBQuery do
+  begin
+    SQL.Clear;
+    SQL.Text := ASql;
+    Prepare();
+    for I := 0 to ParamCount-1 do
+      Params[i].Value := AParams[i];
+  end;
+
+end;
+
 //=============================================================
 //  Основная процедура установки коннекта
 //=============================================================
@@ -96,24 +239,24 @@ procedure TMainDm.LinkWithDataSet(fib_ds: TpFIBDataSetVk; TrRead,
 begin
   with fib_ds do
   begin
-    Database := pFIBDatabaseVera;
+    Database := pFIBDatabaseMain;
     if Assigned(TrRead) then
     begin
       if not Assigned(TrRead.DefaultDatabase) then
-        TrRead.DefaultDatabase := pFIBDatabaseVera;
+        TrRead.DefaultDatabase := pFIBDatabaseMain;
       Transaction := TrRead;
     end
     else
-      Transaction := pFIBDatabaseVera.GetNewTransactionReadOnly(fib_ds.Owner);
+      Transaction := pFIBDatabaseMain.GetNewTransactionReadOnly(fib_ds.Owner);
 
     if Assigned(TrUpdate) then
     begin
       if not Assigned(TrUpdate.DefaultDatabase) then
-        TrUpdate.DefaultDatabase := pFIBDatabaseVera;
+        TrUpdate.DefaultDatabase := pFIBDatabaseMain;
       UpdateTransaction := TrUpdate;
     end
     else
-      UpdateTransaction := pFIBDatabaseVera.DefaultUpdateTransaction;
+      UpdateTransaction := pFIBDatabaseMain.DefaultUpdateTransaction;
 
     AutoUpdateOptions.AutoReWriteSqls          := True;
     AutoUpdateOptions.CanChangeSQLs            := True;
@@ -135,15 +278,15 @@ procedure TMainDm.LinkWithQuery(fib_qr: TpFIBQueryVk; aTr: TpFIBTransaction);
 begin
   with fib_qr do
   begin
-    Database := pFIBDatabaseVera;
+    Database := pFIBDatabaseMain;
     if Assigned(aTr) then
     begin
       if not Assigned(aTr.DefaultDatabase) then
-        aTr.DefaultDatabase := pFIBDatabaseVera;
+        aTr.DefaultDatabase := pFIBDatabaseMain;
       Transaction := aTr;
     end
     else
-      Transaction := pFIBDatabaseVera.DefaultTransaction;
+      Transaction := pFIBDatabaseMain.DefaultTransaction;
 
   end;
 end;
@@ -152,10 +295,10 @@ function TMainDm.login(const userName, password: String):boolean;
 begin
 //  if not SelectAlias then
 //    Raise Exception.Create('Не указан путь к базе!');
-  pFIBDatabaseVera.Connected := true;
+  pFIBDatabaseMain.Connected := true;
   if not ValidUser(userName, password) then
-    pFIBDatabaseVera.Connected := false;
-  Result := pFIBDatabaseVera.Connected;
+    pFIBDatabaseMain.Connected := false;
+  Result := pFIBDatabaseMain.Connected;
   DoAfterLogin;
 end;
 
@@ -165,13 +308,13 @@ var
   I: Integer;
   bTransactionOwner: Boolean;
 begin
-  with pFIBQueryVk1 do
+  with pFIBQueryVkSelect do
   begin
     Close;
     if Assigned(ATransaction) then
       Transaction := ATransaction
     else
-      Transaction := pFIBDatabaseVera.DefaultTransaction;
+      Transaction := pFIBDatabaseMain.DefaultTransaction;
     SQL.Clear;
     SQL.Add(ASql);
     for I := 0 to Params.Count-1 do
@@ -206,13 +349,13 @@ var
   _v: TVkVariable;
 
 begin
-  with pFIBQueryVk1 do
+  with pFIBQueryVkSelect do
   begin
     Close;
     if Assigned(ATransaction) then
       Transaction := ATransaction
     else
-      Transaction := pFIBDatabaseVera.DefaultTransaction;
+      Transaction := pFIBDatabaseMain.DefaultTransaction;
     SQL.Clear;
     SQL.Add(ASql);
     for I := 0 to Params.Count-1 do
@@ -258,17 +401,28 @@ begin
       end;
       1:
         begin
-          pFIBDatabaseVera.DBName := FStorage.GetVariable(_List.Items.Items[0].name,DBPATH,'').AsString;
-          pFIBDatabaseVera.LibraryName := FStorage.GetVariable(_List.Items.Items[0].Name,LIBPATH,'').AsString;
+          pFIBDatabaseMain.DBName := FStorage.GetVariable(_List.Items.Items[0].name,DBPATH,'').AsString;
+          pFIBDatabaseMain.LibraryName := FStorage.GetVariable(_List.Items.Items[0].Name,LIBPATH,'').AsString;
           Result := True;
         end;
       else
       begin
-        _idx := TSelectDbAliasFm.SelectAliasIndex(_List.getItemValues);
+        if ParamCount=3 then
+        begin
+          for _idx := 0 to _List.Items.Count-1 do
+          begin
+            if _List.Items.Items[_idx].name.Equals(ParamStr(3)) then
+            begin
+              break;
+            end;
+          end;
+        end
+        else
+          _idx := TSelectDbAliasFm.SelectAliasIndex(_List.getItemValues);
         if _Idx>-1 then
         begin
-          pFIBDatabaseVera.DBName := FStorage.GetVariable(_List.Items.Items[_Idx].name,DBPATH,'').AsString;
-          pFIBDatabaseVera.LibraryName:= FStorage.GetVariable(_List.Items.Items[_Idx].Name,LIBPATH,'').AsString;
+          pFIBDatabaseMain.DBName := FStorage.GetVariable(_List.Items.Items[_Idx].name,DBPATH,'').AsString;
+          pFIBDatabaseMain.LibraryName:= FStorage.GetVariable(_List.Items.Items[_Idx].Name,LIBPATH,'').AsString;
           Result := True;
         end
         else
@@ -291,7 +445,7 @@ begin
     Exit;
   end;
   try
-    with pFIBQueryVk1 do
+    with pFIBQueryVkSelect do
     begin
       Close;
       SQL.Clear;
@@ -335,7 +489,7 @@ end;
 
 function TMainDm.CheckRequiredPassword(const aUserName: String): Boolean;
 begin
-  with pFIBQueryVk1 do
+  with pFIBQueryVkSelect do
   begin
     Close;
     try

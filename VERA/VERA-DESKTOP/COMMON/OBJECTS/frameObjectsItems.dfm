@@ -1,0 +1,2 @@
+inherited ObjectsItemsFrame: TObjectsItemsFrame
+end

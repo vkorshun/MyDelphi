@@ -86,7 +86,9 @@
         <DCC_UnitSearchPath>C:\THIRDLIB.XE260\VKLIB\VKVARIABLES;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Debugger_RunParams>ADMIN ADMIN</Debugger_RunParams>
+        <Debugger_RunParams>ADMIN ADMIN flexoprint</Debugger_RunParams>
+        <DCC_ExeOutput>..\RUN\FLEXOPRINT\$(Platform)\$(Config)</DCC_ExeOutput>
+        <DCC_DcuOutput>..\RUN\FLEXOPRINT\DCU\$(Platform)\$(Config)</DCC_DcuOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -106,7 +108,7 @@
             <Form>Form3</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\..\COMMON\DmMain.pas">
+        <DCCReference Include="..\..\COMMON\fib.DmMain.pas">
             <Form>MainDm</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
@@ -130,6 +132,76 @@
             <Form>HopeFormFm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="..\..\COMMON\DOCS\DocSqlManager.pas"/>
+        <DCCReference Include="..\..\COMMON\DOCS\uDocDescription.pas"/>
+        <DCCReference Include="..\..\COMMON\DOCS\fib.dmDoc.pas">
+            <Form>DocDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\DOCS\fib.docbinding.pas"/>
+        <DCCReference Include="..\..\COMMON\DOCS\fib.fmCustomDoc.pas">
+            <Form>CustomDocFm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\DOCS\fib.framedoc.pas">
+            <Form>DocFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\DOCS\vkdocinstance.pas"/>
+        <DCCReference Include="..\..\COMMON\AppManager.pas"/>
+        <DCCReference Include="..\..\COMMON\DOCS\fmSetupForm.pas">
+            <Form>SetUpFormFm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\DOCS\docManagerPanel.pas"/>
+        <DCCReference Include="..\..\COMMON\ATTRIBUTES\dmAttributes.pas">
+            <Form>AttributesDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\ATTRIBUTES\dmAttributesOfGroup.pas">
+            <Form>AttributesOfGroupDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\ATTRIBUTES\dmAttributesSet.pas">
+            <Form>AttributesSetDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\ATTRIBUTES\frameAttributes.pas">
+            <Form>AttributesFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\ATTRIBUTES\frameAttributesOfGroup.pas">
+            <Form>AttributesOfGroupFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\ATTRIBUTES\frameAttributesSet.pas">
+            <Form>AttributesSetFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\OBJECTS\dmObjects.pas">
+            <Form>ObjectsDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\OBJECTS\frameobjectsgr.pas">
+            <Form>ObjectsGrFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\OBJECTS\frameObjectsItems.pas">
+            <Form>ObjectsItemsFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\systemconsts.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -158,7 +230,7 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="Win32\Debug\flexoprint_dt.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\RUN\FLEXOPRINT\Win32\Debug\flexoprint_dt.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>flexoprint_dt.exe</RemoteName>
                         <Overwrite>true</Overwrite>

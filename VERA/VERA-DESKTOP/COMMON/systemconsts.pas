@@ -1,0 +1,38 @@
+unit systemconsts;
+
+interface
+
+const
+  ATTRIBUTES_OKU = 1;
+  ATTRIBUTES_OAU = 2;
+
+const
+  TA_STRING = 0;
+  TA_NUMERIC = 1;
+  TA_DATE = 2;
+  TA_LOGICAL = 3;
+  TA_TIMESTAMP = 4;
+  TA_TIME = 5;
+  TA_OBJECT = 6;
+  TA_GROUP = 7;
+  TA_CURRENCY = 8;
+  TA_ACCOUNT = 9;
+
+  ID_EMPTY = 0;
+  IDGROUP_OAU = 2;
+  IDGROUP_OKU = 1;
+  IDGROUP_CURRENCY = 3;
+  IDGROUP_EDIZM = 4;
+  IDGROUP_SYSTEM = 5;
+
+  FLD_ATTR_VAL = 'VAL';
+  FLD_ATTR_V_INT = 'V_INT';
+  FLD_ATTR_V_DOUBLE = 'V_DOUBLE';
+  FLD_ATTR_V_CURRENCY = 'V_CURRENCY';
+  FLD_ATTR_V_DATA = 'V_DATA';
+  FLD_ATTR_V_BOOLEAN = 'V_BOOLEAN';
+  FLD_ATTR_V_BLOB = 'V_BLOB';
+
+implementation
+
+end.

@@ -3,7 +3,7 @@ object MainDm: TMainDm
   OnCreate = DataModuleCreate
   Height = 421
   Width = 447
-  object pFIBDatabaseVera: TpFIBDatabaseVk
+  object pFIBDatabaseMain: TpFIBDatabaseVk
     DefaultTransaction = pFIBTransactionReadOnly
     DefaultUpdateTransaction = pFIBTransactionUpdate
     SQLDialect = 3
@@ -17,17 +17,19 @@ object MainDm: TMainDm
     Left = 216
     Top = 104
   end
-  object pFIBQueryVk1: TpFIBQueryVk
+  object pFIBQueryVkSelect: TpFIBQueryVk
     Left = 80
     Top = 232
+    qoAutoCommit = True
+    qoStartTransaction = True
   end
   object pFIBTransactionReadOnly: TpFIBTransaction
-    DefaultDatabase = pFIBDatabaseVera
+    DefaultDatabase = pFIBDatabaseMain
     Left = 264
     Top = 224
   end
   object pFIBTransactionUpdate: TpFIBTransaction
-    DefaultDatabase = pFIBDatabaseVera
+    DefaultDatabase = pFIBDatabaseMain
     Left = 280
     Top = 152
   end

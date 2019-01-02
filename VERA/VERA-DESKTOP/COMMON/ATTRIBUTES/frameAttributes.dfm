@@ -1,0 +1,2 @@
+inherited AttributesFrame: TAttributesFrame
+end
