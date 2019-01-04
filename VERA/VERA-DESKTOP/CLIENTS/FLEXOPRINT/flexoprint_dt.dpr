@@ -3,7 +3,6 @@ program flexoprint_dt;
 uses
   Vcl.Forms,
   FmMain in 'FmMain.pas' {Form3},
-  fib.DmMain in '..\..\COMMON\fib.DmMain.pas' {MainDm: TDataModule},
   menustructure in '..\..\..\..\LIB\menustructure.pas',
   SettingsStorage in '..\..\..\..\LIB\SettingsStorage.pas',
   uLog in '..\..\..\..\LIB\uLog.pas',
@@ -13,10 +12,6 @@ uses
   fmhopeform in '..\..\..\..\LIB\FORMS\fmhopeform.pas' {HopeFormFm},
   DocSqlManager in '..\..\COMMON\DOCS\DocSqlManager.pas',
   uDocDescription in '..\..\COMMON\DOCS\uDocDescription.pas',
-  fib.dmDoc in '..\..\COMMON\DOCS\fib.dmDoc.pas' {DocDm: TDataModule},
-  fib.docbinding in '..\..\COMMON\DOCS\fib.docbinding.pas',
-  fib.fmCustomDoc in '..\..\COMMON\DOCS\fib.fmCustomDoc.pas' {CustomDocFm},
-  fib.framedoc in '..\..\COMMON\DOCS\fib.framedoc.pas' {DocFrame: TFrame},
   vkdocinstance in '..\..\COMMON\DOCS\vkdocinstance.pas',
   AppManager in '..\..\COMMON\AppManager.pas',
   fmSetupForm in '..\..\COMMON\DOCS\fmSetupForm.pas' {SetUpFormFm},
@@ -30,7 +25,12 @@ uses
   dmObjects in '..\..\COMMON\OBJECTS\dmObjects.pas' {ObjectsDm: TDataModule},
   frameobjectsgr in '..\..\COMMON\OBJECTS\frameobjectsgr.pas' {ObjectsGrFrame: TFrame},
   frameObjectsItems in '..\..\COMMON\OBJECTS\frameObjectsItems.pas' {ObjectsItemsFrame: TFrame},
-  systemconsts in '..\..\COMMON\systemconsts.pas';
+  systemconsts in '..\..\COMMON\systemconsts.pas',
+  fdac.dmDoc in '..\..\COMMON\DOCS\FDAC\fdac.dmDoc.pas' {DocDm: TDataModule},
+  fdac.docbinding in '..\..\COMMON\DOCS\FDAC\fdac.docbinding.pas',
+  fdac.fmCustomDoc in '..\..\COMMON\DOCS\FDAC\fdac.fmCustomDoc.pas' {CustomDocFm},
+  fdac.framedoc in '..\..\COMMON\DOCS\FDAC\fdac.framedoc.pas' {DocFrame: TFrame},
+  fdac.dmmain in '..\..\COMMON\DOCS\FDAC\fdac.dmmain.pas' {MainDm: TDataModule};
 
 {$R *.res}
 

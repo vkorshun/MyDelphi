@@ -18,6 +18,12 @@
         <Projects Include="VERA-DESKTOP\CLIENTS\FLEXOPRINT\flexoprint_dt.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="..\LIB\ATTABS\attabs\attabs_package_delphi.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="C:\THIRDLIB.XE260\VKLIB\vklib_xe260.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -71,14 +77,32 @@
     <Target Name="flexoprint_dt:Make">
         <MSBuild Projects="VERA-DESKTOP\CLIENTS\FLEXOPRINT\flexoprint_dt.dproj" Targets="Make"/>
     </Target>
+    <Target Name="attabs_package_delphi">
+        <MSBuild Projects="..\LIB\ATTABS\attabs\attabs_package_delphi.dproj"/>
+    </Target>
+    <Target Name="attabs_package_delphi:Clean">
+        <MSBuild Projects="..\LIB\ATTABS\attabs\attabs_package_delphi.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="attabs_package_delphi:Make">
+        <MSBuild Projects="..\LIB\ATTABS\attabs\attabs_package_delphi.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="vklib_xe260">
+        <MSBuild Projects="C:\THIRDLIB.XE260\VKLIB\vklib_xe260.dproj"/>
+    </Target>
+    <Target Name="vklib_xe260:Clean">
+        <MSBuild Projects="C:\THIRDLIB.XE260\VKLIB\vklib_xe260.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="vklib_xe260:Make">
+        <MSBuild Projects="C:\THIRDLIB.XE260\VKLIB\vklib_xe260.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="vera_server;vera_client;flexoprint;hopecertcenter;flexoprint_dt"/>
+        <CallTarget Targets="vera_server;vera_client;flexoprint;hopecertcenter;flexoprint_dt;attabs_package_delphi;vklib_xe260"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="vera_server:Clean;vera_client:Clean;flexoprint:Clean;hopecertcenter:Clean;flexoprint_dt:Clean"/>
+        <CallTarget Targets="vera_server:Clean;vera_client:Clean;flexoprint:Clean;hopecertcenter:Clean;flexoprint_dt:Clean;attabs_package_delphi:Clean;vklib_xe260:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="vera_server:Make;vera_client:Make;flexoprint:Make;hopecertcenter:Make;flexoprint_dt:Make"/>
+        <CallTarget Targets="vera_server:Make;vera_client:Make;flexoprint:Make;hopecertcenter:Make;flexoprint_dt:Make;attabs_package_delphi:Make;vklib_xe260:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

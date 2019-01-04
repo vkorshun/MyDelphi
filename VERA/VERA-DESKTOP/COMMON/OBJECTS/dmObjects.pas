@@ -3,12 +3,11 @@ unit dmObjects;
 interface
 
 uses
-  System.SysUtils, System.Classes, fib.dmdoc, MemTableDataEh, Data.DB, FireDAC.Stan.Intf,
+  System.SysUtils, System.Classes, fdac.dmdoc, MemTableDataEh, Data.DB, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.Client, FireDAC.Comp.DataSet,
   DataDriverEh, MemTableEh, VkVariableBinding, VkVariableBindingDialog, Generics.Collections, vkvariable,
-  DateVk, SystemConsts, Math, DocSqlManager, pFIBQueryVK, pFIBDataSet, pFIBDataSetVk,
-  FIBDataSet, FIBQuery, pFIBQuery ;
+  DateVk, SystemConsts, Math, DocSqlManager, FIBQuery, pFIBQuery, pFIBQueryVk;
 
 const
   _VARATTR = 'f_';
@@ -35,7 +34,7 @@ type
 
   TTypeDmObjects = (tdmoGroups, tdmoObjects);
   TObjectsDm = class(TDocDm)
-    pFIBQueryVkAttributesOfGroup: TpFIBQueryVk;
+    FDQueryAttributesOfGroup: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure MemTableEhDocAfterOpen(DataSet: TDataSet);
@@ -77,7 +76,7 @@ implementation
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
-uses uLog, fib.DmMain, uDocDescription, sqldescription, fib.DocBinding, frameObjectsGr;
+uses uLog, fdac.DmMain, uDocDescription, sqldescription, fdac.DocBinding, frameObjectsGr;
 {$R *.dfm}
 
 procedure TObjectsDm.AddAttributesToDocStru;
@@ -88,9 +87,9 @@ var i: Integer;
   _set_name: String;
   _bView: Boolean;
 begin
-  with pFIBQueryVkAttributesOfGroup do
+  with FDQueryAttributesOfGroup do
   begin
-    //First;
+    First;
     i := 1;
     while not Eof  do
     begin
@@ -109,11 +108,11 @@ begin
       _var_name2 := _VARATTR2+ IntToStr(i);
       _bView := FieldByName(FLD_NUMBERVIEW).AsInteger > 0;
       _set_name := FieldByName(FLD_SET_NAME).AsString;
-      case pFIBQueryVkAttributesOfGroup.FieldByName(FLD_ATTRIBUTETYPE).AsInteger of
+      case FDQueryAttributesOfGroup.FieldByName(FLD_ATTRIBUTETYPE).AsInteger of
         TA_STRING:
           begin
             DocStruDescriptionList.Add(_var_name,'',_attr_name,_attr_name,FieldByName('nlen').AsInteger,'',
-              Min(60,FieldByName('nlen').AsInteger),_bView,not _bView,
+              Min(60,FieldByName('nlen').AsInteger+1),_bView,not _bView,
                TBindingDescription.GetBindingDescription(TEditVkVariableBinding),_set_name);
           end;
         TA_NUMERIC:
@@ -166,7 +165,7 @@ begin
         SQLLeftJoin.Add(' LEFT JOIN attributesofobject '+cAliasParam+' ON '+cAliasParam+'.idobject= obj.idobject AND '
           +cAliasParam+'.idattribute='+IntToStr(FDQueryAttributesOfGroup.FieldByName('idattribute').AsInteger));}
       end;
-      pFIBQueryVkAttributesOfGroup.Next;
+      FDQueryAttributesOfGroup.Next;
       Inc(i);
     end;
   end;
@@ -182,8 +181,8 @@ end;
 procedure TObjectsDm.DataModuleCreate(Sender: TObject);
 begin
   inherited;
-  MainDm.LinkWithQuery(pFIBQueryVkAttributesOfGroup,DmMain.pFIBTransactionReadOnly);
-  with pFIBQueryVkAttributesOfGroup do
+  MainDm.LinkWithQuery(FDQueryAttributesOfGroup,DmMain.FDTransactionRead);
+  with FDQueryAttributesOfGroup do
   begin
     SQL.Clear;
     SQL.Add('SELECT ag.*, gr.name as group_name, al.name as attribute_name, s.name as set_name,');
@@ -243,7 +242,7 @@ begin
   if ObjectsTypeDm= tdmoObjects then
   begin
     if AStatus= usInserted then
-      DocVariableList.VarByName('IDGROUP').AsLargeInt := pFIBDataSetVkDoc.ParamByName('idgroup').AsInt64;
+      DocVariableList.VarByName('IDGROUP').AsLargeInt := FDQueryDoc.ParamByName('idgroup').AsLargeInt;
   end;
 end;
 
@@ -254,7 +253,7 @@ begin
   begin
     if AInsert then
     begin
-      _kodg := pFIBDataSetVkDoc.ParamByName('idgroup').AsInt64;
+      _kodg := FDQueryDoc.ParamByName('idgroup').AsLargeInt;
       if _kodg=0 then
         raise Exception.Create('_kodg = 0');
       DocVariableList.VarByName('idgroup').AsLargeInt :=  _kodg;
@@ -288,15 +287,16 @@ begin
     i:=1;
     SQLSelect.Clear;
     SQLSelect.Add(' SELECT obj.*');
-    pFIBQueryVkAttributesOfGroup.Close;
-    pFIBQueryVkAttributesOfGroup.ParamByName('idgroup').AsInt64 := AIdGroup;
-    pFIBQueryVkAttributesOfGroup.ParamByName('iduser').AsInt64 := MainDm.CurrentUser.iduser;
-    pFIBQueryVkAttributesOfGroup.ParamByName('iduatype').AsInt64 := MainDm.UsersAccessType.VarByName('USERACCESS_ATTRIBUTES').AsInteger;
-    pFIBQueryVkAttributesOfGroup.ExecQuery;
+    FDQueryAttributesOfGroup.Active := False;
+    FDQueryAttributesOfGroup.ParamByName('idgroup').AsLargeInt := AIdGroup;
+    FDQueryAttributesOfGroup.ParamByName('iduser').AsLargeInt := MainDm.CurrentUser.iduser;
+    FDQueryAttributesOfGroup.ParamByName('iduatype').AsLargeInt := MainDm.UsersAccessType.VarByName('USERACCESS_ATTRIBUTES').AsInteger;
+    FDQueryAttributesOfGroup.Open;
 
-    while not pFIBQueryVkAttributesOfGroup.Eof do
+    while not FDQueryAttributesOfGroup.Eof do
     begin
-       id_attr := pFIBQueryVkAttributesOfGroup.FieldByName('idattribute').AsInt64;
+       id_attr := FDQueryAttributesOfGroup.FieldByName('idattribute').AsLargeInt;
+
       {if bOnlyView then
       while (FDQueryAttributesOfGroup.FieldByName('numberview').AsInteger=0) do
       begin
@@ -309,7 +309,7 @@ begin
       if FDQueryAttributesOfGroup.Eof then
           Break;
       }
-      case pFIBQueryVkAttributesOfGroup.FieldByName('attributetype').AsInteger of
+      case FDQueryAttributesOfGroup.FieldByName('attributetype').AsInteger of
         TA_STRING:  s:='val';
         TA_NUMERIC: s:='v_double ';
         TA_DATE:    s:='v_data';
@@ -320,12 +320,12 @@ begin
       else
          s:='v_int';
       end;
-      case pFIBQueryVkAttributesOfGroup.FieldByName('attributetype').AsInteger of
+      case FDQueryAttributesOfGroup.FieldByName('attributetype').AsInteger of
         TA_OBJECT,TA_GROUP:
         begin
           cAliasParam  := 'attr'+IntToStr(i);
           SQLLeftJoin.Add(' LEFT JOIN attributesofobject '+cAliasParam+' ON '
-          +cAliasParam+'.idattribute='+IntToStr(pFIBQueryVkAttributesOfGroup.FieldByName('idattribute').AsInteger)+ ' AND '
+          +cAliasParam+'.idattribute='+IntToStr(FDQueryAttributesOfGroup.FieldByName('idattribute').AsInteger)+ ' AND '
           +cAliasParam+'.idobject= obj.idobject  ');
           cAlias := 'obj'+IntToStr(i);
           SQLLeftJoin.Add(' LEFT JOIN objects '+cAlias+' ON '+cAlias+'.idobject='+cAliasParam+'.v_int');
@@ -335,7 +335,7 @@ begin
         begin
           cAliasParam  := 'attr'+IntToStr(i);
           SQLLeftJoin.Add(' LEFT JOIN attributesofobject '+cAliasParam+' ON '+cAliasParam+'.idobject= obj.idobject AND '
-          +cAliasParam+'.idattribute='+IntToStr(pFIBQueryVkAttributesOfGroup.FieldByName('idattribute').AsInteger));
+          +cAliasParam+'.idattribute='+IntToStr(FDQueryAttributesOfGroup.FieldByName('idattribute').AsInteger));
           cAlias := 'acc'+IntToStr(i);
           SQLLeftJoin.Add(' LEFT JOIN account '+cAlias+' ON '+cAlias+'.id_account='+cAliasParam+'.v_int');
           SQLSelect.Add(','+cAlias+'.name as f_'+IntToStr(i));
@@ -345,15 +345,15 @@ begin
           cAliasParam  := 'attr'+IntToStr(i);
           SQLSelect.Add(', coalesce('+cAliasParam+'.'+s+',0) as f_'+IntToStr(i));
           SQLLeftJoin.Add(' LEFT JOIN attributesofobject '+cAliasParam+' ON '+cAliasParam+'.idobject= obj.idobject AND '
-          +cAliasParam+'.idattribute='+IntToStr(pFIBQueryVkAttributesOfGroup.FieldByName('idattribute').AsInteger));
+          +cAliasParam+'.idattribute='+IntToStr(FDQueryAttributesOfGroup.FieldByName('idattribute').AsInteger));
         end;
       else
         cAliasParam  := 'attr'+IntToStr(i);
         SQLSelect.Add(','+cAliasParam+'.'+s+' as f_'+IntToStr(i));
         SQLLeftJoin.Add(' LEFT JOIN attributesofobject '+cAliasParam+' ON '+cAliasParam+'.idobject= obj.idobject AND '
-          +cAliasParam+'.idattribute='+IntToStr(pFIBQueryVkAttributesOfGroup.FieldByName('idattribute').AsInteger));
+          +cAliasParam+'.idattribute='+IntToStr(FDQueryAttributesOfGroup.FieldByName('idattribute').AsInteger));
       end;
-      pFIBQueryVkAttributesOfGroup.Next;
+      FDQueryAttributesOfGroup.Next;
       _adescr := TAttributeDescr.Create;
       _adescr.Id := id_attr;
       _adescr.Name := _VARATTR+IntToStr(i);
@@ -485,17 +485,17 @@ begin
   _Item := TAdditionalSqlManager(Sender);
   if SameText(_Item.TableName,'ATTRIBUTESOFOBJECT') then
   begin
-    pFIBQueryVkUpdate.SQL.Text := 'INSERT INTO '+_Item.TableName+'(IDOBJECT, IDATTRIBUTE, VAL)'+
+    FDCommandUpdate.CommandText.Text := 'INSERT INTO '+_Item.TableName+'(IDOBJECT, IDATTRIBUTE, VAL)'+
       ' VALUES(:IDOBJECT, :IDATTRIBUTE, :VAL)';
-    pFIBQueryVkUpdate.ParamByName('IDOBJECT').AsInt64 := DocVariableList.VarByName('IDOBJECT').AsLargeInt;
+    FDCommandUpdate.ParamByName('IDOBJECT').AsLargeInt := DocVariableList.VarByName('IDOBJECT').AsLargeInt;
     for I := 0 to _Item.FieldList.Count-1 do
     begin
       if Assigned(_Item.FieldList.Objects[i]) then
       begin
         _id := TAttributeDescr(_Item.FieldList.Objects[i]).Id;
-        pFIBQueryVkUpdate.ParamByName('IDATTRIBUTE').AsInt64 := _id;
-        pFIBQueryVkUpdate.ParamByName('VAL').AsString := DocVariableList.VarByName(_Item.FieldList[i]).AsString;
-        pFIBQueryVkUpdate.ExecQuery();
+        FDCommandUpdate.ParamByName('IDATTRIBUTE').AsLargeInt := _id;
+        FDCommandUpdate.ParamByName('VAL').AsString := DocVariableList.VarByName(_Item.FieldList[i]).AsString;
+        FDCommandUpdate.Execute();
       end;
     end;
   end;
@@ -511,23 +511,32 @@ begin
   _Item := TAdditionalSqlManager(Sender);
   if SameText(_Item.TableName,'ATTRIBUTESOFOBJECT') then
   begin
-    pFIBQueryVkUpdate.SQL.Text := 'UPDATE OR INSERT INTO '+_Item.TableName+
+    FDCommandUpdate.CommandText.Text := 'UPDATE OR INSERT INTO '+_Item.TableName+
       ' (IDOBJECT, IDATTRIBUTE, VAL) '+
       ' VALUES  (:IDOBJECT, :IDATTRIBUTE, :VAL)'+
       'MATCHING (IDOBJECT,IDATTRIBUTE)';
 //    FDCommandUpdate.ParamByName('IDGROUP').AsLargeInt := FDQueryDoc.ParamByName('idgroup').AsLargeInt;
-    pFIBQueryVkUpdate.ParamByName('IDOBJECT').AsInt64 := DocVariableList.VarByName('IDOBJECT').AsLargeInt;
+    FDCommandUpdate.ParamByName('IDOBJECT').AsLargeInt := DocVariableList.VarByName('IDOBJECT').AsLargeInt;
     _UpdateList := tStringList.Create;
     DocVariableList.GetChangedList(_UpdateList,_Item.FieldList);
     for I := 0 to _UpdateList.Count-1 do
     begin
-      if Assigned(_Item.FieldList.Objects[i]) then
+      _RecNo := _Item.FieldList.IndexOf(_UpdateList[i]);
+
+      if (_RecNo>-1) and Assigned(_Item.FieldList.Objects[_RecNo]) then
       begin
-        _id := TAttributeDescr(_Item.FieldList.Objects[i]).Id;
-        pFIBQueryVkUpdate.ParamByName('IDATTRIBUTE').AsInt64 := _id;
-        pFIBQueryVkUpdate.ParamByName('VAL').AsString := DocVariableList.VarByName(_UpdateList[i]).AsString;
-        pFIBQueryVkUpdate.ExecQuery();
+        _id := TAttributeDescr(_Item.FieldList.Objects[_RecNo]).Id;
+        FDCommandUpdate.ParamByName('IDATTRIBUTE').AsLargeInt := _id;
+        FDCommandUpdate.ParamByName('VAL').AsString := DocVariableList.VarByName(_UpdateList[i]).AsString;
+        FDCommandUpdate.Execute();
       end;
+      {if TryStrToInt(Copy(_UpdateList[i],3,length(Trim(_UpdateList[i]))),_RecNo) then
+      begin
+        FDQueryAttributesOfGroup.RecNo := _RecNo;
+        FDCommandUpdate.ParamByName('IDATTRIBUTE').AsLargeInt := FDQueryAttributesOfGroup.FieldByName('IDATTRIBUTE').AsLargeInt;
+        FDCommandUpdate.ParamByName('VAL').AsString := DocVariableList.VarByName(_UpdateList[i]).AsString;
+        FDCommandUpdate.Execute();
+      end;}
     end;
   end;
 end;
@@ -541,11 +550,10 @@ begin
   _Item := TVkVariableBinding(Sender);
   if (pos('f_',_Item.name)>0) and TryStrToInt(Copy(_Item.name,3,length(Trim(_Item.name))),_RecNo) then
   begin
-    with pFIBQueryVkAttributesOfGroup do
+    with FDQueryAttributesOfGroup do
     begin
-      ExecQuery();
-      GoToRecNo(_Recno);
-      case pFIBQueryVkAttributesOfGroup.FieldByName(FLD_ATTRIBUTETYPE).AsInteger of
+      RecNo := _RecNo;
+      case FDQueryAttributesOfGroup.FieldByName(FLD_ATTRIBUTETYPE).AsInteger of
         TA_STRING:
           begin
           end;
@@ -589,7 +597,7 @@ begin
         begin
           TObjectsGrFrame(TCustomDocFmVkVariableBinding(_Item).DocMEditBox.DocFm.FrameDoc).RootIdGroup :=
             CoalEsce(MainDm.QueryValue('SELECT idgroup FROM attributelist WHERE idattribute=:idattribute',
-            [FieldByName(FLD_IDATTRIBUTE).AsInt64]),0);
+            [FieldByName(FLD_IDATTRIBUTE).AsLargeInt]),0);
         end;
         TA_ACCOUNT:
         begin
@@ -613,19 +621,19 @@ begin
   MemTableEhDoc.Close;
   DocVariableList.Clear;
   Prepare(AIdGroup);
-  pFIBDataSetVkDoc.Close;
-  pFIBDataSetVkDoc.SelectSQL.Clear;
+  FDQueryDoc.Close;
+  FDQueryDoc.SQL.Clear;
   try
     if ObjectsTypeDm=tdmoGroups then
     begin
-      pFIBDataSetVkDoc.SelectSQL.Text := SqlManager.SelectSQL.Text;
-      pFIBDataSetVkDoc.ParamByName('idobject').AsInt64 := AIdGroup;
+      FDQueryDoc.SQL.Text := SqlManager.SelectSQL.Text;
+      FDQueryDoc.ParamByName('idobject').AsLargeInt := AIdGroup;
     end
     else
     begin
       //SqlManager.SelectSQL.Text := GetSelectFromObjects(AIdGroup);
-      pFIBDataSetVkDoc.SelectSQL.Text := SqlManager.SelectSQL.Text;
-      pFIBDataSetVkDoc.ParamByName('idgroup').AsInt64 := AIdGroup;
+      FDQueryDoc.SQL.Text := SqlManager.SelectSQL.Text;
+      FDQueryDoc.ParamByName('idgroup').AsLargeInt := AIdGroup;
     end;
     MemTableEhDoc.Open;
     if ObjectsTypeDm=tdmoGroups then
@@ -633,7 +641,7 @@ begin
   except
     on E: Exception do
     begin
-      LogMessage(' DmObjects:'+#13#10+E.Message+#13#10+pFIBDataSetVkDoc.SelectSQL.Text);
+      LogMessage(' DmObjects:'+#13#10+E.Message+#13#10+FDQueryDoc.SQL.Text);
     end;
   end;
 end;

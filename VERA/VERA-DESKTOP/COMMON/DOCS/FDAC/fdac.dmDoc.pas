@@ -1,12 +1,13 @@
-unit fib.dmDoc;
+unit fdac.dmDoc;
 
 interface
 
 uses
-  SysUtils, Classes, MemTableDataEh, Db, MemTableEh, DataDriverEh, fib.dmmain, DocSqlManager, VkVariable,
+  SysUtils, Classes, MemTableDataEh, Db, MemTableEh, DataDriverEh, fdac.dmmain, DocSqlManager, VkVariable,
   Generics.Collections, vkdocinstance, Controls, vkvariablebinding, fmVkDocDialog, uDocDescription,
-  Forms, Variants, VariantUtils, Dialogs, pFIBQueryVk, FIBDatabase, pFIBDatabase,
-  FIBDataSet, pFIBDataSet, pFIBDataSetVk, FIBQuery, pFIBQuery ;
+  u_XmlInit, Forms, Variants, VariantUtils, Dialogs,  FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.Comp.Client, FireDAC.DApt, FireDAC.Comp.DataSet;
 
 type
   TFieldViewState = (fvsRead, fvsInsert, fvsEdit);
@@ -56,17 +57,16 @@ type
   TDocDm = class(TDataModule)
     MemTableEhDoc: TMemTableEh;
     DataSetDriverEhDoc: TDataSetDriverEh;
-    pFIBQueryVkDocInfo: TpFIBQueryVk;
-    pFIBDataSetVkDoc: TpFIBDataSetVk;
-    pFIBQueryVkLock: TpFIBQueryVk;
-    pFIBQueryVkUpdate: TpFIBQueryVk;
+    FDCommandLock: TFDCommand;
+    FDCommandUpdate: TFDCommand;
+    FDQueryDoc: TFDQuery;
+    FDMetaInfoQueryDoc: TFDMetaInfoQuery;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataSetDriverEhDocUpdateRecord(DataDriver: TDataDriverEh; MemTableData: TMemTableDataEh;
       MemRec: TMemoryRecordEh);
     procedure DataModuleDestroy(Sender: TObject);
     procedure MemTableEhDocAfterOpen(DataSet: TDataSet);
     procedure MemTableEhDocBeforeClose(DataSet: TDataSet);
-    procedure VkUIBDataSetDocAfterOpen(DataSet: TDataSet);
   private
     { Private declarations }
     FDmMain: TMainDm;
@@ -124,12 +124,13 @@ type
     function IsLocked: Boolean;
     procedure FullRefreshDoc(ARecalcVariables: Boolean = false);
     procedure Open;
+    procedure ReinitVariables;
     procedure SetFilter(nIndex:Integer;Sender:TObject);virtual;
     procedure WriteVariables(AInsert: Boolean);
     function ValidFmEditItems(Sender:TObject):Boolean;virtual;
     procedure VarLog(AVarList: TVkVariableCollection);
 
-    class procedure SetParamValues(AQuery: TpFIBQueryVk; AVarList: TVkVariableCollection);
+    class procedure SetParamValues(AQuery: TFDCommand; AVarList: TVkVariableCollection);
     class function GetDm: TDocDm;virtual;
     property IsInternalTransaction: Boolean read FIsInternalTransaction;
     property SqlManager:TDocSqlManager read FDocSqlManager write FDocSqlManager;
@@ -198,10 +199,11 @@ begin
   FGridOrderList := TStringList.Create;
   FEditOrderList := TStringList.Create;
 
-  FDmMain.LinkWithDataSet(pFIBDataSetVkDoc,FDmMain.pFIBTransactionReadOnly, FDmMain.pFIBTransactionUpdate,'','','');
-  FDmMain.LinkWithQuery(pFIBQueryVkLock,FDmMain.pFIBTransactionUpdate);
-  FDmMain.LinkWithQuery(pFIBQueryVkUpdate,FDmMain.pFIBTransactionUpdate);
-  FDmMain.LinkWithQuery(pFIBQueryVkDocInfo,FDmMain.pFIBTransactionReadOnly);
+  FDmMain.LinkWithQuery(FDQueryDoc,FDmMain.FDTransactionUpdate);
+  FDmMain.LinkWithCommand(FDCommandUpdate,FDmMain.FDTransactionRC);
+  FDmMain.LinkWithCommand(FDCommandLock,FDmMain.FDTransactionUpdate);
+  FDmMain.LinkWithQuery(TFDQuery(FDMetaInfoQueryDoc),FDmMain.FDTransactionRead);
+
 end;
 
 procedure TDocDm.DataModuleDestroy(Sender: TObject);
@@ -244,27 +246,27 @@ var bMyTransaction: Boolean;
     _Name: String;
 begin
   bMyTransaction := False;
-  with pFIBQueryVkUpdate do
+  with FDCommandUpdate do
   begin
-    if not Transaction.InTransaction then
+    if not Transaction.Active then
     begin
       bMyTransaction := true;
       Transaction.StartTransaction;
     end;
 
-//    LockDoc;
     try
       //FDCommandUpdate.SQLText.Clear;
-      pFIBQueryVkUpdate.SQL.Text := FDocSqlManager.DeleteSQL.Text;
-      pFIBQueryVkUpdate.Prepare();
-      TDocDm.SetParamValues(pFIBQueryVkUpdate,DocVariableList);
-      ExecQuery;
-      if bMyTransaction and Transaction.InTransaction then
+      FDocSqlManager.CalcVariablesOnDs(MemtableEhDoc, DocVariableList);
+      FDCommandUpdate.CommandText.Text := FDocSqlManager.DeleteSQL.Text;
+      FDCommandUpdate.Prepare();
+      TDocDm.SetParamValues(FDCommandUpdate,DocVariableList);
+      Execute;
+      if bMyTransaction and Transaction.Active then
         Transaction.Commit;
     except
       if bMyTransaction then
         Transaction.RollBack;
-      LogMessage(' SQL - '+ pFIBQueryVkUpdate.SQL.Text);
+      LogMessage(' SQL - '+ FDCommandUpdate.CommandText.Text);
       Raise;
     end;
   end;
@@ -317,9 +319,9 @@ var bMyTransaction: Boolean;
     _bChanged: Boolean;
 begin
   bMyTransaction := False;
-  with pFIBQueryVkUpdate do
+  with FDCommandUpdate do
   begin
-    if not Transaction.InTransaction then
+    if not Transaction.Active then
     begin
       bMyTransaction := true;
       Transaction.StartTransaction;
@@ -327,22 +329,22 @@ begin
 
     LockDoc;
     try
-      SQL.Clear;
+      CommandText.Clear;
       FDocSqlManager.GenerateDinamicSQLUpdate(_bChanged);
       if _bChanged then
       begin
-        SQL.Text := FDocSqlManager.UpdateSQL.Text;
+        CommandText.Text := FDocSqlManager.UpdateSQL.Text;
         Prepare();
-        TDocDm.SetParamValues(pFIBQueryVkUpdate,DocVariableList);
-        ExecQuery;
+        TDocDm.SetParamValues(FDCommandUpdate,DocVariableList);
+        Execute;
       end;
       DoUpdateAdditionalFields;
-      if bMyTransaction and Transaction.InTransaction then
+      if bMyTransaction and Transaction.Active then
         Transaction.Commit;
     except
       if bMyTransaction then
         Transaction.RollBack;
-      LogMessage(' SQL - '+ pFIBQueryVkUpdate.SQL.Text);
+      LogMessage(' SQL - '+ FDCommandUpdate.CommandText.Text);
       Raise;
     end;
   end;
@@ -377,9 +379,7 @@ begin
         raise Exception.Create('Error locate!'+ _CurKey);}
     end;
   finally
-
     MemTableEhDoc.EnableControls;
-
   end;
 end;
 
@@ -432,20 +432,18 @@ function TDocDm.IsLocked: Boolean;
 var _KeyFieldsList: TStringList;
     i: Integer;
 begin
-  if (pFIBQueryVkLock.Open) then
+  if (FDCommandLock.State = csExecuting) or (FDCommandLock.State = csPrepared) then
   begin
     _KeyFieldsList := FDocSqlManager.KeyFieldsList;
     Result := True;
     for I := 0 to _KeyFieldsList.Count-1 do
     begin
-      Result := pFIBQueryVkLock.ParamByName(_KeyFieldsList[i]).AsVariant =
+      Result := FDCommandLock.ParamByName(_KeyFieldsList[i]).Value =
         MemTableEhDoc.FieldByName(_KeyFieldsList[i]).Value;
       if not Result  then
         Exit;
     end;
-  end
-  else
-    Result := false;
+  end;
 end;
 
 procedure TDocDm.DirectInsertDoc;
@@ -454,28 +452,28 @@ var bMyTransaction: Boolean;
 //    _Name: String;
 begin
   bMyTransaction := False;
-  with pFIBQueryVkUpdate do
+  with FDCommandUpdate do
   begin
-    if not pFIBQueryVkUpdate.Transaction.InTransaction then
+    if not FDCommandUpdate.Transaction.Active then
     begin
       bMyTransaction := true;
-      pFIBQueryVkUpdate.Transaction.StartTransaction;
+      FDCommandUpdate.Transaction.StartTransaction;
     end;
 
     //LockDoc;
     try
-      pFIBQueryVkUpdate.SQL.Clear;
-      pFIBQueryVkUpdate.SQL.Text := FDocSqlManager.InsertSQL.Text;
-      pFIBQueryVkUpdate.Prepare();
+      FDCommandUpdate.CommandText.Clear;
+      FDCommandUpdate.CommandText.Text := FDocSqlManager.InsertSQL.Text;
+      FDCommandUpdate.Prepare();
       FillKeyFields;
-      TDocDm.SetParamValues(pFIBQueryVkUpdate,DocVariableList);
-      ExecQuery;
+      TDocDm.SetParamValues(FDCommandUpdate,DocVariableList);
+      Execute;
       DoInsertAdditionalFields;
-      if bMyTransaction and pFIBQueryVkUpdate.Transaction.InTransaction then
-        pFIBQueryVkUpdate.Transaction.Commit;
+      if bMyTransaction and FDCommandUpdate.Transaction.Active then
+        FDCommandUpdate.Transaction.Commit;
     except
       if bMyTransaction then
-        pFIBQueryVkUpdate.Transaction.RollBack;
+        FDCommandUpdate.Transaction.RollBack;
       Raise;
     end;
   end;
@@ -494,20 +492,20 @@ end;
 
 procedure TDocDm.LockDoc;
 begin
-  if (pFIBQueryVkLock.Open) then
+  if (FDCommandLock.State= csExecuting) or (FDCommandLock.State= csOpen) then
     Exit;
 
   if ARecalc or not FDocSqlManager.DocVariableList.IsChanged or CursorIsChanged then
     FDocSqlManager.CalcVariablesOnDs(MemtableEhDoc, DocVariableList);
-  FIsInternalTransaction := not pFIBQueryVkLock.Transaction.InTransaction;
 
-  with pFIBQueryVkLock do
+  with FDCommandLock do
   begin
-    SQL.Clear;
-    SQL.Add(FDocSqlManager.LockSQL.Text);
+    FIsInternalTransaction := not Transaction.Active;
+    CommandText.Clear;
+    CommandText.Add(FDocSqlManager.LockSQL.Text);
     Prepare();
-    TDocDm.SetParamValues(pFIBQueryVkLock,DocVariableList);
-    ExecQuery;
+    TDocDm.SetParamValues(FDCommandLock,DocVariableList);
+    Open;
   end;
 end;
 
@@ -535,24 +533,27 @@ begin
         // Fields[i].ReadOnly := True;
         FDocSqlManager.DocVariableList.CreateVkVariable(Fields[i].FieldName,null );
       end
-    end;
-    //else
+    end
+    else
+    for i := 0 to FieldCount - 1 do
+        Fields[i].Visible := False;
+
     for i := 0 to FGridOrderList.Count - 1 do
     begin
       PField := DocStruDescriptionList.GetDocStruDescriptionItem(FGridOrderList[i]);
       if  Assigned(PField) and not PField.IsVariable then
       begin
         // Raise Exception.Create(Format(' PField(%S) not found',[FGridOrderList[i]]));
-      field := FieldByName(PField.name);
-      with field do
-      begin
-        DisplayLabel := PField.GridLabel;
-        DisplayWidth := PField.DisplayWidth;
-        if length(PField.DisplayFormat)>0 then
-          TNumericField(field).DisplayFormat := PField.DisplayFormat;
-        Index := i;
-        if not PField.bNotInGrid then
-          Visible := True;
+        field := FieldByName(PField.name);
+        with field do
+        begin
+          DisplayLabel := PField.GridLabel;
+          DisplayWidth := PField.DisplayWidth;
+          if length(PField.DisplayFormat)>0 then
+            TNumericField(field).DisplayFormat := PField.DisplayFormat;
+          Index := i;
+          if not PField.bNotInGrid then
+            Visible := True;
           ReadOnly := not PField.bEditInGrid;
         end;
       end
@@ -609,70 +610,30 @@ begin
 end;
 
 procedure TDocDm.OnFillFiledList(Sender: TObject);
-const  QRYTableFields =
-    'select ' +
-    '  FLD.RDB$FIELD_TYPE' +
-    ', FLD.RDB$FIELD_SCALE' +
-    ', FLD.RDB$FIELD_LENGTH' +
-    ', FLD.RDB$FIELD_PRECISION' +
-    ', FLD.RDB$CHARACTER_SET_ID' +   // CHARACTER SET
-    ', RFR.RDB$COLLATION_ID' +
-    ', COL.RDB$COLLATION_NAME' +     // COLLATE
-    ', FLD.RDB$FIELD_SUB_TYPE' +
-    ', RFR.RDB$DEFAULT_SOURCE' +     // DEFAULT
-    ', RFR.RDB$FIELD_NAME' +
-    ', FLD.RDB$SEGMENT_LENGTH' +
-    ', FLD.RDB$SYSTEM_FLAG'+
-    ', RFR.RDB$FIELD_SOURCE' +       // DOMAIN
-    ', RFR.RDB$NULL_FLAG' +          // NULLABLE
-    ', FLD.RDB$VALIDATION_SOURCE' +  // CHECK
-    ', FLD.RDB$DIMENSIONS'+
-    ', FLD.RDB$COMPUTED_SOURCE' +    // COMPUTED BY
-    ', RDB$VALIDATION_SOURCE ' +
-    'from ' +
-    '  RDB$RELATIONS REL ' +
-    'join RDB$RELATION_FIELDS RFR on (RFR.RDB$RELATION_NAME = REL.RDB$RELATION_NAME) ' +
-    'join RDB$FIELDS FLD on (RFR.RDB$FIELD_SOURCE = FLD.RDB$FIELD_NAME) ' +
-    'left outer join RDB$COLLATIONS COL on (COL.RDB$COLLATION_ID = RFR.RDB$COLLATION_ID and COL.RDB$CHARACTER_SET_ID = FLD.RDB$CHARACTER_SET_ID) ' +
-    'where ' +
-    '  (REL.RDB$RELATION_NAME = :tablename) ' +
-    'order by ' +
-    '  RFR.RDB$FIELD_POSITION, RFR.RDB$FIELD_NAME';
-
 begin
-  //VkUIBQueryDocInfo.Active := False;
-  pFIBQueryVkDocInfo.SQL.Text := QRYTableFields;
-  pFIBQueryVkDocInfo.Prepare();
-  pFIBQueryVkDocInfo.ParamByName('tablename').AsString :=  TDocSqlManager(Sender).Tablename;
-  pFIBQueryVkDocInfo.ExecQuery();
-  try
-    TDocSqlManager(Sender).FieldNameList.Clear;
-    while not pFIBQueryVkDocInfo.Eof do
-    begin
-      TDocSqlManager(Sender).FieldNameList.Add(pFIBQueryVkDocInfo.FieldByName('RDB$FIELD_NAME').AsString.Trim());
-      pFIBQueryVkDocInfo.Next;
-    end;
-  finally
-    pFIBQueryVkDocInfo.Close;
-  end;
   {FDMetaInfoQueryDoc.Active := False;
   FDMetaInfoQueryDoc.ObjectName := TDocSqlManager(Sender).Tablename;
   FDMetaInfoQueryDoc.Active := True;
   FDMetaInfoQueryDoc.GetFieldNames(TDocSqlManager(Sender).FieldNameList);}
-//  FDmMain.FDConnectionMain.GetFieldNames('','',TDocSqlManager(Sender).Tablename,'',TDocSqlManager(Sender).FieldNameList);
+  FDmMain.FDConnectionMain.GetFieldNames('','',TDocSqlManager(Sender).Tablename,'',TDocSqlManager(Sender).FieldNameList);
 end;
 
 procedure TDocDm.Open;
 begin
-  pFIBDataSetVkDoc.Close;
-  pFIBDataSetVkDoc.SelectSQL.Clear;
-  pFIBDataSetVkDoc.SelectSQL.Text := SqlManager.SelectSQL.Text;
+  FDQueryDoc.Close;
+  FDQueryDoc.SQL.Clear;
+  FDQueryDoc.SQL.Text := SqlManager.SelectSQL.Text;
   try
     MemTableEhDoc.Open;
   except
-    TLogWriter.Log(pFIBDataSetVkDoc.SelectSQL.Text);
+    TLogWriter.Log(FDQueryDoc.SQL.Text);
     Raise;
   end;
+end;
+
+procedure TDocDm.ReinitVariables;
+begin
+  FDocSqlManager.CalcVariablesOnDs(MemTableEhDoc,FDocSqlManager.DocVariableList);
 end;
 
 procedure TDocDm.SetFilter(nIndex: Integer; Sender: TObject);
@@ -691,7 +652,7 @@ begin
   FOnWriteVariables := Value;
 end;
 
-class procedure TDocDm.SetParamValues(AQuery: TpFIBQueryVk; AVarList: TVkVariableCollection);
+class procedure TDocDm.SetParamValues(AQuery: TFDCommand; AVarList: TVkVariableCollection);
 var i: Integer;
   _Name: String;
 begin
@@ -699,7 +660,7 @@ begin
   begin
     _Name := AQuery.Params[i].Name;
     if AvarList.VarExists(_Name) then
-      AQuery.ParamByName(_Name).AsVariant := AVarList.VarByName(_Name).Value
+      AQuery.ParamByName(_Name).Value := AVarList.VarByName(_Name).Value
     else
       raise Exception.CreateFmt('Param %s not found',[_Name]);
   end;
@@ -713,21 +674,20 @@ end;
 procedure TDocDm.UnLockDoc(bCommit: Boolean = True);
 begin
 
-  if pFIBQueryVkLock.Transaction.InTransaction and pFIBQueryVkLock.Open then
-  begin
+  if not FDCommandLock.Transaction.Active or (FDCommandLock.State <> csOpen) then
+    Exit;
 
-    if IsInternalTransaction then
+  if IsInternalTransaction then
+  begin
+    if bCommit then
     begin
-      if bCommit then
-      begin
-        pFIBQueryVkLock.Transaction.Commit;
-      end
-      else
-        pFIBQueryVkLock.Transaction.Rollback;
+      FDCommandLock.Transaction.Commit;
     end
     else
-      pFIBQueryVkLock.Close;
-  end;
+      FDCommandLock.Transaction.Rollback;
+  end
+  else
+    FDCommandLock.Close;
 end;
 
 function TDocDm.ValidFmEditItems(Sender: TObject): Boolean;
@@ -768,49 +728,6 @@ begin
     v :=  FDocSqlManager.DocVariableList.Items[i];
     TLogWriter.Log(v.Name+' = '+v.AsString);
   end;
-end;
-
-procedure TDocDm.VkUIBDataSetDocAfterOpen(DataSet: TDataSet);
-var i: Integer;
-    field: TField;
-      PField: PDocStruDescriptionItem;
-
-begin
-{  with DataSet do
-  begin
-    for i := 0 to FieldCount - 1 do
-    begin
-      Fields[i].Visible := False;
-      Fields[i].Visible := False;
-    end;
-
-    for i := 0 to FGridOrderList.Count - 1 do
-    begin
-      PField := DocStruDescriptionList.GetDocStruDescriptionItem(FGridOrderList[i]);
-      if  Assigned(PField) and not PField.IsVariable then
-      begin
-        // Raise Exception.Create(Format(' PField(%S) not found',[FGridOrderList[i]]));
-      field := FieldByName(PField.name);
-      with field do
-      begin
-        DisplayLabel := PField.GridLabel;
-        DisplayWidth := PField.DisplayWidth;
-        if length(PField.DisplayFormat)>0 then
-          TNumericField(field).DisplayFormat := PField.DisplayFormat;
-        Index := i;
-        if not PField.bNotInGrid then
-          Visible := True;
-          ReadOnly := not PField.bEditInGrid;
-        end;
-      end
-      //else
-      //begin
-      //if  Assigned(PField) and PField.IsVariable then
-       // if not Assigned(FDocSqlManager.DocVariableList.FindVkVariable(PField.Name)) then
-       //   FDocSqlManager.DocVariableList.CreateVkVariable(PField.Name,null );
-      //end;
-    end;
-  end; }
 end;
 
 procedure TDocDm.WriteVariables(AInsert: Boolean);

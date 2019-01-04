@@ -22,6 +22,7 @@ object DocDm: TDocDm
   object pFIBQueryVkDocInfo: TpFIBQueryVk
     Left = 192
     Top = 128
+    qoStartTransaction = True
   end
   object pFIBDataSetVkDoc: TpFIBDataSetVk
     UniDirectional = True
@@ -31,9 +32,11 @@ object DocDm: TDocDm
   object pFIBQueryVkLock: TpFIBQueryVk
     Left = 144
     Top = 192
+    qoStartTransaction = True
   end
   object pFIBQueryVkUpdate: TpFIBQueryVk
     Left = 240
     Top = 192
+    qoStartTransaction = True
   end
 end

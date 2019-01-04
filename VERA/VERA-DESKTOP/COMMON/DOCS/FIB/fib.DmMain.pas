@@ -79,7 +79,7 @@ uses FmSelectDbAlias;
 procedure TMainDm.DataModuleCreate(Sender: TObject);
 begin
   pFIBDatabaseMain.SetTransactionReadOnly(pFIBTransactionReadOnly);
-  pFIBDatabaseMain.SetTransactionConcurency(pFIBTransactionUpdate );
+  //pFIBDatabaseMain.SetTransactionConcurency(pFIBTransactionUpdate );
   LinkWithQuery(pFIBQueryVkSelect, pFIBTransactionReadOnly);
   FStorage := TSettingsStorage.Create(ChangeFileExt(Application.ExeName,'.ini'));
   FStorage.Read;

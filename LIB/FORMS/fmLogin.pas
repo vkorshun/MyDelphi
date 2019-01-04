@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, jpeg, DmMain,AppEvnts, fmhopedialogform;
+  Dialogs, StdCtrls, ExtCtrls, jpeg, fdac.DmMain,AppEvnts, fmhopedialogform;
 
 type
   TLoginFm = class(THopeDialogFormFm)

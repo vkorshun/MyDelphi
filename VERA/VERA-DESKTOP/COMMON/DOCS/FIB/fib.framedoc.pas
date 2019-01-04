@@ -870,6 +870,7 @@ begin
     if Assigned(FOnEditInGrid) then
     begin
       try
+        FDocDm.LockDoc;
         FDocDm.MemTableEhDoc.Edit;
         FOnEditInGrid(self, fld_name);
         FDocDm.MemTableEhDoc.Post;
@@ -1252,12 +1253,12 @@ begin
   try
     if not _bDocInsert and not _bDocClone then
     begin
-      DocDm.LockDoc(True);
-      DocDm.FullRefreshDoc;
+      //DocDm.LockDoc(True);
+      DocDm.ReinitVariables;
         // Проверка - Before Edit
       if not DoBeforeDocEdit then
       begin
-        DocDm.UnLockDoc(True);
+        //DocDm.UnLockDoc(True);
         Exit;
       end;
 //    DocDm.InitVariables(_bDocInsert);
@@ -1281,6 +1282,10 @@ begin
       _FmEdit.PopupParent := Screen.ActiveForm;
       if _FmEdit.ShowModal = mrOk then
       begin
+        if not _bDocInsert and not _bDocClone then
+        begin
+          DocDm.LockDoc;
+        end;
         if _bDocInsert or DocDm.DocVariableList.IsChanged then
           DocDm.WriteVariables(_bDocInsert or _bDocClone);
       end;
@@ -1303,7 +1308,10 @@ begin
           begin
             TMEditBox(_pBinding.oControl).OnButtonClick(TMEditBox(_pBinding.oControl));
             if DocDm.DocVariableList.IsChanged then
+            begin
+              DocDm.LockDoc(True);
               DocDm.WriteVariables(_bDocInsert);
+            end;
           end;
         end
         else

@@ -4,8 +4,8 @@ inherited ObjectsDm: TObjectsDm
   inherited MemTableEhDoc: TMemTableEh
     AfterPost = MemTableEhDocAfterPost
   end
-  object pFIBQueryVkAttributesOfGroup: TpFIBQueryVk
-    Left = 296
-    Top = 136
+  object FDQueryAttributesOfGroup: TFDQuery
+    Left = 256
+    Top = 184
   end
 end

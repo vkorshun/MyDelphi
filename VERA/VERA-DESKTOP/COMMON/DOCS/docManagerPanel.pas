@@ -1,7 +1,7 @@
 unit docManagerPanel;
 
 interface
-uses classes, Vcl.Controls,Vcl.ExtCtrls, fib.framedoc, Forms, fib.dmDoc, System.SysUtils, Windows, vkvariable;
+uses classes, Vcl.Controls,Vcl.ExtCtrls, fdac.framedoc, Forms, fDAC.dmDoc, System.SysUtils, Windows, vkvariable;
 
 type
   TDocManagerPanel = class(TPanel)
@@ -33,8 +33,8 @@ begin
    _FrameDocClass := TDocFrameClass(FindClass(AFrameDocClassName));
    docFrame := CreateFrameDoc(_FrameDocClass);
    TForm(Owner).ActiveControl := docFrame.DBGridEhVkDoc;
-   if (Assigned(AParams)) then
-     docFrame.checkParams(AParams);
+//   if (Assigned(AParams)) then
+//     docFrame.checkParams(AParams);
 end;
 
 

@@ -3,12 +3,10 @@ unit dmAttributesSet;
 interface
 
 uses
-  System.SysUtils, System.Classes, fib.dmDoc, MemTableDataEh, Data.DB, FireDAC.Stan.Intf,
+  System.SysUtils, System.Classes, fDAC.dmDoc, MemTableDataEh, Data.DB, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.Client, FireDAC.Comp.DataSet,
-  DataDriverEh, MemTableEh, VkVariableBinding, VkVariableBindingDialog,
-  FIBDataSet, pFIBDataSet, pFIBDataSetVk, FIBQuery,
-  pFIBQuery, pFIBQueryVk;
+  DataDriverEh, MemTableEh, VkVariableBinding, VkVariableBindingDialog;
 
 type
   TAttributesSetDm = class(TDocDm)
@@ -28,7 +26,7 @@ var
 implementation
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
-uses fib.dmmain, uLog, uDocDescription;
+uses fdac.dmmain, uLog, uDocDescription;
 
 {$R *.dfm}
 
@@ -64,9 +62,9 @@ end;
 
 procedure TAttributesSetDm.Open;
 begin
-  pFIBDataSetVkDoc.Close;
-  pFIBDataSetVkDoc.SelectSQL.Clear;
-  pFIBDataSetVkDoc.SelectSQL.Text := SqlManager.SelectSQL.Text;
+  FDQueryDoc.Close;
+  FDQueryDoc.SQL.Clear;
+  FDQueryDoc.SQL.Text := SqlManager.SelectSQL.Text;
   MemTableEhDoc.Open;
 end;
 

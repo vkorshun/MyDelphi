@@ -30,6 +30,7 @@ object MainDm: TMainDm
   end
   object pFIBTransactionUpdate: TpFIBTransaction
     DefaultDatabase = pFIBDatabaseMain
+    TPBMode = tpbRepeatableRead
     Left = 280
     Top = 152
   end

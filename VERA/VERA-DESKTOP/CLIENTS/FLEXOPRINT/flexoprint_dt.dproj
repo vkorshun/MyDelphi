@@ -89,6 +89,7 @@
         <Debugger_RunParams>ADMIN ADMIN flexoprint</Debugger_RunParams>
         <DCC_ExeOutput>..\RUN\FLEXOPRINT\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_DcuOutput>..\RUN\FLEXOPRINT\DCU\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_Define>SUPPORT_FB3;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -107,11 +108,6 @@
         <DCCReference Include="FmMain.pas">
             <Form>Form3</Form>
             <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="..\..\COMMON\fib.DmMain.pas">
-            <Form>MainDm</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="..\..\..\..\LIB\menustructure.pas"/>
         <DCCReference Include="..\..\..\..\LIB\SettingsStorage.pas"/>
@@ -134,21 +130,6 @@
         </DCCReference>
         <DCCReference Include="..\..\COMMON\DOCS\DocSqlManager.pas"/>
         <DCCReference Include="..\..\COMMON\DOCS\uDocDescription.pas"/>
-        <DCCReference Include="..\..\COMMON\DOCS\fib.dmDoc.pas">
-            <Form>DocDm</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="..\..\COMMON\DOCS\fib.docbinding.pas"/>
-        <DCCReference Include="..\..\COMMON\DOCS\fib.fmCustomDoc.pas">
-            <Form>CustomDocFm</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="..\..\COMMON\DOCS\fib.framedoc.pas">
-            <Form>DocFrame</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
         <DCCReference Include="..\..\COMMON\DOCS\vkdocinstance.pas"/>
         <DCCReference Include="..\..\COMMON\AppManager.pas"/>
         <DCCReference Include="..\..\COMMON\DOCS\fmSetupForm.pas">
@@ -202,6 +183,26 @@
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\..\COMMON\systemconsts.pas"/>
+        <DCCReference Include="..\..\COMMON\DOCS\FDAC\fdac.dmDoc.pas">
+            <Form>DocDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\DOCS\FDAC\fdac.docbinding.pas"/>
+        <DCCReference Include="..\..\COMMON\DOCS\FDAC\fdac.fmCustomDoc.pas">
+            <Form>CustomDocFm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\DOCS\FDAC\fdac.framedoc.pas">
+            <Form>DocFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\DOCS\FDAC\fdac.dmmain.pas">
+            <Form>MainDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

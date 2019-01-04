@@ -4,9 +4,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, fib.framedoc, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, ActnList, Menus,
+  Dialogs, fdac.framedoc, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, ActnList, Menus,
   ImgList, DB, GridsEh, DBAxisGridsEh, DBGridEh, DBGridEhVk, ToolWin, ActnMan, ActnCtrls, ExtCtrls, ComCtrls,
-  fib.dmdoc, fib.dmmain, dmattributes, VkVariableBinding, System.Actions, VkVariable, VariantUtils,
+  fdac.dmdoc, fdac.dmmain, dmattributes, VkVariableBinding, System.Actions, VkVariable, VariantUtils,
   System.ImageList, EhLibVCL;
 
 type
@@ -77,7 +77,7 @@ begin
       end
       else
       begin
-        _Item2.oControl.Enabled := True;
+        _Item2.oControl.Enabled := _Item.Variable.AsLargeInt <> 0;
         _Item3.oControl.Enabled := True
       end;
       if Assigned(_ItemGroup) and Assigned(_ItemGroup.oControl) then

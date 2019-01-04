@@ -4,10 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, fib.framedoc, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, fdac.framedoc, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
   DynVarsEh, System.Actions, Vcl.ActnList, Vcl.Menus, Vcl.ImgList, Data.DB, GridsEh, DBAxisGridsEh, DBGridEh,
-  DBGridEhVk, Vcl.ToolWin, Vcl.ActnMan, Vcl.ActnCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, fib.dmdoc,dmobjects,
-  frameObjectsItems, Vcl.StdCtrls, VkVariable, VariantUtils, fib.fmcustomdoc,
+  DBGridEhVk, Vcl.ToolWin, Vcl.ActnMan, Vcl.ActnCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, fdac.dmdoc,dmobjects,
+  frameObjectsItems, Vcl.StdCtrls, VkVariable, VariantUtils, fdac.fmcustomdoc,
   System.ImageList, EhLibVCL;
 
 type
@@ -73,7 +73,7 @@ var
 implementation
 
 {$R *.dfm}
-uses systemconsts, fib.DmMain, ActionManagerDescription;
+uses systemconsts, fdac.DmMain, ActionManagerDescription;
 
 { TFrameObjectsGr }
 
@@ -352,7 +352,10 @@ begin
       FObjectsItemsFr.IdGroup := CurrentIdGroup;
   end;
   if not Panel2.Visible then
+  begin
     Panel1.Visible := True;
+    DBGridEhVkDoc.SetFocus;
+  end;
 end;
 
 procedure TObjectsGrFrame.SetRootIdGroup(const Value: LargeInt);

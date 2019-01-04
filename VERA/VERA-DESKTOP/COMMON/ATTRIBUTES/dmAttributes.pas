@@ -4,11 +4,10 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, fib.dmdoc, MemTableDataEh, Db, DataDriverEh, MemTableEh,  FireDAC.Comp.Client,
+  Dialogs, fdac.dmdoc, MemTableDataEh, Db, DataDriverEh, MemTableEh,  FireDAC.Comp.Client,
   VkVariable, VkVariableBinding, VkVariableBindingDialog, uDocDescription, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.Phys.Intf,
-  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, pFIBquery, pFIBdataset,
-  pFIBdatasetVk, FIBDataSet, FIBQuery, pFIBQueryVk;
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet;
 
 type
   TAttributesDm = class(TDocDm)
@@ -35,7 +34,7 @@ var
 
 implementation
 
-uses fib.dmmain, uLog, systemconsts, fib.docBinding, frameObjectsGr;
+uses fdac.dmmain, uLog, systemconsts, fdac.docBinding, frameObjectsGr;
 
 {$R *.dfm}
 
@@ -45,9 +44,10 @@ procedure TAttributesDm.DataModuleCreate(Sender: TObject);
 begin
   inherited;
   SqlManager.InitCommonParams('ATTRIBUTELIST','IDATTRIBUTE','GEN_ATTRIBUTELIST_ID');
-  SqlManager.SelectSQL.Add('SELECT al.*,  attl.name as typename ');
+  SqlManager.SelectSQL.Add('SELECT al.*,  attl.name as typename, obj.name as groupname ');
   SqlManager.SelectSQL.Add('FROM attributelist al');
   SqlManager.SelectSQL.Add('LEFT OUTER JOIN  attributetypelist attl ON attl.idtypeattribute = al.attributetype');
+  SqlManager.SelectSQL.Add('LEFT OUTER JOIN  objects obj ON obj.idobject = al.idgroup');
   SqlManager.SelectSQL.Add('WHERE al.id=:id');
 
   DocStruDescriptionList.Add('id','','ID','ID',4,'',4,False,True,nil);
@@ -62,7 +62,7 @@ begin
     TBindingDescription.GetBindingDescription(TEditVkVariableBinding));
   DocStruDescriptionList.Add('ndec','','Точность','Точность',10,'',10,True,False,
     TBindingDescription.GetBindingDescription(TEditVkVariableBinding));
-  DocStruDescriptionList.Add('idgroup','','Группа','Группа',60,'',60,True,False,
+  DocStruDescriptionList.Add('groupname','idgroup','Группа','Группа',60,'',60,True,False,
     TDocMEditBoxBindingDescription.GetDocMEditBoxBindingDescription('TObjectsGrFrame',nil));
   DocStruDescriptionList.Add('isunique','','Уник.','Признак уникальности',10,'',10,True,False,
     TBindingDescription.GetBindingDescription(TCheckBoxVkVariableBinding));
@@ -90,7 +90,7 @@ procedure TAttributesDm.DoOnInitVariables(ASender: TObject; AInsert: Boolean);
 begin
   if AInsert then
   begin
-    DocVariableList.VarByName('id').AsLargeInt := pFIBDataSetVkDoc.ParamByName('ID').AsInt64;
+    DocVariableList.VarByName('id').AsLargeInt := FDQueryDoc.ParamByName('ID').AsLargeInt;
     DocVariableList.VarByName('isunique').AsBoolean := False;
     DocVariableList.VarByName('notempty').AsBoolean := False;
     DocVariableList.VarByName('idgroup').AsLargeInt := 0;
@@ -115,20 +115,28 @@ procedure TAttributesDm.LocalOnChangeVariable(Sender: TObject);
 begin
   if Sender = DocVariableList.VarByName('attributetype') then
   begin
-    case DocVariableList.VarByName('attributetype').AsLargeInt of
-      TA_STRING :
-        begin
-          DocvariableList.VarByName('nlen').AsInteger := 10;
+    if DocVariableList.VarByName('attributetype').InitValue = DocVariableList.VarByName('attributetype').AsLargeInt then
+    begin
+      DocvariableList.VarByName('nlen').AsInteger := DocvariableList.VarByName('nlen').InitValue;
+      DocvariableList.VarByName('ndec').AsInteger := DocvariableList.VarByName('ndec').InitValue;
+    end
+    else
+    begin
+      case DocVariableList.VarByName('attributetype').AsLargeInt of
+        TA_STRING :
+          begin
+            DocvariableList.VarByName('nlen').AsInteger := 100;
+            DocvariableList.VarByName('ndec').AsInteger := 0;
+          end;
+        TA_NUMERIC :
+          begin
+            DocvariableList.VarByName('nlen').AsInteger := 15;
+            DocvariableList.VarByName('ndec').AsInteger := 2;
+          end;
+        else
+          DocvariableList.VarByName('nlen').AsInteger := 4;
           DocvariableList.VarByName('ndec').AsInteger := 0;
-        end;
-      TA_NUMERIC :
-        begin
-          DocvariableList.VarByName('nlen').AsInteger := 15;
-          DocvariableList.VarByName('ndec').AsInteger := 2;
-        end;
-      else
-        DocvariableList.VarByName('nlen').AsInteger := 4;
-        DocvariableList.VarByName('ndec').AsInteger := 0;
+      end;
     end;
   end;
 end;
@@ -159,7 +167,7 @@ begin
   _Item := TVkVariableBinding(Sender);
   if SameText(_Item.Name, 'attributetype') then
   begin
-    _proc := procedure (AQuery: TpFIBQuery)
+    _proc := procedure (AQuery: TFDQuery)
     begin
        while not AQuery.Eof  do
        begin
@@ -173,22 +181,22 @@ begin
   if SameText(_Item.Name, 'idgroup') then
   begin
     TObjectsGrFrame(TCustomDocFmVkVariableBinding(_Item).DocMEditBox.DocFm.FrameDoc).RootIdGroup :=
-      pFIBDataSetVkDoc.ParamByName('ID').AsInt64;
+      FDQueryDoc.ParamByName('ID').AsLargeInt;
   end;
 end;
 
 procedure TAttributesDm.Open(AId: largeInt);
 begin
-  pFIBDataSetVkDoc.Close;
-  pFIBDataSetVkDoc.SelectSQL.Clear;
-  pFIBDataSetVkDoc.SelectSQL.Text := SqlManager.SelectSQL.Text;
+  FDQueryDoc.Close;
+  FDQueryDoc.SQL.Clear;
+  FDQueryDoc.SQL.Text := SqlManager.SelectSQL.Text;
   try
-    pFIBDataSetVkDoc.ParamByName('id').AsInt64 := AId;
+    FDQueryDoc.ParamByName('id').AsLargeInt := AId;
     MemTableEhDoc.Open;
   except
     on E: Exception do
     begin
-      LogMessage(' DmAttributes:'+#13#10+E.Message+#13#10+pFIBDataSetVkDoc.SelectSQL.Text);
+      LogMessage(' DmAttributes:'+#13#10+E.Message+#13#10+FDQueryDoc.SQL.Text);
     end;
   end;
 end;

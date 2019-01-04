@@ -4,10 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, fib.framedoc, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, fdac.framedoc, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
   DynVarsEh, System.Actions, Vcl.ActnList, Vcl.Menus, Vcl.ImgList, Data.DB, GridsEh, DBAxisGridsEh, DBGridEh,
   DBGridEhVk, Vcl.ToolWin, Vcl.ActnMan, Vcl.ActnCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, VariantUtils,
-  fib.dmdoc, fib.dmmain, dmAttributesSet, VkVariable, VkVariableBinding, fib.docbinding,
+  fdac.dmdoc, fdac.dmmain, dmAttributesSet, VkVariable, VkVariableBinding, fdac.docbinding,
    System.ImageList, EhLibVCL;
 
 type

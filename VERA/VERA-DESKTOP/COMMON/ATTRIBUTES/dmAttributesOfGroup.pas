@@ -3,12 +3,10 @@ unit dmAttributesOfGroup;
 interface
 
 uses
-  System.SysUtils, System.Classes, fib.dmDoc, MemTableDataEh, Data.DB, FireDAC.Stan.Intf,
+  System.SysUtils, System.Classes, fdac.dmDoc, MemTableDataEh, Data.DB, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.Client, FireDAC.Comp.DataSet,
-  DataDriverEh, MemTableEh,VkVariableBinding, VkVariableBindingDialog, frameAttributes,
-   FIBDataSet, pFIBDataSet, pFIBDataSetVk,
-  FIBQuery, pFIBQuery, pFIBQueryVk;
+  DataDriverEh, MemTableEh,VkVariableBinding, VkVariableBindingDialog, frameAttributes;
 
 type
   TAttributesOfGroupDm = class(TDocDm)
@@ -36,7 +34,7 @@ implementation
 
 {$R *.dfm}
 
-uses fib.docbinding,fmVkDocDialog, Vcl.Controls, fib.dmmain, uDocDescription;
+uses fdac.docbinding,fmVkDocDialog, Vcl.Controls, fdac.dmmain, uDocDescription;
 { TAttributesOfGroupDm }
 
 procedure TAttributesOfGroupDm.DataModuleCreate(Sender: TObject);
@@ -127,10 +125,10 @@ end;
 
 procedure TAttributesOfGroupDm.Open;
 begin
-  pFIBDataSetVkDoc.Close;
-  pFIBDataSetVkDoc.SelectSQL.Clear;
-  pFIBDataSetVkDoc.SelectSQL.Text := SqlManager.SelectSQL.Text;
-  pFIBDataSetVkDoc.ParamByName('idgroup').AsInt64 := FIdGroup;
+  FDQueryDoc.Close;
+  FDQueryDoc.SQL.Clear;
+  FDQueryDoc.SQL.Text := SqlManager.SelectSQL.Text;
+  FDQueryDoc.ParamByName('idgroup').AsLargeInt := FIdGroup;
   MemTableEhDoc.Open;
 end;
 
