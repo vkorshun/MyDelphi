@@ -51,7 +51,10 @@ object MainFm: TMainFm
     Tabs = <>
     DoubleBuffered = True
     OptButtonLayout = '<>,v'
+    OptVarWidth = True
     OptTabHeight = 20
+    OptTabWidthNormal = 200
+    OptTabWidthMaximal = 600
     OptShowAngleTangent = 2.599999904632568000
     OptShowPlusTab = False
     OptShowModifiedText = '*'
@@ -98,6 +101,7 @@ object MainFm: TMainFm
     object aViewOAU: TAction
       Category = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082#1080
       Caption = #1054#1073#1098#1077#1082#1090#1099' '#1072#1085#1072#1083#1080#1090#1080#1095#1077#1089#1082#1086#1075#1086' '#1091#1095#1077#1090#1072
+      OnExecute = aViewOAUExecute
     end
     object aViewOKU: TAction
       Category = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082#1080
@@ -106,6 +110,7 @@ object MainFm: TMainFm
     object aViewAttributesOAU: TAction
       Category = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082#1080
       Caption = #1040#1090#1088#1080#1073#1091#1090#1099' '#1086#1073#1098#1077#1082#1090#1086#1074' '#1072#1085#1072#1083#1080#1090#1080#1095#1077#1089#1082#1086#1075#1086' '#1091#1095#1077#1090#1072
+      OnExecute = aViewAttributesOAUExecute
     end
     object aViewAttributesOKU: TAction
       Category = #1057#1087#1088#1072#1074#1086#1095#1085#1080#1082#1080

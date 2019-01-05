@@ -479,7 +479,7 @@ end;
 procedure TObjectsDm.MyInsertAdditionalFields(Sender: TObject);
 var _Item: TAdditionalSqlManager;
   I: Integer;
-  _RecNo: Integer;
+//  _RecNo: Integer;
   _id: Int64;
 begin
   _Item := TAdditionalSqlManager(Sender);
@@ -544,7 +544,7 @@ end;
 procedure TObjectsDm.OnDocStruInitialize(Sender: TObject);
 var _Item: TVkVariableBinding;
     _RecNo: Integer;
-    i: Integer;
+//    i: Integer;
 begin
   Assert(Sender is TVkVariableBinding,'Invalid type');
   _Item := TVkVariableBinding(Sender);

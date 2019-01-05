@@ -55,10 +55,10 @@ type
     { Private declarations }
     //FIni: TIniFile;
     FPInterface: Pointer;
-    FAlias: String;          // Алиас соединения
+//    FAlias: String;          // Алиас соединения
     FCurrentUser: PUserInfo; // Инфо о тек. пользователе.
-    FDirDocs: String;  // Пть к документам
-    FDocPrefix: String; //Префикс к документам комплекса
+//    FDirDocs: String;  // Пть к документам
+//    FDocPrefix: String; //Префикс к документам комплекса
     FShortTransactionList: TShortTransactionList;
     FXmlIni : TXmlIni; //.Create(self,ChangeFileExt(Application.ExeName,'.xml'));
     FUsersAccessType: TVkVariableCollection;
@@ -443,6 +443,7 @@ end;
 function TMainDm.InternalLogin: Boolean;
 begin
   FDConnectionMain.Params.Add('DatabaseName = '+FStorage.GetVariable('SET','DATABASE','').AsString);
+  Result := true;
 end;
 
 procedure TMainDm.InternalPrepareQuery(AFDQuery: TFDQuery; const ASql: String;
@@ -592,6 +593,7 @@ var
   i: Integer;
   _v: TVkVariable;
 begin
+  bTransactionOwner := false;
   AVkvariableList.Clear;
   with FDCommandSelect do
   begin
@@ -633,6 +635,7 @@ const ALIASES = 'aliases';
 var _List: TSettingsStorageItem;
     _idx: Integer;
 begin
+  Result := False;
   _List := FStorage.GetSection(ALIASES);
   try
     //FStorage.ReadSection(DBALIASES,_List);

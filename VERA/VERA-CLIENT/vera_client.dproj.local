@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.787,=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.038,=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.017,C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit2.pas=D:\MyDelphi\VERA\VERA-CLIENT\FmMain.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.183,C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Project1.dproj=D:\MyDelphi\VERA\VERA-CLIENT\vera_client.dproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.017,C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit2.dfm=D:\MyDelphi\VERA\VERA-CLIENT\FmMain.dfm</Transaction>
     <Transaction>1899.12.30 00:00:00.000.260,=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.038,=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.017,D:\MyDelphi\VERA\VERA-CLIENT\FmMain.pas=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.183,D:\MyDelphi\VERA\VERA-CLIENT\vera_client.dproj=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.017,D:\MyDelphi\VERA\VERA-CLIENT\FmMain.dfm=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit2.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.787,=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
   </Transactions>
 </BorlandProject>

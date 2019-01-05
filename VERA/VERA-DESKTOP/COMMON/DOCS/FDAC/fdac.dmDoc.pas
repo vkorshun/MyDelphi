@@ -45,8 +45,8 @@ type
     FNotNullList: TStringList;
     procedure SetNotNullList(const Value: TStringList);
   public
-    constructor Create(AOwner: TComponent);
-    destructor Destroy;
+    constructor Create(AOwner: TComponent);override;
+    destructor Destroy;override;
     function Vilidate(Items: TVkVariableCollection): Boolean;
     function VilidateNotNull(Items: TVkVariableCollection): Boolean;
 
@@ -173,8 +173,8 @@ begin
 end;
 
 function TDocDm.CursorIsChanged: Boolean;
-var i: Integer;
-    _List: TStringList;
+//var i: Integer;
+    //_List: TStringList;
 begin
   Result := False;
 {  _List := FDocSqlManager.KeyFieldsList;
@@ -314,8 +314,8 @@ end;
 
 procedure TDocDm.DirectEditDoc;
 var bMyTransaction: Boolean;
-    i: Integer;
-    _Name: String;
+//    i: Integer;
+//    _Name: String;
     _bChanged: Boolean;
 begin
   bMyTransaction := False;
@@ -432,6 +432,7 @@ function TDocDm.IsLocked: Boolean;
 var _KeyFieldsList: TStringList;
     i: Integer;
 begin
+  Result := false;
   if (FDCommandLock.State = csExecuting) or (FDCommandLock.State = csPrepared) then
   begin
     _KeyFieldsList := FDocSqlManager.KeyFieldsList;
@@ -697,6 +698,7 @@ var
     _oControl: TWinControl;
     _Binding: TEditVkVariableBinding;
 begin
+  _oControl := nil;
   _fm := TVkDocDialogFm(Sender);
   Result :=  DocValidator.Vilidate(DocVariableList);
   if not Result then

@@ -28,6 +28,8 @@ type
     ActionManager1: TActionManager;
     procedure FormCreate(Sender: TObject);
     procedure aExitExecute(Sender: TObject);
+    procedure aViewAttributesOAUExecute(Sender: TObject);
+    procedure aViewOAUExecute(Sender: TObject);
   private
     { Private declarations }
     FMenuStru: TMenuStructure;
@@ -48,12 +50,22 @@ begin
   Close;
 end;
 
+procedure TMainFm.aViewAttributesOAUExecute(Sender: TObject);
+begin
+  docManager.ShowDocument('TAttributesFrameOAU');
+end;
+
+procedure TMainFm.aViewOAUExecute(Sender: TObject);
+begin
+  docManager.ShowDocument('TFrameGOAU');
+end;
+
 procedure TMainFm.FormCreate(Sender: TObject);
 begin
   with MainTabs do
   begin
     //TabDoubleClickPlus:= true;
-    OptTabWidthMinimal:= 100; //debug
+  {*  OptTabWidthMinimal:= 100; //debug
     //OptAngle:= 0;
     OptTabHeight := 20;
     Height := 25;
@@ -68,7 +80,7 @@ begin
     //OnTabMove := formOnTabMove;
     //OnTabClick := formOnTabClick;
     //OnTabClose := FormOnTabClose;
-
+    *}
     AddTab(0,'Project', nil);
     docManager := TDocManagerPanel.create(self);
     docManager.Parent := self;
@@ -93,5 +105,6 @@ begin
   FMenuStru.FillActionMenu(ActionManager1, ActionMainMenuBar1);
 
 end;
+
 
 end.

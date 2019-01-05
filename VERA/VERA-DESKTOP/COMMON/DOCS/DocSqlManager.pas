@@ -16,7 +16,7 @@ type
     FObjectList: TObjectList;
   public
     constructor Create;
-    destructor Destroy;
+    destructor Destroy;override;
     property TableName: String read FTableName write FTableName;
     property FieldList: TStringList read FFieldList;
     property ObjectList:TObjectList read FObjectList;
@@ -43,7 +43,7 @@ type
     procedure FillFieldNameList; virtual;
   public
     constructor Create;
-    destructor Destroy;
+    destructor Destroy;override;
     procedure CalcVariablesOnDs(DataSet: TDataSet; AVarList: TVkVariableCollection);
     function GetKeyValues(ADataSet: TDataSet): Variant;overload;
     function GetKeyValues(AVarList: TVkVariableCollection): Variant;overload;
@@ -132,6 +132,7 @@ begin
   FKeyFieldsList.Free;
   FFieldnameList.Free;
   FAdditionalList.Free;
+  inherited;
 end;
 
 procedure TDocSqlManager.FillFieldNameList;
@@ -340,7 +341,7 @@ begin
 end;
 
 function TDocSqlManager.IndexOfInAdditionalFields(const AName: String): Integer;
-var i: Integer;
+var
     _Item: TAdditionalSqlManager;
 begin
   Result := -1;
@@ -380,16 +381,18 @@ begin
   begin
     _Field := ADataSet.FindField(AVarList.Items[i].Name);
     if Assigned(_Field) then
-    try
+    begin
       _ReadOnly := _Field.ReadOnly;
-      if _ReadOnly then
-        _Field.ReadOnly := False;
-      if AVarList.Items[i].Value = unassigned then
-        _Field.Value  := null
-      else
-        _Field.Value := AVarList.Items[i].Value;
-    finally
-      _Field.ReadOnly := _ReadOnly;
+      try
+        if _ReadOnly then
+          _Field.ReadOnly := False;
+        if AVarList.Items[i].Value = unassigned then
+          _Field.Value  := null
+        else
+          _Field.Value := AVarList.Items[i].Value;
+      finally
+        _Field.ReadOnly := _ReadOnly;
+      end;
     end;
   end;
 end;
@@ -436,6 +439,7 @@ destructor TAdditionalSqlManager.Destroy;
 begin
   FFieldList.Free;
   FObjectList.Free;
+  inherited;
 end;
 
 end.

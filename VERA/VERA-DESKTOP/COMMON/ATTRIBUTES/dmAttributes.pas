@@ -202,7 +202,7 @@ begin
 end;
 
 function TAttributesDm.ValidFmEditItems(Sender: TObject): Boolean;
-var _Items: TVkVariableBindingCollection;
+//var _Items: TVkVariableBindingCollection;
 begin
 {  _Items :=
   if True then}

@@ -122,6 +122,7 @@ type
     FOnEditAction: TProcOnActionEvent;
     FIsSelect: Boolean;
     FPrepare: Boolean;
+    FCurrentParams: TVkVariableCollection;
 
     procedure Init(Component: TComponent);
 //    function bHaveSod: Boolean;
@@ -238,6 +239,7 @@ type
     procedure InitBeforeSelect(AValue: TVkVariableCollection);virtual;
     function Locate(AValue: TVkVariableCollection):Boolean;virtual;
     function CheckParams(AParams: TVkVariableCollection): Boolean;
+    function IsEqualParams(AParams: TVkVariableCollection): Boolean;
 
     property ExternalFmEdit: TVkDocDialogFm read FExternalFmEdit write FExternalFmEdit;
     property OnBeforeEditInForm: TNotifyEvent read FOnBeforeEditInForm write SetOnBeforeEditInForm;
@@ -450,6 +452,7 @@ end;
 
 function TDocFrame.CheckParams(AParams: TVkVariableCollection): Boolean;
 begin
+  FCurrentParams := AParams;
   Result := true;
 end;
 
@@ -625,6 +628,35 @@ begin
   for I := 0 to VarList.Count - 1 do
     varList.Value[i] := 0;
   SetSumMarked;
+end;
+
+function TDocFrame.IsEqualParams(AParams: TVkVariableCollection): Boolean;
+var v: TVkVariable;
+    i: Integer;
+begin
+   Result := True;
+   if (Assigned(FCurrentParams) and Assigned(AParams)) then
+   begin
+     if FCurrentParams.Count <> AParams.count then
+     begin
+       Result := False;
+     end
+     else
+     begin
+       for I := 0 to AParams.Count-1 do
+       begin
+         v := FCurrentParams.FindVkVariable(AParams.Items[i].Name);
+         if not Assigned(v) or (v.Value <> AParams.Items[i].Value) then
+         begin
+           Result := False;
+           exit;
+         end;
+       end;
+     end;
+   end
+   else
+     Result := (not Assigned(FCurrentParams) and not Assigned(AParams))
+
 end;
 
 procedure TDocFrame.Load;
@@ -1166,7 +1198,7 @@ end;
 
 function TDocFrame.StoreVariables: Boolean;
 begin
-
+  Result := True;
 end;
 
 

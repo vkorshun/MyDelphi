@@ -31,8 +31,8 @@ type
 
   TCustomDocFmVkVariableBinding = class(TMEditBoxVkVariableBinding)
   private
-    function MyGetValue(Sender: TObject): Variant;
-    procedure MySetValue(Sender: TObject;const Value:Variant);
+    function MyGetValue(Sender: TObject): Variant;override;
+    procedure MySetValue(Sender: TObject;const Value:Variant);override;
   public
     constructor Create(AOwner: TPersistent);override;
     function GetMEditBox: TDocMEditBox;
