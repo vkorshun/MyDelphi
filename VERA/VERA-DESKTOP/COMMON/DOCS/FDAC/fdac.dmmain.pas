@@ -20,7 +20,7 @@ const
   TRReadOnly : TTransParams = [tpRead,tpReadCommitted, tpRecVersion, tpNowait];
   TRWriteTableStability: TTransParams = [tpWrite, tpConsistency,tpNowait];
  }
-  TRSnapShot =  0;
+TRSnapShot =  0;
 type
   PUserInfo = ^RUserInfo;
   RUserInfo = Record
@@ -31,6 +31,12 @@ type
     userpassword :string;
     g_username   :string;
     g_rolename   :string;
+  end;
+
+  RDbInfo = Record
+    server: String;
+    port:String;
+    databasePath:String;
   end;
 
   TShortTransactionList = TList<TFDTransaction> ;
@@ -79,6 +85,7 @@ type
     function InternalLogin:Boolean;
     function GetFDDatabaseMain: TFDConnection;
     function ValidUser(const AUserName, APassword:String):Boolean;
+    function getRDbInfo(const path:String):RDbInfo;
   public
     { Public declarations }
     procedure InitConstsList(var AVarList: TVkVariableCollection;const ATableName,AIdName:String);
@@ -294,6 +301,29 @@ end;
 function TMainDm.GetPInterface: Pointer;
 begin
   Result := FPInterface;
+end;
+
+function TMainDm.getRDbInfo(const path: String): RDbInfo;
+var p, p2: Integer;
+    s: String;
+begin
+  Result.port := '3050';
+  Result.server := '';
+  Result.databasePath := path;
+  p := Pos(':',path);
+  if (p>2) then
+  begin
+    Result.databasePath := Copy(path,p+1,length(path));
+    s := Copy(path,1,p-1);
+    p2 := pos('/',s);
+    if p2>0 then
+    begin
+      Result.server := copy(s,1,p2-1);
+      Result.port := copy(s,p2+1,10);
+    end
+    else
+      Result.server := s;
+  end;
 end;
 
 function TMainDm.GetRootKey(bCurrentUser:Boolean = true): String;
@@ -514,6 +544,7 @@ var
   sUserName: String;
   sCurrDir: String;
   p: Integer;
+  info: RDbInfo;
 begin
   //if not SelectAlias then
     //Raise Exception.Create('Не указан путь к базе!');
@@ -526,8 +557,18 @@ begin
 //    Params.Add('DriverID=FB');
     Params.Add('User_Name=task');
     Params.Add('password=vksoft123');
-    Params.Add('role=RHOPE');
-    Params.Add('Database='+sDatabaseName);
+    Params.Add('RoleName=RHOPE');
+    Params.Add('PageSize=16384');
+    Params.Add('Protocol=TCPIP');
+    Params.Add('CharacterSet=UTF8');
+    info := getRDbInfo(sDatabaseName);
+    Params.Add('Server='+info.server);
+    Params.Add('Port='+info.Port);
+    Params.Add('Database='+info.databasePath);
+
+ //   FDConnectionMain.Params.RoleName := 'RHOPE';
+//    Params.Add('role=RHOPE');
+//    Params.Add('Database='+sDatabaseName);
 
     if (FVendorLib <> '') then
     begin
@@ -731,7 +772,7 @@ begin
     begin
       Close;
       SQL.Clear;
-      SQL.Add('SELECT ul.*,ug.idmenu FROM userslist ul  ');
+      SQL.Add('SELECT ul.*,ug.id_menu FROM userslist ul  ');
       SQL.Add(' INNER JOIN usersgroup ug ON ug.idgroup= ul.idgroup ');
       SQL.Add(' WHERE UPPER(ul.username)=:username ');
       ParamByName('username').AsString := AnsiUpperCase(AUserName);
@@ -742,7 +783,7 @@ begin
           CurrentUser.iduser       := FieldByName('iduser').AslargeInt;
           CurrentUser.username     := FieldByName('username').AsString;
           CurrentUser.userpassword := FieldByName('userpassword').AsString;
-          CurrentUser.idmenu       := FieldByName('idmenu').AsLargeInt;
+          CurrentUser.idmenu       := FieldByName('id_menu').AsLargeInt;
           Result := CheckValidPassword(APassword);
       end;
       if (CurrentUser.iduser>0) and Result then

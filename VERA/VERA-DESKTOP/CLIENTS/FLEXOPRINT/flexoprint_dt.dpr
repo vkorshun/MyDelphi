@@ -30,7 +30,13 @@ uses
   fdac.docbinding in '..\..\COMMON\DOCS\FDAC\fdac.docbinding.pas',
   fdac.fmCustomDoc in '..\..\COMMON\DOCS\FDAC\fdac.fmCustomDoc.pas' {CustomDocFm},
   fdac.framedoc in '..\..\COMMON\DOCS\FDAC\fdac.framedoc.pas' {DocFrame: TFrame},
-  fdac.dmmain in '..\..\COMMON\DOCS\FDAC\fdac.dmmain.pas' {MainDm: TDataModule};
+  fdac.dmmain in '..\..\COMMON\DOCS\FDAC\fdac.dmmain.pas' {MainDm: TDataModule},
+  dmMenuStru in '..\..\COMMON\MENUSTRU\dmMenuStru.pas' {MenuStruDm: TDataModule},
+  frameMenuStru in '..\..\COMMON\MENUSTRU\frameMenuStru.pas' {MenuStruFrame: TFrame},
+  EhLibMTE in 'C:\THIRDLIB.XE260\Eh\Lib\EhLibMTE.pas',
+  DBGridFilterDropDownFormsEh in 'C:\THIRDLIB.XE260\Eh\Lib\DBGridFilterDropDownFormsEh.pas' {DBGridFilterDropDownForm: TFrame},
+  FilterDropDownFormsEh in 'C:\THIRDLIB.XE260\Eh\Lib\FilterDropDownFormsEh.pas' {FilterDropDownForm: TCustomDropDownFormEh},
+  DBGridEh in 'C:\THIRDLIB.XE260\Eh\Lib\DBGridEh.pas';
 
 {$R *.res}
 

@@ -81,10 +81,10 @@ begin
     //OnTabClick := formOnTabClick;
     //OnTabClose := FormOnTabClose;
     *}
-    AddTab(0,'Project', nil);
+//    AddTab(0,'Project', nil);
     docManager := TDocManagerPanel.create(self);
     docManager.Parent := self;
-    docManager.ShowDocument('TAttributesFrameOAU');
+    docManager.ShowDocument('TMenuStruFrame');
   end;
   //FRightTabs.AddTab(0,'Builds', nil);
   FMenuStru := TMenuStructure.Create;

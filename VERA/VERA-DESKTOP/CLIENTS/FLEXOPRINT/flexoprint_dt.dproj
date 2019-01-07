@@ -83,7 +83,7 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
-        <DCC_UnitSearchPath>C:\THIRDLIB.XE260\VKLIB\VKVARIABLES;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\THIRDLIB.XE260\VKLIB\VKVARIABLES;C:\THIRDLIB.XE260\Eh\Lib;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Debugger_RunParams>ADMIN ADMIN flexoprint</Debugger_RunParams>
@@ -203,6 +203,27 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="..\..\COMMON\MENUSTRU\dmMenuStru.pas">
+            <Form>MenuStruDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\MENUSTRU\frameMenuStru.pas">
+            <Form>MenuStruFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="C:\THIRDLIB.XE260\Eh\Lib\EhLibMTE.pas"/>
+        <DCCReference Include="C:\THIRDLIB.XE260\Eh\Lib\DBGridFilterDropDownFormsEh.pas">
+            <Form>DBGridFilterDropDownForm</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="C:\THIRDLIB.XE260\Eh\Lib\FilterDropDownFormsEh.pas">
+            <Form>FilterDropDownForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TCustomDropDownFormEh</DesignClass>
+        </DCCReference>
+        <DCCReference Include="C:\THIRDLIB.XE260\Eh\Lib\DBGridEh.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

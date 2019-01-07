@@ -8,7 +8,12 @@ object MainDm: TMainDm
     Params.Strings = (
       'DriverID=FB3_VK'
       'User_Name=sysdba'
-      'Password=masterkey')
+      'Password=masterkey'
+      'PageSize=16384'
+      'Protocol=TCPIP'
+      'CharacterSet=UTF8'
+      'Port=3050'
+      'RoleName=RHOPE')
     ConnectedStoredUsage = []
     LoginPrompt = False
     Transaction = FDTransactionRead

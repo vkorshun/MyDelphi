@@ -793,6 +793,7 @@ begin
       if (not DataSource1.DataSet.Fields[i].FieldName.Equals(Column.FieldName)) then
         Column.FieldName := DataSource1.DataSet.Fields[i].FieldName;
   end;
+//  Processed := True;
 end;
 
 procedure TDocFrame.nMarkClick(Sender: TObject);
@@ -1042,6 +1043,7 @@ end;
 procedure TDocFrame.DbGridEhVkDocAfterApplayUserFilter(Sender: TObject);
 begin
   DoUnmarkAll;
+  TDbGridEhVK(Sender).DefaultApplyFilter;
 end;
 
 procedure TDocFrame.DBGridEhVkDocDblClick(Sender: TObject);

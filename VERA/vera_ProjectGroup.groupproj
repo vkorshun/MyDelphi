@@ -24,6 +24,9 @@
         <Projects Include="C:\THIRDLIB.XE260\VKLIB\vklib_xe260.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="C:\THIRDLIB.XE260\VKLIB\mycomponents\DbGridEhVk\dbgridehvkd260.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -95,14 +98,23 @@
     <Target Name="vklib_xe260:Make">
         <MSBuild Projects="C:\THIRDLIB.XE260\VKLIB\vklib_xe260.dproj" Targets="Make"/>
     </Target>
+    <Target Name="dbgridehvkd260">
+        <MSBuild Projects="C:\THIRDLIB.XE260\VKLIB\mycomponents\DbGridEhVk\dbgridehvkd260.dproj"/>
+    </Target>
+    <Target Name="dbgridehvkd260:Clean">
+        <MSBuild Projects="C:\THIRDLIB.XE260\VKLIB\mycomponents\DbGridEhVk\dbgridehvkd260.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dbgridehvkd260:Make">
+        <MSBuild Projects="C:\THIRDLIB.XE260\VKLIB\mycomponents\DbGridEhVk\dbgridehvkd260.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="vera_server;vera_client;flexoprint;hopecertcenter;flexoprint_dt;attabs_package_delphi;vklib_xe260"/>
+        <CallTarget Targets="vera_server;vera_client;flexoprint;hopecertcenter;flexoprint_dt;attabs_package_delphi;vklib_xe260;dbgridehvkd260"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="vera_server:Clean;vera_client:Clean;flexoprint:Clean;hopecertcenter:Clean;flexoprint_dt:Clean;attabs_package_delphi:Clean;vklib_xe260:Clean"/>
+        <CallTarget Targets="vera_server:Clean;vera_client:Clean;flexoprint:Clean;hopecertcenter:Clean;flexoprint_dt:Clean;attabs_package_delphi:Clean;vklib_xe260:Clean;dbgridehvkd260:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="vera_server:Make;vera_client:Make;flexoprint:Make;hopecertcenter:Make;flexoprint_dt:Make;attabs_package_delphi:Make;vklib_xe260:Make"/>
+        <CallTarget Targets="vera_server:Make;vera_client:Make;flexoprint:Make;hopecertcenter:Make;flexoprint_dt:Make;attabs_package_delphi:Make;vklib_xe260:Make;dbgridehvkd260:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

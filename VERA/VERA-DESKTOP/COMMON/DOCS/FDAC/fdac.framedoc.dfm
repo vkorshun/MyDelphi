@@ -72,7 +72,7 @@ object DocFrame: TDocFrame
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghRowHighlight, dghColumnResize, dghColumnMove]
       PopupMenu = PopupMenu1
       SortLocal = True
-      STFilter.InstantApply = True
+      STFilter.InstantApply = False
       STFilter.Local = True
       STFilter.Location = stflInTitleFilterEh
       STFilter.Visible = True
@@ -82,6 +82,7 @@ object DocFrame: TDocFrame
       OnDblClick = DBGridEhVkDocDblClick
       OnDrawColumnCell = DBGridEhVkDocDrawColumnCell
       OnEnter = DBGridEhVkDocEnter
+      OnFillSTFilterListValues = DBGridEhVkDocFillSTFilterListValues
       OnGetCellParams = DBGridEhVkDocGetCellParams
       OnKeyDown = DBGridEhVkDocKeyDown
       OnKeyPress = DBGridEhVkDocKeyPress
