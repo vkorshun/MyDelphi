@@ -62,6 +62,7 @@ procedure TDocManagerPanel.ShowDocument(const AFrameDocClassName: String; AParam
 var _FrameDocClass : TDocFrameClass;
     docFrame : TDocFrame;
     i: Integer;
+    control: TWinControl;
 begin
    _FrameDocClass := TDocFrameClass(FindClass(AFrameDocClassName));
    for I := 0 to FDocFrameTabs.Tabs.Count-1 do
@@ -79,8 +80,15 @@ begin
 
    docFrame := CreateFrameDoc(_FrameDocClass);
    docFrame.CheckParams(AParams);
-   TForm(Owner).ActiveControl := docFrame.DBGridEhVkDoc;
+   control := docFrame.getActiveControl;
    FDocFrameTabs.AddTab(FDocFrameTabs.TabCount,docFrame.GetCaption, docFrame);
+   if (Assigned(control) and  control.visible and control.Enabled) then
+   try
+     // PostMessage(WM_SETFOCUS,control.Handle,0,0);
+     TForm(Owner).ActiveControl := control;
+   except
+
+   end;
 //   if (Assigned(AParams)) then
 //     docFrame.checkParams(AParams);
 end;
@@ -148,10 +156,10 @@ begin
         //StatusBar1.Panels[0].Text := frm.GetFileName;
   //---      frm.SynEdit1.CaretX :=1;
   //      frm.SynEdit1.CaretY :=1;
-        TForm(Owner).ActiveControl := frm.DBGridEhVkDoc;
+       // TForm(Owner).ActiveControl := frm.GetActiveControl;
         if FDocFrameTabs.TabIndex <> i then
           FDocFrameTabs.TabIndex := i;
-        PostMessage(WM_SETFOCUS,frm.DBGridEhVkDoc.Handle,0,0);
+        PostMessage(WM_SETFOCUS,frm.GetActiveControl.Handle,0,0);
       end;
     end;
 
