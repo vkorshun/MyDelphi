@@ -240,6 +240,7 @@ type
     function Locate(AValue: TVkVariableCollection):Boolean;virtual;
     function CheckParams(AParams: TVkVariableCollection): Boolean;
     function IsEqualParams(AParams: TVkVariableCollection): Boolean;
+    function GetActiveControl: TWinControl; virtual;
 
     property ExternalFmEdit: TVkDocDialogFm read FExternalFmEdit write FExternalFmEdit;
     property OnBeforeEditInForm: TNotifyEvent read FOnBeforeEditInForm write SetOnBeforeEditInForm;
@@ -299,6 +300,11 @@ begin
     DocDm.FullRefreshDoc;
 
   DBGridEhVkDoc.STFilter.Visible := true;
+end;
+
+function TDocFrame.GetActiveControl: TWinControl;
+begin
+  Result := DBGridEhVkDoc;
 end;
 
 function TDocFrame.GetCaption: String;
