@@ -7,7 +7,7 @@ uses
   Dialogs, fdac.dmdoc, MemTableDataEh, Db, DataDriverEh, MemTableEh,  FireDAC.Comp.Client,
   VkVariable, VkVariableBinding, VkVariableBindingDialog, uDocDescription, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.Phys.Intf,
-  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet;
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, Vcl.StdCtrls;
 
 type
   TMenuStruDm = class(TDocDm)
@@ -21,6 +21,7 @@ type
   protected
     procedure DoOnInitVariables(ASender: TObject; AInsert: Boolean);
     procedure DoStoreVariables(Sender: TObject; AStatus: TUpdateStatus);
+    procedure DoDocStruInitialize(Sender:TObject);
   public
     { Public declarations }
     class function GetDm: TDocDm;override;
@@ -65,7 +66,8 @@ begin
   DocStruDescriptionList.Add('num_level','','NUM_LEVEL','NUM_LEVEL',4,'',4,False,True,nil);
   DocStruDescriptionList.Add('namemenu','','Наименование','Наименование',60,'',60,True,False,
     TBindingDescription.GetBindingDescription(TEditVkVariableBinding));
-  DocStruDescriptionList.Add('mi_id','','MI_ID','MI_ID',4,'',4,False,False,nil);
+  DocStruDescriptionList.Add('mi_id','','Событие','Событие',14,'',14,False,False,
+    TBindingDescription.GetBindingDescription(TComboBoxVkVariableBinding));
   DocStruDescriptionList.Add('funcmenu','','FUNC_MENU','FUNC_MENU',4,'',4,False,True,nil);
   DocStruDescriptionList.Add('count_sod','','COUNT_SOD','COUNT_SOD',4,'',4,False,True,nil);
 
@@ -75,12 +77,31 @@ begin
   DocValidator.NotNullList.Add('namemenu');
   OnInitVariables := DoOnInitvariables;
   OnStoreVariables := DoStorevariables;
+  OnFillKeyFields := DoOnFillKeyFields;
+  DocStruDescriptionList.OnInitialize := DoDocStruInitialize;
+
+end;
+
+procedure TMenuStruDm.DoDocStruInitialize(Sender: TObject);
+var _Item: TVkVariableBinding;
+    oCombo: TComboBox;
+    k: Integer;
+begin
+  Assert(Sender is TVkVariableBinding,'Invalid type');
+  _Item := TVkVariableBinding(Sender);
+  if SameText(_Item.Name,'mi_id') then
+  begin
+    oCombo := TItemComboBox(_item.GetControl);
+    for k := 0 to miList.Count-1 do
+       oCombo.Items.Add(miList.Items[k].Name);
+
+  end;
 end;
 
 procedure TMenuStruDm.DoOnFillKeyFields(Sender: TObject);
 begin
   if DocvariableList.VarByName('id_item').AsLargeInt=0 then
-    DocvariableList.VarByName('id_item').AslargeInt := DmMain.GenId('ID_ITEM');
+    DocvariableList.VarByName('id_item').AslargeInt := DmMain.GenId('GEN_MENUSTRU_ID');
 end;
 
 procedure TMenuStruDm.DoOnInitVariables(ASender: TObject; AInsert: Boolean);
@@ -178,11 +199,11 @@ end;
 
 procedure TMenuStruDm.MemTableEhDocBeforePost(DataSet: TDataSet);
 begin
-  if DataSet.FieldByName('ID').AsLargeInt=0 then
+{  if DataSet.FieldByName('ID').AsLargeInt=0 then
   begin
     DataSet.FieldByName('ID').ReadOnly := False;
     DataSet.FieldByName('ID').AslargeInt := MainDm.GenId('IDATTRIBUTE');
-  end;
+  end;}
   inherited;
 end;
 
