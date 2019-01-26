@@ -29,7 +29,7 @@ type
     procedure OnDocStruInitialize(Sender: TObject);
     procedure DoOnFillKeyFields(Sender: TObject);
     function ValidFmEditItems(Sender:TObject):Boolean;override;
-    function getNextNumLevel(AIdLevel:Integer):Integer;
+    function getNextNumLevel(const AIdMenu,AIdLevel:Integer):Integer;
   end;
 
 var
@@ -130,10 +130,11 @@ begin
   Result := TMenuStruDm.Create(MainDm);
 end;
 
-function TMenuStruDm.getNextNumLevel(AIdLevel: Integer): Integer;
+function TMenuStruDm.getNextNumLevel(const AIdMenu,AIdLevel: Integer): Integer;
 var bk: TBookMark;
 begin
-  bk := MemTableEhDoc.GetBookmark;
+  Result := MainDm.QueryValue('SELECT coalesce(MAX(num_level),0) FROM MENUSTRU WHERE id_menu=:id_menu AND id_level=:id_level',[AIdMenu, AIdLevel]);
+{  bk := MemTableEhDoc.GetBookmark;
   try
     MemTableEhDoc.Filter := Format('ID_LEVEL=%d',[AIdLevel]);
     MemTableEhDoc.Filtered := true;
@@ -147,7 +148,7 @@ begin
     MemTableEhDoc.Filtered := false;
     MemTableEhDoc.Filter := '';
     MemTableEhDoc.GotoBookmark(bk);
-  end;
+  end;}
 end;
 
 procedure TMenuStruDm.LocalOnChangeVariable(Sender: TObject);

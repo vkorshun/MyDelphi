@@ -26,6 +26,7 @@ type
     PanelMenuTree: TPanel;
     PanelMenuFooter: TPanel;
     vstMenu: TVirtualStringTree;
+    aDocSubInsert: TAction;
     procedure Panel1Enter(Sender: TObject);
     procedure vstMenuInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode;
       var ChildCount: Cardinal);
@@ -34,15 +35,28 @@ type
     procedure vstMenuGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure vstMenuChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure aDocInsertExecute(Sender: TObject);
+    procedure aDocSubInsertExecute(Sender: TObject);
+    procedure aDocDeleteExecute(Sender: TObject);
+    procedure aDocEditExecute(Sender: TObject);
   private
     { Private declarations }
     FId: Integer;
     FMenuStruDm: TMenuStruDm;
+    FCurrentNode: PVirtualNode;
+    isSubInsert: Boolean;
     //procedure SetId(const Value: Integer);
+    function getCurrentData: PTreeData;
+    function internalBeforeDocInsert:Boolean;
+    function internalBeforeDocDelete:Boolean;
+    function synchroMemPosition(Data: PTreeData):Boolean;
   protected
     procedure FmEditOnActionUpdate(Sender: TObject);override;
     procedure DoDocAfterOpen(DataSet: TDataSet);override;
     procedure DoOnInitVariables(ASender: TObject; AInsert: Boolean);
+    procedure DoInitActionManager(Sender: TObject);
+    procedure internalAddNode();
+
 
   public
     { Public declarations }
@@ -75,6 +89,45 @@ uses systemconsts;
 {$R *.dfm}
 
 { TFrameAttributes }
+
+procedure TMenuStruFrame.aDocDeleteExecute(Sender: TObject);
+var Data: PtreeData;
+begin
+  if internalBeforeDocDelete then
+  begin
+    inherited;
+  end;
+end;
+
+procedure TMenuStruFrame.aDocEditExecute(Sender: TObject);
+var Data: PTreeData;
+begin
+  Data := getCurrentData;
+  if Assigned(Data) and (Data.id_level > 0) then
+  begin
+    FMenuStruDm.MemTableEhDoc.Locate('id_item',Data.id_item,[]);
+    inherited;
+  end;
+end;
+
+procedure TMenuStruFrame.aDocInsertExecute(Sender: TObject);
+begin
+  if internalBeforeDocInsert then
+  begin
+    FCurrentNode := vstMenu.FocusedNode;
+    isSubInsert := False;
+    inherited;
+    internalAddNode;
+  end;
+end;
+
+procedure TMenuStruFrame.aDocSubInsertExecute(Sender: TObject);
+begin
+  FCurrentNode := vstMenu.FocusedNode.Parent;
+  isSubInsert := true;
+  inherited aDocInsertExecute(Sender);
+  internalAddNode;
+end;
 
 constructor TMenuStruFrame.Create(AOwner: TComponent; ADocDm: TDocDm);
 var nCount: Integer;
@@ -109,8 +162,29 @@ begin
 //    vstMenu.FullExpand(node);
     ConfigureEdit;
   end;
-
+  OnInitActionManager := DoInitActionManager;
 //  FmEdit.OnActionUpdate := FmEditOnActionUpdate;
+end;
+
+function TMenuStruFrame.internalBeforeDocDelete: Boolean;
+var data: PtreeData;
+begin
+  result := synchroMemPosition(getCurrentData);
+end;
+
+function TMenuStruFrame.internalBeforeDocInsert: Boolean;
+var data: PtreeData;
+begin
+  data := getCurrentData;
+  if Assigned(data) and (data.id_level=0) then
+  begin
+    ShowMessage('Добавление на нулевом уровне невозможно! ');
+    result := false;
+  end
+  else
+  begin
+    result := true;
+  end;
 end;
 
 procedure TMenuStruFrame.DoDocAfterOpen(DataSet: TDataSet);
@@ -132,15 +206,37 @@ begin
 
 end;
 
+procedure TMenuStruFrame.DoInitActionManager(Sender: TObject);
+var i: Integer;
+begin
+  DefaultActionListInit;
+  i := FActionDescription.IndexOf(aDocInsert);
+  FActionDescription.InsertDescription(i+1,'DOC',aDocSubInsert,'Bitmap_subins');
+
+end;
+
 procedure TMenuStruFrame.DoOnInitVariables(ASender: TObject; AInsert: Boolean);
 var data: PTreeData;
 begin
   if AInsert then
   begin
-    data := vstMenu.GetNodeData(vstMenu.FocusedNode);
-    FMenuStruDm.DocVariableList.VarByName('id_menu').AsInteger := data.id_menu;
-    FMenuStruDm.DocVariableList.VarByName('id_level').AsInteger := data.id_level;
-    FMenuStruDm.DocVariableList.VarByName('num_level').AsInteger := FMenuStruDm.getNextNumLevel(data.id_level);
+    if not isSubInsert then
+    begin
+      data := vstMenu.GetNodeData(FCurrentNode);
+      FMenuStruDm.DocVariableList.VarByName('id_menu').AsInteger := data.id_menu;
+      FMenuStruDm.DocVariableList.VarByName('id_level').AsInteger := data.id_level;
+      FMenuStruDm.DocVariableList.VarByName('num_level').AsInteger := FMenuStruDm.getNextNumLevel(data.id_menu,data.id_level);
+      FMenuStruDm.DocVariableList.VarByName('mi_id').AsInteger := -1;
+    end
+    else
+    begin
+//      FCurrentNode := vstMenu.FocusedNode;
+      data := vstMenu.GetNodeData(FCurrentNode);
+      FMenuStruDm.DocVariableList.VarByName('id_menu').AsInteger := data.id_menu;
+      FMenuStruDm.DocVariableList.VarByName('id_level').AsInteger := data.id_level+1;
+      FMenuStruDm.DocVariableList.VarByName('num_level').AsInteger := FMenuStruDm.getNextNumLevel(data.id_menu,data.id_level+1);;
+      FMenuStruDm.DocVariableList.VarByName('mi_id').AsInteger := -1;
+    end;
   end;
 end;
 
@@ -199,6 +295,16 @@ begin
   Result := 'Настройка меню';
 end;
 
+function TMenuStruFrame.getCurrentData: PTreeData;
+begin
+  if Assigned(vstMenu.FocusedNode) then
+  begin
+    result := vstMenu.GetNodeData(vstMenu.FocusedNode);
+  end
+  else
+    result := nil;
+end;
+
 class function TMenuStruFrame.GetDmDoc: TDocDm;
 begin
   Result := TMenuStruDm.GetDm;
@@ -218,10 +324,44 @@ begin
   end;
 end;
 
+procedure TMenuStruFrame.internalAddNode;
+var newnode: PVirtualNode;
+    Data: PTreeData;
+begin
+  if isSubInsert then
+  begin
+    newnode :=    VstMenu.AddChild(FCurrentNode);
+  end
+  else
+  begin
+    newnode :=    VstMenu.AddChild(FCurrentNode.Parent);
+  end;
+  Data := VstMenu.GetNodeData(newnode);
+//  := VstMenu.GetNodeData(newnode);
+  Data.id_level := FMenuStruDm.MemTableEhDoc.FieldByName('ID_LEVEL').AsLargeInt;
+  Data.id_item := FMenuStruDm.MemTableEhDoc.FieldByName('ID_ITEM').AsLargeInt;
+  Data.id_menu := FMenuStruDm.MemTableEhDoc.FieldByName('ID_MENU').AsLargeInt;
+  Data.mi_id := FMenuStruDm.MemTableEhDoc.FieldByName('MI_ID').AsLargeInt;
+  Data.namemenu := FMenuStruDm.MemTableEhDoc.FieldByName('NAMEMENU').AsString;
+  Data.num_level := FMenuStruDm.MemTableEhDoc.FieldByName('NUM_LEVEL').AsLargeInt;
+
+  VstMenu.FocusedNode := newnode;
+  VstMenu.Selected[newnode] := True;
+
+end;
+
 procedure TMenuStruFrame.Panel1Enter(Sender: TObject);
 begin
   inherited;
   vstMenu.SetFocus;
+end;
+
+function TMenuStruFrame.synchroMemPosition(Data:PTreeData) : Boolean;
+begin
+  if Assigned(Data) and (Data.id_level >0) then
+     Result := FMenuStruDm.MemTableEhDoc.Locate('id_item',Data.id_item,[])
+  else
+     Result := false;
 end;
 
 procedure TMenuStruFrame.vstMenuChange(Sender: TBaseVirtualTree;

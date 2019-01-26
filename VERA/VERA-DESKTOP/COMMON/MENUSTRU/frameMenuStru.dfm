@@ -32,13 +32,22 @@ inherited MenuStruFrame: TMenuStruFrame
         Align = alClient
         Header.AutoSizeIndex = 0
         Header.MainColumn = -1
+        PopupMenu = PopupMenu1
         TabOrder = 1
         OnChange = vstMenuChange
         OnGetText = vstMenuGetText
         OnInitChildren = vstMenuInitChildren
         OnInitNode = vstMenuInitNode
+        ExplicitLeft = 6
+        ExplicitTop = -6
         Columns = <>
       end
+    end
+  end
+  inherited DocActionList: TActionList
+    object aDocSubInsert: TAction
+      Caption = #1056#1072#1079#1074#1077#1090#1074#1080#1090#1100
+      OnExecute = aDocSubInsertExecute
     end
   end
 end
