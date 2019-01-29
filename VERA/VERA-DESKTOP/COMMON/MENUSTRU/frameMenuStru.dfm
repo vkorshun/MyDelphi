@@ -35,11 +35,12 @@ inherited MenuStruFrame: TMenuStruFrame
         PopupMenu = PopupMenu1
         TabOrder = 1
         OnChange = vstMenuChange
+        OnDragAllowed = vstMenuDragAllowed
+        OnDragOver = vstMenuDragOver
+        OnDragDrop = vstMenuDragDrop
         OnGetText = vstMenuGetText
         OnInitChildren = vstMenuInitChildren
         OnInitNode = vstMenuInitNode
-        ExplicitLeft = 6
-        ExplicitTop = -6
         Columns = <>
       end
     end

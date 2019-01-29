@@ -11,6 +11,7 @@ uses
 
 type
   TMenuStruDm = class(TDocDm)
+    FDCommandNormalLevel: TFDCommand;
     procedure DataModuleCreate(Sender: TObject);
     procedure MemTableEhDocAfterOpen(DataSet: TDataSet);
     procedure MemTableEhDocBeforePost(DataSet: TDataSet);
@@ -30,6 +31,7 @@ type
     procedure DoOnFillKeyFields(Sender: TObject);
     function ValidFmEditItems(Sender:TObject):Boolean;override;
     function getNextNumLevel(const AIdMenu,AIdLevel:Integer):Integer;
+    procedure setNumLevel(id_item, id_level, num_level:Integer);
   end;
 
 var
@@ -79,6 +81,9 @@ begin
   OnStoreVariables := DoStorevariables;
   OnFillKeyFields := DoOnFillKeyFields;
   DocStruDescriptionList.OnInitialize := DoDocStruInitialize;
+
+  FDmMain.LinkWithCommand(FDCommandNormalLevel,FDmMain.FDTransactionUpdate);
+
 
 end;
 
@@ -255,6 +260,21 @@ begin
     on E: Exception do
     begin
       LogMessage(' DmMenuStru:'+#13#10+E.Message+#13#10+FDQueryDoc.SQL.Text);
+    end;
+  end;
+end;
+
+procedure TMenuStruDm.setNumLevel(id_item, id_level, num_level: Integer);
+begin
+  if MemTableEhDoc.locate('id_item',id_item,[]) then
+  begin
+    ReInitVariables;
+    try
+      DocVariableList.VarByName('id_level').AsInteger := id_level;
+      DocVariableList.VarByName('num_level').AsInteger := num_level;
+    finally
+      WriteVariables(false);
+
     end;
   end;
 end;

@@ -7,7 +7,7 @@ uses
   Dialogs, fdac.framedoc, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, ActnList, Menus,
   ImgList, DB, GridsEh, DBAxisGridsEh, DBGridEh, DBGridEhVk, ToolWin, ActnMan, ActnCtrls, ExtCtrls, ComCtrls,
   fdac.dmdoc, fdac.dmmain, dmMenuStru, VkVariableBinding, System.Actions, VkVariable, VariantUtils,
-  System.ImageList, EhLibVCL, VirtualTrees;
+  System.ImageList, EhLibVCL, VirtualTrees, ActiveX;
 
 type
 
@@ -39,6 +39,14 @@ type
     procedure aDocSubInsertExecute(Sender: TObject);
     procedure aDocDeleteExecute(Sender: TObject);
     procedure aDocEditExecute(Sender: TObject);
+    procedure vstMenuDragAllowed(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Column: TColumnIndex; var Allowed: Boolean);
+    procedure vstMenuDragDrop(Sender: TBaseVirtualTree; Source: TObject;
+      DataObject: IDataObject; Formats: TFormatArray; Shift: TShiftState;
+      Pt: TPoint; var Effect: Integer; Mode: TDropMode);
+    procedure vstMenuDragOver(Sender: TBaseVirtualTree; Source: TObject;
+      Shift: TShiftState; State: TDragState; Pt: TPoint; Mode: TDropMode;
+      var Effect: Integer; var Accept: Boolean);
   private
     { Private declarations }
     FId: Integer;
@@ -50,6 +58,7 @@ type
     function internalBeforeDocInsert:Boolean;
     function internalBeforeDocDelete:Boolean;
     function synchroMemPosition(Data: PTreeData):Boolean;
+    procedure NormalNumLevel(aNode:PVirtualNode);
   protected
     procedure FmEditOnActionUpdate(Sender: TObject);override;
     procedure DoDocAfterOpen(DataSet: TDataSet);override;
@@ -185,6 +194,67 @@ begin
   begin
     result := true;
   end;
+end;
+
+procedure TMenuStruFrame.NormalNumLevel(aNode: PVirtualNode);
+var
+  aParent: PVirtualNode;
+  bQuit: Boolean;
+  Data: PTreeData;
+  id:Integer;
+  lastnode: PVirtualNode;
+  nextnode: PVirtualNode;
+  num:Integer;
+  ParentData: PTreeData;
+begin
+  aParent := aNode.Parent;
+  ParentData := VstMenu.GetNodeData(aParent);
+  if Assigned(aParent) then
+  begin
+    nextnode := aParent.FirstChild;
+    id := ParentData.id_item;
+  end
+  else
+  begin
+    nextnode := VstMenu.GetFirst;
+    id :=0;
+  end;
+
+  if Assigned(aParent) then
+    lastnode := aParent.LastChild
+  else
+    lastnode := VstMenu.GetLast(nil);
+  num := 1;
+  repeat
+    bQuit := nextnode=lastnode;
+    Data:= vstMenu.GetNodeData(nextnode);
+    if (Data.id_level<> id) or (Data.num_level<> num) then
+    begin
+      Data.num_level := num;
+      Data.id_level := id;
+
+      //MenuStruDm.setNumLevel();
+      with MenuStruDm do
+      begin
+       { Close;
+        SQL.Clear;
+        SQL.Add(' UPDATE menustru SET id_level=:id_level, num_level=:num_level');
+        SQL.Add(' WHERE id_item = :id_item');
+        ParamByName('id_item').AsInteger := Data.id_item;
+        ParamByName('id_level').AsInteger := id;
+        ParamByName('num_level').AsInteger := num;}
+        //try
+          //FieldByName(i);
+          Data.num_level := num;
+          Data.id_level := id;
+          setNumLevel(Data.id_item, Data.id_level, Data.num_level);
+        //end;
+      end;
+    end;
+    NextNode := vstMenu.GetNextSibling(nextnode);
+    Inc(num);
+  until bQuit ;
+
 end;
 
 procedure TMenuStruFrame.DoDocAfterOpen(DataSet: TDataSet);
@@ -375,6 +445,94 @@ begin
   if Assigned(data) then
     StatusBar1.Panels[0].Text := '   '+data.Namemenu+' '+IntToStr(data.id_item);
 
+end;
+
+procedure TMenuStruFrame.vstMenuDragAllowed(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; var Allowed: Boolean);
+begin
+  inherited;
+  Allowed := True;
+end;
+
+procedure TMenuStruFrame.vstMenuDragDrop(Sender: TBaseVirtualTree;
+  Source: TObject; DataObject: IDataObject; Formats: TFormatArray;
+  Shift: TShiftState; Pt: TPoint; var Effect: Integer; Mode: TDropMode);
+
+procedure DetermineEffect;
+
+  // Determine the drop effect to use if the source is a Virtual Treeview.
+
+  begin
+    // In the case the source is a Virtual Treeview we know 'move' is the default if dragging within
+    // the same tree and copy if dragging to another tree. Set Effect accordingly.
+    if Shift = [] then
+    begin
+      // No modifier key, so use standard action.
+      if Source = Sender then
+        Effect := DROPEFFECT_MOVE
+      else
+        Effect := DROPEFFECT_COPY;
+    end
+    else
+    begin
+      // A modifier key is pressed, hence use this to determine action.
+      if (Shift = [ssAlt]) or (Shift = [ssCtrl, ssAlt]) then
+        Effect := DROPEFFECT_LINK
+      else
+        if Shift = [ssCtrl] then
+          Effect := DROPEFFECT_COPY
+        else
+          Effect := DROPEFFECT_MOVE;
+    end;
+  end;
+var Nodes:TNodeArray;
+  Attachmode: TVTNodeAttachMode;
+  I: Integer;
+begin
+  Nodes :=nil ;
+  // Translate the drop position into an node attach mode.
+  case Mode of
+    dmAbove:
+      AttachMode := amInsertBefore;
+    dmOnNode:
+      AttachMode := amInsertAfter;
+//      AttachMode := amAddChildLast;
+    dmBelow:
+      AttachMode := amInsertAfter;
+//      AttachMode := amInsertAfter;
+  else
+    AttachMode := amNowhere;
+  end;
+    if Source = Sender then
+    begin
+      // Since we know this is a Virtual Treeview we can ignore the drop event entirely and use VT mechanisms.
+      DetermineEffect;
+      Nodes := Sender.GetSortedSelection(True);
+      if not Assigned(Nodes[0].Parent) then
+      begin
+        ShowMessage('Level denited!') ;
+        Exit;
+      end;
+
+      if Effect = DROPEFFECT_COPY then
+      begin
+        for I := 0 to High(Nodes) do
+          Sender.CopyTo(Nodes[I], Sender.DropTargetNode, AttachMode, False);
+      end
+      else
+        for I := 0 to High(Nodes) do
+          Sender.MoveTo(Nodes[I], Sender.DropTargetNode, AttachMode, False);
+      NormalNumLevel(Nodes[0]);
+    end ;
+
+end;
+
+procedure TMenuStruFrame.vstMenuDragOver(Sender: TBaseVirtualTree;
+  Source: TObject; Shift: TShiftState; State: TDragState; Pt: TPoint;
+  Mode: TDropMode; var Effect: Integer; var Accept: Boolean);
+begin
+  inherited;
+  Accept := True ;
 end;
 
 procedure TMenuStruFrame.vstMenuGetText(Sender: TBaseVirtualTree;

@@ -69,7 +69,6 @@ type
     procedure MemTableEhDocBeforeClose(DataSet: TDataSet);
   private
     { Private declarations }
-    FDmMain: TMainDm;
     FDocInstance: TDocInstance;
     FDocSqlManager: TDocSqlManager;
     FDocStruDescriptionList: TDocStruDescriptionList;
@@ -96,6 +95,7 @@ type
     procedure SetOnFillKeyFields(const Value: TNotifyEvent);
     procedure SetOnWriteVariables(const Value: TOnWriteVariablesEvent);
   protected
+    FDmMain: TMainDm;
     FIsInternalTransaction: Boolean;
     FGridOrderList: TStringList;
     FEditOrderList: TStringList;
