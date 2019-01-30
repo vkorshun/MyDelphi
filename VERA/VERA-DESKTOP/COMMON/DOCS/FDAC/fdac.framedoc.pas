@@ -147,6 +147,7 @@ type
     ValList: TVkVariableCollection;
     FSelected: TVkVariableCollection;
     FInEdit: Boolean;
+    FActionSuccess: Boolean;
 
     FOnDefineActionManager: TNotifyDefineactionManager;
     FOnDeleteGetMessage: TFuncgetMessage;
@@ -995,6 +996,7 @@ begin
       if DocDm.MemTableEhDoc.Eof then
         DocDm.MemTableEhDoc.Last;
       FMarkList.Delete(0);
+      FActionSuccess := true;
     except
       DocDm.UnLockDoc(False);
       Raise;
@@ -1362,6 +1364,7 @@ begin
     //  FDmMikkoads.AdsConnection1.Commit;
     DocDm.UnLockDoc(True);
     DocDm.FullRefreshDoc;
+    FActionSuccess := true;
   except
       //if FDmMikkoads.AdsConnection1.TransactionActive and mIsMyTransaction then
       //  FDmMikkoads.AdsConnection1.Rollback;

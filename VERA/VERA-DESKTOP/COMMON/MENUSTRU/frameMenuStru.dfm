@@ -38,6 +38,7 @@ inherited MenuStruFrame: TMenuStruFrame
         OnDragAllowed = vstMenuDragAllowed
         OnDragOver = vstMenuDragOver
         OnDragDrop = vstMenuDragDrop
+        OnFreeNode = vstMenuFreeNode
         OnGetText = vstMenuGetText
         OnInitChildren = vstMenuInitChildren
         OnInitNode = vstMenuInitNode
