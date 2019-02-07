@@ -13,13 +13,15 @@ type
   private
     FAction: TAction;
     FCaption: String;
+    FId: Integer;
     FList: TObjectList<TMenuStructureItem>;
   public
-    constructor Create(const ACaption:String; AAction: TAction = nil);
+    constructor Create(const ACaption:String; id:Integer; AAction: TAction = nil);
     destructor Destroy;override;
-    procedure Add(const ACaption:String; AAction: TAction = nil);
+    procedure Add(const ACaption:String; id: Integer;AAction: TAction = nil);
     property Items: TObjectList<TMenuStructureItem> read FList;
     procedure DefaultExecuteAction(Sender:TObject);
+    property Id:Integer read FId;
   end;
 
   TMenuStructure = class (TObject)
@@ -29,7 +31,7 @@ type
     constructor Create;
     destructor Destroy;override;
     property Root: TMenuStructureItem read FRoot;
-    procedure Add(const ACaption:String; AAction: TAction = nil);
+    procedure Add(const ACaption:String; id: Integer;AAction: TAction = nil);
     procedure FillActionMenu(AAM:tActionManager; AMenuBar: TActionMainMenuBar);
   end;
 
@@ -37,19 +39,20 @@ implementation
 
 { TMenuStructureItem }
 
-procedure TMenuStructureItem.Add(const ACaption: String; AAction: TAction);
+procedure TMenuStructureItem.Add(const ACaption: String; id: Integer;AAction: TAction);
 var _msi: TMenuStructureItem;
 begin
-  _msi := TMenuStructureItem.Create(Acaption, AAction);
+  _msi := TMenuStructureItem.Create(Acaption, id, AAction);
   FList.Add(_msi);
 end;
 
-constructor TMenuStructureItem.Create(const ACaption:String; AAction: TAction);
+constructor TMenuStructureItem.Create(const ACaption:String; id: Integer;AAction: TAction);
 begin
   FAction := AAction;
   FCaption := ACaption;
   FList := TObjectList<TMenuStructureItem>.Create;
   FList.OwnsObjects := True;
+  FId := id;
 end;
 
 procedure TMenuStructureItem.DefaultExecuteAction(Sender: TObject);
@@ -66,14 +69,14 @@ end;
 
 { TMenuStructure }
 
-procedure TMenuStructure.Add(const ACaption: String; AAction: TAction);
+procedure TMenuStructure.Add(const ACaption: String; id: Integer;AAction: TAction);
 begin
-  FRoot.Add(ACaption, AAction);
+  FRoot.Add(ACaption, id, AAction);
 end;
 
 constructor TMenuStructure.Create;
 begin
-  FRoot := TMenuStructureItem.Create('ROOT',nil);
+  FRoot := TMenuStructureItem.Create('ROOT',0,nil);
 end;
 
 destructor TMenuStructure.Destroy;

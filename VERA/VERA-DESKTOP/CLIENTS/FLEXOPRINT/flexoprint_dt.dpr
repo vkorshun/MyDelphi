@@ -36,7 +36,8 @@ uses
   EhLibMTE in 'C:\THIRDLIB.XE260\Eh\Lib\EhLibMTE.pas',
   DBGridFilterDropDownFormsEh in 'C:\THIRDLIB.XE260\Eh\Lib\DBGridFilterDropDownFormsEh.pas' {DBGridFilterDropDownForm: TFrame},
   FilterDropDownFormsEh in 'C:\THIRDLIB.XE260\Eh\Lib\FilterDropDownFormsEh.pas' {FilterDropDownForm: TCustomDropDownFormEh},
-  DBGridEh in 'C:\THIRDLIB.XE260\Eh\Lib\DBGridEh.pas';
+  DBGridEh in 'C:\THIRDLIB.XE260\Eh\Lib\DBGridEh.pas',
+  fdsqlquery in '..\..\COMMON\DOCS\FDAC\fdsqlquery.pas';
 
 {$R *.res}
 

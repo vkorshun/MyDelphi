@@ -34,6 +34,7 @@ inherited MenuStruFrame: TMenuStruFrame
         Header.MainColumn = -1
         PopupMenu = PopupMenu1
         TabOrder = 1
+        TreeOptions.AutoOptions = [toAutoDropExpand, toAutoScrollOnExpand, toAutoSort, toAutoTristateTracking, toAutoChangeScale]
         OnChange = vstMenuChange
         OnDragAllowed = vstMenuDragAllowed
         OnDragOver = vstMenuDragOver

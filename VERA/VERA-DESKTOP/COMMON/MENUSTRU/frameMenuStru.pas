@@ -345,7 +345,9 @@ begin
         FMenuStruDm.getNextNumLevel(Data.id_menu, Data.id_level + 1);;
       FMenuStruDm.DocVariableList.VarByName('mi_id').AsInteger := -1;
     end;
-  end;
+  end
+  else
+  FMenuStruDm.DocVariableList.VarByName('mi_id').AsInteger := GetIndexOf_mi_id(FMenuStruDm.DocVariableList.VarByName('mi_id').AsInteger);
 end;
 
 procedure TMenuStruFrame.findNode(const id: Int64; list: TList<Int64>);
@@ -628,7 +630,7 @@ begin
         Sender.MoveTo(Nodes[i], Sender.DropTargetNode, Attachmode, false);
     NormalNumLevel(Nodes[0]);
   end;
-  RefreshTree(vstMenu.GetNodeData(Sender.DropTargetNode));
+  //RefreshTree(vstMenu.GetNodeData(Sender.DropTargetNode));
 end;
 
 procedure TMenuStruFrame.vstMenuDragOver(Sender: TBaseVirtualTree;

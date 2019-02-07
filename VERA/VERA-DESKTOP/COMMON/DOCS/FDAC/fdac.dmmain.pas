@@ -26,7 +26,7 @@ type
   RUserInfo = Record
     idgroup      :LargeInt;
     iduser       :LargeInt;
-    idmenu       :LargeInt;
+    id_menu       :LargeInt;
     username     :string;
     userpassword :string;
     g_username   :string;
@@ -113,6 +113,8 @@ type
        ATransaction:TFDTransaction = nil):Variant;
     procedure QueryValues(AVkVariableList: TVkVariableCollection;const ASql:String;const AParams: array of variant;
        ATransaction:TFDTransaction = nil);
+    function QueryList(const ASql:String;const AParams: array of variant;
+                ATransaction:TFDTransaction = nil):TList<TVkVariableCollection>;
     property CurrentUser: PUserInfo read FCurrentUser;
     property Strorage: TSettingsStorage read FStorage;
     property XmlInit: TXmlIni read FXmlIni;
@@ -590,6 +592,12 @@ begin
   DoAfterLogin;
 end;
 
+function TMainDm.QueryList(const ASql: String; const AParams: array of variant;
+  ATransaction: TFDTransaction): TList<TVkVariableCollection>;
+begin
+
+end;
+
 function TMainDm.QueryValue(const ASql: String; const AParams: array of variant;
   ATransaction: TFDTransaction): Variant;
 var
@@ -783,7 +791,7 @@ begin
           CurrentUser.iduser       := FieldByName('iduser').AslargeInt;
           CurrentUser.username     := FieldByName('username').AsString;
           CurrentUser.userpassword := FieldByName('userpassword').AsString;
-          CurrentUser.idmenu       := FieldByName('id_menu').AsLargeInt;
+          CurrentUser.id_menu       := FieldByName('id_menu').AsLargeInt;
           Result := CheckValidPassword(APassword);
       end;
       if (CurrentUser.iduser>0) and Result then

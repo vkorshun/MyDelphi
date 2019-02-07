@@ -34,6 +34,8 @@ type
     { Private declarations }
     FMenuStru: TMenuStructure;
     docManager: TDocManagerPanel;
+//    procedure CreateMenu;
+    procedure OnMyActionExecute(Sender:TObject);
   public
     { Public declarations }
   end;
@@ -44,6 +46,8 @@ var
 implementation
 
 {$R *.dfm}
+
+uses dmMenuStru, fdac.dmmain, systemconsts;
 
 procedure TMainFm.aExitExecute(Sender: TObject);
 begin
@@ -61,6 +65,7 @@ begin
 end;
 
 procedure TMainFm.FormCreate(Sender: TObject);
+var _menuStruDm: TMenuStruDm;
 begin
   with MainTabs do
   begin
@@ -84,27 +89,41 @@ begin
 //    AddTab(0,'Project', nil);
     docManager := TDocManagerPanel.create(self);
     docManager.Parent := self;
-    docManager.ShowDocument('TMenuStruFrame');
   end;
   //FRightTabs.AddTab(0,'Builds', nil);
   FMenuStru := TMenuStructure.Create;
-  FMenuStru.Add('Документы');
-  FMenuStru.Add('Справочники');
-  FMenuStru.Add('Настройки');
-  FMenuStru.Root.Items[0].Add('',aCertStore);
-  FMenuStru.Root.Items[0].Add('-');
-  FMenuStru.Root.Items[0].Add('',aExit);
-  FMenuStru.Root.Items[1].Add('',aViewOAU);
-//  FMenuStru.Root.Items[1].Add('',aViewOKU);
-  FMenuStru.Root.Items[1].Add('-');
-  FMenuStru.Root.Items[1].Add('',aViewAttributesOAU);
-//  FMenuStru.Root.Items[1].Add('',aViewAttributesOKU);
-  FMenuStru.Root.Items[2].Add('',aTest);
-  FMenuStru.Root.Items[2].Add('',aSettings);
 
+  _menuStruDm := TMenuStruDm.Create(MainDm);
+  _MenuStruDm.FillMenuStru(FMenuStru,OnMyActionExecute);
+
+{  FMenuStru.Add('Документы',1);
+  FMenuStru.Add('Справочники',2);
+  FMenuStru.Add('Настройки',3);
+  FMenuStru.Root.Items[0].Add('',4,aCertStore);
+  FMenuStru.Root.Items[0].Add('-',5);
+  FMenuStru.Root.Items[0].Add('',6,aExit);
+  FMenuStru.Root.Items[1].Add('',7,aViewOAU);
+//  FMenuStru.Root.Items[1].Add('',aViewOKU);
+  FMenuStru.Root.Items[1].Add('-',8);
+  FMenuStru.Root.Items[1].Add('',9,aViewAttributesOAU);
+//  FMenuStru.Root.Items[1].Add('',aViewAttributesOKU);
+  FMenuStru.Root.Items[2].Add('',10,aTest);
+  FMenuStru.Root.Items[2].Add('',11,aSettings);
+ }
   FMenuStru.FillActionMenu(ActionManager1, ActionMainMenuBar1);
 
 end;
 
+
+
+
+
+procedure TMainFm.OnMyActionExecute(Sender: TObject);
+begin
+   case TAction(Sender).Tag of
+     MI_EXIT: aExit.Execute;
+     MI_MENUEDITOR:     docManager.ShowDocument('TMenuStruFrame');
+   end;
+end;
 
 end.

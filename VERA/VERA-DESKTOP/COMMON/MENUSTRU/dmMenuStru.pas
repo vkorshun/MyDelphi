@@ -7,7 +7,8 @@ uses
   Dialogs, fdac.dmdoc, MemTableDataEh, Db, DataDriverEh, MemTableEh,  FireDAC.Comp.Client,
   VkVariable, VkVariableBinding, VkVariableBindingDialog, uDocDescription, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.Phys.Intf,
-  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, Vcl.StdCtrls;
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, Vcl.StdCtrls, menustructure,
+  fdsqlquery;
 
 type
   TMenuStruDm = class(TDocDm)
@@ -17,6 +18,7 @@ type
     procedure MemTableEhDocBeforePost(DataSet: TDataSet);
   private
     { Private declarations }
+    FDSqlQuery: TFDSqlQuery;
     procedure LocalOnChangeVariable(Sender: TObject);
     procedure MyOnGetText(Field:TField;var text:String; DisplayText: Boolean);
   protected
@@ -32,6 +34,7 @@ type
     function ValidFmEditItems(Sender:TObject):Boolean;override;
     function getNextNumLevel(const AIdMenu,AIdLevel:Integer):Integer;
     procedure setNumLevel(id_item, id_level, num_level:Integer);
+    procedure FillMenuStru(const AMenuStru:TMenuStructure; AOnExecute:TNotifyEvent);
   end;
 
 var
@@ -39,7 +42,7 @@ var
 
 implementation
 
-uses fdac.dmmain, uLog, systemconsts, fdac.docBinding, frameObjectsGr;
+uses fdac.dmmain, uLog, systemconsts, fdac.docBinding, frameObjectsGr, Vcl.ActnList, Vcl.Menus;
 
 {$R *.dfm}
 
@@ -59,6 +62,7 @@ const
 
 begin
   inherited;
+  FDSqlQuery := TFDSqlQuery.Create(self);
   SqlManager.InitCommonParams('MENUSTRU','ID_ITEM','GEN_MENUSTRU_ID');
   SqlManager.SelectSQL.Add(query);
 
@@ -120,15 +124,167 @@ begin
     DocVariableList.VarByName('attributetype').AsLargeInt := 0;
     }
   end
+  else
+  begin
+    DocVariableList.VarByName('mi_id').AsLargeInt := GetIndexOf_mi_id(DocVariableList.VarByName('mi_id').AsLargeInt);
+  end
+
 end;
 
 procedure TMenuStruDm.DoStoreVariables(Sender: TObject; AStatus: TUpdateStatus);
 begin
-  if AStatus= usInserted then
-  begin
-//    DocVariableList.VarByName('IDATTRIBUTE').AsLargeInt := MainDm.GenId('IDATTRIBUTE');
-  end;
+//  if AStatus= usInserted then
+//  begin
+    DocVariableList.VarByName('mi_id').AsLargeInt := Get_mi_id(DocVariableList.VarByName('mi_id').AsLargeInt);
+//  end;
 end;
+
+procedure TMenuStruDm.FillMenuStru(const AMenuStru: TMenuStructure; AOnExecute:TNotifyEvent);
+var
+     CA: TAction;
+    procedure FillAction(pmi:TMenuStructureItem);
+    var i: Integer;
+    begin
+
+      with FDSqlQuery do
+      begin
+        Close;
+        Command.ParamByName('id_menu').AsInteger := MainDm.CurrentUser.id_menu;
+        if Assigned(pmi) and (pmi.id<>0)then
+        begin
+          Command.ParamByName('id_level').AsInteger := pmi.id;
+        end
+        else
+          Command.ParamByName('id_level').AsInteger := 0;
+        Open;
+          //mm := pmi.Items[i];
+        while not Eof do
+        begin
+          if FieldByName('namemenu').AsString='-' then
+          begin
+            if Assigned(pmi) then
+            begin
+              pmi.Add('-', FieldByName('id_item').AsInteger);
+            end
+            else
+              ShowMessage('Not Assigned!') ;
+          end
+          else
+          begin
+            CA := TAction.Create(Self);
+            CA.Caption := FieldByName('namemenu').AsString;
+            CA.Tag     := FieldByName('mi_id').AsInteger;
+            if FieldByName('shortcut').AsString<>'' then
+              CA.ShortCut := TextToShortCut(FieldByName('shortcut').AsString);
+            CA.OnExecute := AOnExecute;
+            if (pmi = nil) then
+              AMenuStru.Add(CA.Caption, FieldByName('id_item').AsInteger)
+            else
+              pmi.Add(CA.Caption, FieldByName('id_item').AsInteger, CA );
+            //if Assigned(pmi) then
+            //begin
+            //  ActionManager1.AddAction(CA, nil);
+
+            //  SomeMenu := pmi.Items.Add;
+            //  SomeMenu.Action := CA;
+            //  SomeMenu.Tag    := FieldByName('id_item').AsInteger;
+            //end
+            //else
+            //begin
+            // next we need to create a dummy action, we will assign to our sub menu parent items
+            // and use that later on
+//            CAMenu := TContainedAction.Create(Self);
+
+            // now, for our action bar (which hold a reference to the action main menu) we need to
+            // create the menu item
+              // ACIMain := ABI.Items.Add;
+              // ACIMain.Action := CA;
+              // ACIMain.Caption := FieldByName('namemenu').AsString;
+              // ACIMain.Tag     := FieldByName('id_item').AsInteger;
+            //mi := ActionMainMenuBar.ActionManager.ActionBars[0].Items.Add;
+          end;
+          Next;
+        end;
+        if not Assigned(pmi) then
+        begin
+          pmi := AMenuStru.Root;
+        end;
+
+        begin
+          for I := 0 to pmi.Items.Count - 1 do
+             FillAction(pmi.Items[i]);
+        end;
+      end;
+    end;
+
+begin
+
+  with FDSqlQuery do
+  begin
+    Close;
+    Command.CommandText.Clear;
+    if MainDm.CurrentUser.idgroup=1 then
+    begin
+      // Admin
+      Command.CommandText.Add('SELECT m.* FROM menustru m');
+      Command.CommandText.Add('WHERE m.id_level=:id_level and m.id_menu=:id_menu');
+      Command.CommandText.Add('ORDER BY m.id_level, m.num_level ');
+      Command.ParamByName('id_menu').AsInteger := MainDm.CurrentUser.id_menu;
+    end
+    else
+    begin
+      //User
+      Command.CommandText.Add('SELECT m.* FROM menustru m');
+      Command.CommandText.Add(' LEFT JOIN usersaccess ua ON ua.id_access=:id_access AND ua.id_user=:id_user AND ua.id_item= m.id_item ');
+      Command.CommandText.Add('WHERE m.id_level=:id_level and m.id_menu=:id_menu and ua.access_value>0');
+      Command.CommandText.Add('ORDER BY m.id_level, m.num_level ');
+      Command.ParamByName('id_menu').AsInteger    := MainDm.CurrentUser.id_menu;
+      Command.ParamByName('id_access').AsInteger := ACCESS_MENU;
+      Command.ParamByName('id_user').AsInteger   := MainDm.CurrentUser.iduser;
+    end;
+
+  end;
+  FillAction(nil);
+
+  {*with FAmDescription1 do
+  begin
+    if oIDmMain.CurrentUser.id_group= GROUP_ADMIN then
+    begin
+      AddDescription('MAIN1','MI_OPENDOC','BITMAP_prodoc32','Документы','');
+      AddDescription('MAIN1','MI_WORKPERIOD','BITMAP_date32','Рабочий диапазон','');
+      AddDescription('MAIN1','MI_USERSACCESS','BITMAP_access32','Список пользователей','');
+      AddDescription('MAIN1','MI_VIEWACCOUNT','BITMAP_ps32','План счетов','');
+      AddDescription('MAIN1','SEPARATOR','EMPTY','','');
+      AddDescription('MAIN2','MI_VIEWOAU','BITMAP_oau32','Объекты ан. учета','');
+//    AddDescription('MAIN2','oku','BITMAP_oku32','Объекты кол. учета','');
+      AddDescription('MAIN2','SEPARATOR','EMPTY','','');
+      AddDescription('MAIN3','MI_PAROAU','BITMAP_poau32','Параметры объектов ан. учета','');
+//    AddDescription('MAIN3','poku','BITMAP_poku32','Параметры объектов кол. учета','');
+      AddDescription('MAIN3','SEPARATOR','EMPTY','','');
+//    AddDescription('MAIN4','valuta','BITMAP_valuta32','Динамика курсов валют','');
+      AddDescription('MAIN4','MI_LISTENTERPRIZE','BITMAP_pred32','Информация о предприятиях','');
+//    AddDescription('MAIN4','jho','BITMAP_jho32','Журнал хоз. операций','');
+//    AddDescription('MAIN4','j_prov','BITMAP_j_prov32','Журнал проводок','');
+//    AddDescription('MAIN4','corschet','BITMAP_corschet32','Корреспонденция счетов','');
+//    AddDescription('MAIN4','oplata','BITMAP_oplata32','Разноска оплаты','');
+      AddDescription('MAIN4','MI_REPORT','BITMAP_reports32','Список отчетов','');
+//      AddDescription('MAIN4','MI_CALENDAR','BITMAP_CALENDAR32','Календарь','CTRL+F2');
+    end
+    else
+    begin
+      AddDescription('MAIN1','MI_OPENDOC','BITMAP_prodoc32','Документы','');
+      AddDescription('MAIN4','MI_REPORT','BITMAP_reports32','Список отчетов','');
+      AddDescription('MAIN1','SEPARATOR','EMPTY','','');
+      AddDescription('MAIN1','MI_VIEWACCOUNT','BITMAP_ps32','План счетов','');
+      AddDescription('MAIN2','MI_VIEWOAU','BITMAP_oau32','Объекты ан. учета','');
+      AddDescription('MAIN1','SEPARATOR','EMPTY','','');
+      AddDescription('MAIN1','MI_WORKPERIOD','BITMAP_date32','Рабочий диапазон','');
+
+    end;
+    InitActionManager(ActionManager2,NIL,MainExecuteAction);}
+//    ActionToolBar1.Parent := Panel1;
+  end;
+
 
 class function TMenuStruDm.GetDm: TDocDm;
 begin
