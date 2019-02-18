@@ -225,6 +225,11 @@
         </DCCReference>
         <DCCReference Include="C:\THIRDLIB.XE260\Eh\Lib\DBGridEh.pas"/>
         <DCCReference Include="..\..\COMMON\DOCS\FDAC\fdsqlquery.pas"/>
+        <DCCReference Include="..\..\COMMON\WORKRANGE\DmWorkRange.pas">
+            <Form>WorkRangeDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

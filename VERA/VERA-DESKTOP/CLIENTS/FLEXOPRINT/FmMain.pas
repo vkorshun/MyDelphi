@@ -123,6 +123,11 @@ begin
    case TAction(Sender).Tag of
      MI_EXIT: aExit.Execute;
      MI_MENUEDITOR:     docManager.ShowDocument('TMenuStruFrame');
+     MI_VIEWOAU: docManager.ShowDocument('TFrameGOAU');
+     MI_VIEWOKU: docManager.ShowDocument('TFrameGOKU');
+     MI_ATTROAU: docManager.ShowDocument('TAttributesFrameOAU');
+     MI_ATTROKU: docManager.ShowDocument('TAttributesFrameOKU');
+
    end;
 end;
 
