@@ -8,7 +8,7 @@ uses
   DynVarsEh, System.Actions, Vcl.ActnList, Vcl.Menus, Vcl.ImgList, Data.DB, GridsEh, DBAxisGridsEh, DBGridEh,
   DBGridEhVk, Vcl.ToolWin, Vcl.ActnMan, Vcl.ActnCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, VariantUtils,
   fdac.dmdoc, fdac.dmmain, dmAttributesSet, VkVariable, VkVariableBinding, fdac.docbinding,
-   System.ImageList, EhLibVCL;
+  {$IFDEF VER330} System.ImageList,{$ENDIF} EhLibVCL;
 
 type
   TAttributesSetFrame = class(TDocFrame)

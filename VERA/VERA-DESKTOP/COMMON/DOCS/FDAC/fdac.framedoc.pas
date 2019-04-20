@@ -9,7 +9,7 @@ uses
   GridsEh, vkvariable, ActionManagerDescription, ToolWin, ActnMan, fmVkDocDialog,
   ActnCtrls, ImgList,ActnList, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBAxisGridsEh,
   VkVariableBinding, MEditBox, uDocDescription, fmsetupform, System.Actions, System.Generics.Collections, EhLibMTE,
-  EhLibVCL, System.ImageList;
+  EhLibVCL{$IFDEF VER330}, System.ImageList{$ENDIF};
 
 const
   WM_ENTER = WM_USER +2;

@@ -15,7 +15,7 @@ uses
   vkdocinstance in '..\..\COMMON\DOCS\vkdocinstance.pas',
   AppManager in '..\..\COMMON\AppManager.pas',
   fmSetupForm in '..\..\COMMON\DOCS\fmSetupForm.pas' {SetUpFormFm},
-  docManagerPanel in '..\..\COMMON\DOCS\docManagerPanel.pas',
+  tabManagerPanel in '..\..\COMMON\TABS\tabManagerPanel.pas',
   dmAttributes in '..\..\COMMON\ATTRIBUTES\dmAttributes.pas' {AttributesDm: TDataModule},
   dmAttributesOfGroup in '..\..\COMMON\ATTRIBUTES\dmAttributesOfGroup.pas' {AttributesOfGroupDm: TDataModule},
   dmAttributesSet in '..\..\COMMON\ATTRIBUTES\dmAttributesSet.pas' {AttributesSetDm: TDataModule},

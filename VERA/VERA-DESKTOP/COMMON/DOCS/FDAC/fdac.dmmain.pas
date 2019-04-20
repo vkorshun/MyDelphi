@@ -7,8 +7,8 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
   FireDAC.DApt, FireDAC.VCLUI.Wait, FireDAC.Comp.UI, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
-  FireDAC.Phys.FB, FireDAC.Phys.IBBase, datevk, vkvariable, SettingsStorage, systemconsts,
-  FireDAC.Phys.FBDef;
+  FireDAC.Phys.FB, FireDAC.Phys.IBBase, datevk, vkvariable, SettingsStorage, systemconsts
+  {$IFDEF VER330},FireDAC.Phys.FBDef{$ENDIF};
 
 
 const

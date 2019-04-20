@@ -8,7 +8,7 @@ uses
   ImgList, ToolWin, ActnMan, ActnCtrls, ActionManagerDescription, ActnList,
   Registry, uLog, u_xmlinit,
   DateVk, Contnrs, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBAxisGridsEh,
-  System.ImageList, EhLibVCL;
+  {$IFDEF VER330}System.ImageList,{$ENDIF} EhLibVCL;
 
 ResourceString
 {$IFDEF ENGLISH_INTERFACE }

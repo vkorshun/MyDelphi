@@ -7,7 +7,7 @@ uses
   Dialogs, fdac.framedoc, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, ActnList, Menus,
   ImgList, DB, GridsEh, DBAxisGridsEh, DBGridEh, DBGridEhVk, ToolWin, ActnMan, ActnCtrls, ExtCtrls, ComCtrls,
   fdac.dmdoc, fdac.dmmain, dmattributes, VkVariableBinding, System.Actions, VkVariable, VariantUtils,
-  System.ImageList, EhLibVCL;
+  {$IFDEF VER330}System.ImageList,{$ENDIF} EhLibVCL;
 
 type
   TAttributesFrame = class(TDocFrame)

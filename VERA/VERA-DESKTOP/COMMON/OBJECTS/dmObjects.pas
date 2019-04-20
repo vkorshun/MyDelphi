@@ -7,7 +7,8 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.Client, FireDAC.Comp.DataSet,
   DataDriverEh, MemTableEh, VkVariableBinding, VkVariableBindingDialog, Generics.Collections, vkvariable,
-  DateVk, SystemConsts, Math, DocSqlManager, FIBQuery, pFIBQuery, pFIBQueryVk;
+  DateVk, SystemConsts, Math, DocSqlManager;
+  //, FIBQuery, pFIBQuery, pFIBQueryVk;
 
 const
   _VARATTR = 'f_';

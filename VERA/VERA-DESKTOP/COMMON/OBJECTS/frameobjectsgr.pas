@@ -8,7 +8,7 @@ uses
   DynVarsEh, System.Actions, Vcl.ActnList, Vcl.Menus, Vcl.ImgList, Data.DB, GridsEh, DBAxisGridsEh, DBGridEh,
   DBGridEhVk, Vcl.ToolWin, Vcl.ActnMan, Vcl.ActnCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, fdac.dmdoc,dmobjects,
   frameObjectsItems, Vcl.StdCtrls, VkVariable, VariantUtils, fdac.fmcustomdoc,
-  System.ImageList, EhLibVCL;
+  {$IFDEF VER330}System.ImageList,{$ENDIF} EhLibVCL;
 
 type
   TObjectsGrFrame = class(TDocFrame)

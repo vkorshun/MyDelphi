@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin, Vcl.ActnMan, Vcl.ActnCtrls,
-  Vcl.ActnMenus, System.Actions, Vcl.ActnList, System.ImageList, Vcl.ImgList,
+  Vcl.ActnMenus, System.Actions, Vcl.ActnList, {$IFDEF VER330} System.ImageList,{$ENDIF} Vcl.ImgList,
   Vcl.PlatformDefaultStyleActnCtrls, attabs, Vcl.ComCtrls, docManagerPanel, menustructure;
 
 type

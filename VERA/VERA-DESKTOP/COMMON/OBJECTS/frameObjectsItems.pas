@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, fdac.framedoc, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
   DynVarsEh, System.Actions, Vcl.ActnList, Vcl.Menus, Vcl.ImgList, Data.DB, GridsEh, DBAxisGridsEh, DBGridEh,
   DBGridEhVk, Vcl.ToolWin, Vcl.ActnMan, Vcl.ActnCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, fdac.dmdoc,dmobjects,
-  vkvariable, VariantUtils, System.ImageList, EhLibVCL;
+  vkvariable, VariantUtils, {$IFDEF VER330}System.ImageList,{$ENDIF} EhLibVCL;
 
 type
   TObjectsItemsFrame = class(TDocFrame)

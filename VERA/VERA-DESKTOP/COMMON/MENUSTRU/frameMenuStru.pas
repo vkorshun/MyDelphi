@@ -10,7 +10,7 @@ uses
   ActnCtrls, ExtCtrls, ComCtrls,
   fdac.dmdoc, fdac.dmmain, dmMenuStru, VkVariableBinding, System.Actions,
   VkVariable, VariantUtils,
-  System.ImageList, EhLibVCL, VirtualTrees, ActiveX,
+  {$IFDEF VER330}System.ImageList,{$ENDIF} EhLibVCL, VirtualTrees, ActiveX,
   System.Generics.Collections;
 
 type

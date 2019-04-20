@@ -21,7 +21,6 @@ object MainFm: TMainFm
     Top = 0
     Width = 689
     Height = 29
-    UseSystemFont = False
     Caption = 'ActionMainMenuBar1'
     Color = clMenuBar
     ColorMap.DisabledFontColor = 7171437
