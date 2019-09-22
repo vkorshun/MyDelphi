@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, DB, adsdata, adsfunc, adstable, adscnnct, doc.variablelist,
-  Dm_mikkoads,
+  Dm_mikkoads, doc.variable,
   DateVk, Dialogs, Variants, xbase_utils;
 
 const
@@ -176,12 +176,12 @@ begin
           // ==== Update Params
           for i := 0 to aVarList.Count - 1 do
           begin
-            if (aVarList[i].Value <> aVarList[i].InitValue) then
-              if pos('p_', aVarList[i].name) = 1 then
+            if (aVarList.Items[i].Value <> aVarList.Items[i].InitValue) then
+              if pos('p_', aVarList.Items[i].name) = 1 then
               begin
-                ListChanged.Add(aVarList[i].name);
-                kodpar := StrToInt(Copy(aVarList[i].name, 3, 11));
-                UpdateParam(kodpar, kodkli, aVarList[i], False);
+                ListChanged.Add(aVarList.Items[i].name);
+                kodpar := StrToInt(Copy(aVarList.Items[i].name, 3, 11));
+                UpdateParam(kodpar, kodkli, aVarList.Items[i], False);
               end;
           end;
           FDmMikkoAds.WriteProtocol(ACT_EDITOAU, 'Коррекция ОАУ ',
@@ -215,12 +215,12 @@ begin
         for i := 0 to aVarList.Count - 1 do
         begin
           // if (aVarList[i].value<>aVarList[i].InitValue) then
-          if pos('p_', aVarList[i].name) = 1 then
+          if pos('p_', aVarList.Items[i].name) = 1 then
           begin
             // ListChanged.Add(aVarList[i].name);
-            kodpar := StrToInt(Copy(aVarList[i].name, 3, 11));
+            kodpar := StrToInt(Copy(aVarList.Items[i].name, 3, 11));
             try
-              UpdateParam(kodpar, kodkli, aVarList[i], True);
+              UpdateParam(kodpar, kodkli, aVarList.Items[i], True);
             except
               ShowMessage(' kodpar - ' + IntToStr(kodpar));
               Raise;
@@ -283,30 +283,30 @@ begin
     Result := null;
     exit;
   end;
-  kodpar := StrToInt(Copy(aVarListClient[aIndex].name, 3, 11));
+  kodpar := StrToInt(Copy(aVarListClient.Items[aIndex].name, 3, 11));
   nType := GetTypPar(kodpar);
   case nType of
     PARTYP_OK, PARTYP_OA, PARTYP_S, PARTYP_V, PARTYP_GK, PARTYP_GA:
-      Result := aVarListClient[aIndex].AsInteger;
+      Result := aVarListClient.Items[aIndex].AsInteger;
     PARTYP_N:
-      Result := aVarListClient[aIndex].AsExtended;
+      Result := aVarListClient.Items[aIndex].AsExtended;
     PARTYP_C:
-      Result := aVarListClient[aIndex].AsString;
+      Result := aVarListClient.Items[aIndex].AsString;
     PARTYP_L:
       begin
-        Result := aVarListClient[aIndex].AsInteger;
+        Result := aVarListClient.Items[aIndex].AsInteger;
         if Result = 0 then
           Result := 2;
       end;
     PARTYP_D:
       begin
-        if aVarListClient[aIndex].AsDateTime = 0 then
+        if aVarListClient.Items[aIndex].AsDateTime = 0 then
           Result := null
         else
-          Result := aVarListClient[aIndex].AsDateTime;
+          Result := aVarListClient.Items[aIndex].AsDateTime;
       end;
   else
-    Result := aVarListClient[aIndex].Value;
+    Result := aVarListClient.Items[aIndex].Value;
   end;
 
 end;
@@ -349,9 +349,9 @@ begin
       end;
       ListComment.Add(cLabel);
       ListComment.Add(' Старое значение - ' + aVarList.VarByName(ListChanged[i])
-        .VarInitValue.ToString);
+        .InitValue.ToString);
       ListComment.Add(' Новое значение - ' + aVarList.VarByName(ListChanged[i])
-        .VarValue.ToString);
+        .Value.ToString);
     end;
   end;
   Result := ListComment.Text;

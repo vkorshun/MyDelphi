@@ -4,8 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, ComCtrls, Grids, DBGridEh, DBGridEhVk, DB, StdCtrls, BtnList,
-  EditContext, ImgList, IniFiles, fasapi, DateVk, fmVkDocDialog, GridsEh, varlist,
+  Dialogs, ExtCtrls, ComCtrls, Grids, DBGridEh, DBGridEhVk, DB, StdCtrls,
+  EditContext, ImgList, IniFiles, fasapi, DateVk, fmVkDocDialog, GridsEh, doc.variablelist,
   DBGridEhGrouping, dm_mikkoserver, Menus, ToolWin, ActnMan, ActnCtrls,
   PlatformDefaultStyleActnCtrls, ActnList, ActionManagerDescription, ToolCtrlsEh, DBGridEhToolCtrls,
   DynVarsEh, DBAxisGridsEh, System.Actions, EhLibVCL;
@@ -321,7 +321,7 @@ begin
   Result := False;
   FmLogin := TVkDocDialogFm.Create(Application);
   try
-    FmLogin.NewControl(ieEdit,'Пароль',20,'edpassword');
+    FmLogin.NewControl(TEdit,'Пароль',20,'edpassword');
     FmLogin.DoCenter(nil);
     while not Result do
     with FmLogin do

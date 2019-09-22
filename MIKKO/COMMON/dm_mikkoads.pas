@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes, Ace, adsfunc, adstable, adsset, adscnnct, DB, adsdata,
   IniFiles, Forms,Dialogs, DateVk, Controls, Windows,  mikko_consts, doc.variablelist,
-  docdialog.fm_docdialog, variants,Generics.Collections, DbClient, RtcInfo,RtcDb;
+  fmVkDocdialog, variants,Generics.Collections, DbClient, RtcInfo,RtcDb;
 
 
 const
@@ -227,11 +227,11 @@ begin
       if ind >-1 then
       begin
         case NewRow.FieldType[NewRow.FieldName[i]] of
-          ft_FMTBcd:    aVarList[ind].InitValue := NewRow.FieldByName(NewRow.FieldName[i]).AsFloat;
-          ft_Bcd:       aVarList[ind].InitValue := NewRow.FieldByName(NewRow.FieldName[i]).AsInteger;
+          ft_FMTBcd:    aVarList.Items[ind].InitValue := NewRow.FieldByName(NewRow.FieldName[i]).AsFloat;
+          ft_Bcd:       aVarList.Items[ind].InitValue := NewRow.FieldByName(NewRow.FieldName[i]).AsInteger;
         else
           try
-            aVarList[ind].InitValue := NewRow.FieldByName(NewRow.FieldName[i]).Value;
+            aVarList.Items[ind].InitValue := NewRow.FieldByName(NewRow.FieldName[i]).Value;
           except
             {$IFNDEF APP_SERVICE}
             ShowMessage((' error in InitVariable i = '+IntToStr(i)));
@@ -256,11 +256,11 @@ begin
       if ind >-1 then
       begin
         case Fields[i].DataType of
-          ftFMTBcd:    aVarList[ind].InitValue := Fields[i].AsFloat;
-          ftBcd:       aVarList[ind].InitValue := Fields[i].AsInteger;
+          ftFMTBcd:    aVarList.Items[ind].InitValue := Fields[i].AsFloat;
+          ftBcd:       aVarList.Items[ind].InitValue := Fields[i].AsInteger;
         else
           try
-            aVarList[ind].InitValue := Fields[i].Value;
+            aVarList.Items[ind].InitValue := Fields[i].Value;
           except
             {$IFNDEF APP_SERVICE}
             ShowMessage((' error in InitVariable i = '+IntToStr(i)));
@@ -278,9 +278,9 @@ var i,k: Integer;
 begin
   for I := 0 to aSource.Count-1 do
   begin
-    k := aDestination.IndexOf(aSource[i].name);
+    k := aDestination.IndexOf(aSource.Items[i].name);
     if k>-1 then
-      aDestination[k].Value := aSource[i].Value;
+      aDestination.Items[k].Value := aSource.Items[i].Value;
   end;
 end;
 
@@ -395,7 +395,7 @@ begin
 
       aVarList.Add(Fields[i].FieldName,defvalue,Fields[i].DataType,True);
       if bInit then
-         aVarList[i].InitValue := Fields[i].Value;
+         aVarList.Items[i].InitValue := Fields[i].Value;
     end;
   end;
 end;
@@ -760,7 +760,7 @@ begin
         ind := aVarList.IndexOf(Fields[i].FieldName) ;
         if ind>-1 then
          try
-            aVarList[ind].Value := Fields[i].Value;
+            aVarList.Items[ind].Value := Fields[i].Value;
          except
            //{$IFNDEF APP_SERVICE}
            //ShowMessage('Name '+Fields[i].FieldName+', Index - '+IntToStr(ind));
@@ -796,9 +796,9 @@ begin
         if ind>-1 then
          try
 //            if NewRow.asCode[OldRow.FieldName[i]]= OldRow.asCode[OldRow.FieldName[i]] then
-            if aVarList[ind].Value<>NewRow.FieldByName(OldRow.FieldName[i]).Value then
+            if aVarList.Items[ind].Value<>NewRow.FieldByName(OldRow.FieldName[i]).Value then
             begin
-              aVarList[ind].Value := NewRow.FieldByName(OldRow.FieldName[i]).Value;
+              aVarList.Items[ind].Value := NewRow.FieldByName(OldRow.FieldName[i]).Value;
             end;
          except
            //{$IFNDEF APP_SERVICE}
@@ -829,7 +829,7 @@ begin
     begin
       ind := aVarList.IndexOf(Fields[i].FieldName) ;
       if ind>-1 then
-        aVarList[ind].Value := Fields[i].Value;
+        aVarList.Items[ind].Value := Fields[i].Value;
     end;
   end;
 end;
@@ -1110,10 +1110,10 @@ begin
   begin
     for I := 0 to aFields.Count - 1 do
     begin
-      if aFields[i].IsLinkField then
+      if aFields.Items[i].IsLinkField then
       begin
-        Result := Result+' Поле :'+ aFields[i].name+#13;
-        Result := Result+' Новое значение ='+ CoalEsce(aFields[i].AsString,'')+#13#13;
+        Result := Result+' Поле :'+ aFields.Items[i].name+#13;
+        Result := Result+' Новое значение ='+ CoalEsce(aFields.Items[i].AsString,'')+#13#13;
       end;
     end;
   end
@@ -1122,11 +1122,11 @@ begin
     for k := 0 to UpdateList.Count - 1 do
     begin
       i := aFields.IndexOf(UpdateList[k]);
-      if aFields[i].IsLinkField then
+      if aFields.Items[i].IsLinkField then
       begin
-        Result := Result+' Поле :'+ aFields[i].name+#13;
-        Result := Result+' Новое значение ='+ CoalEsce(aFields[i].AsString,'')+#13;
-        Result := Result+' Прежнее значение ='+ aFields[i].GetInitValueAsString+#13#13;
+        Result := Result+' Поле :'+ aFields.Items[i].name+#13;
+        Result := Result+' Новое значение ='+ CoalEsce(aFields.Items[i].AsString,'')+#13;
+        Result := Result+' Прежнее значение ='+ aFields.Items[i].InitValue.AsString+#13#13;
       end;
     end;
   end;
@@ -1183,23 +1183,23 @@ begin
       SQL.Add(' (');
       for i := 0 to aFields.Count - 1 do
       begin
-        if aFields[i].IsLinkField then
+        if aFields.Items[i].IsLinkField then
         begin
           if i>0 then
            SQL.Add(',');
-          SQL.Add(aFields[i].name);
+          SQL.Add(aFields.Items[i].name);
         end;
       end;
       SQL.Add(')');
       SQL.Add(' VALUES(');
       for i := 0 to aFields.Count - 1 do
       begin
-        if aFields[i].IsLinkField then
+        if aFields.Items[i].IsLinkField then
         begin
           if i>0 then
             SQL.Add(',');
-          SQL.Add(':'+aFields[i].name);
-          UpdateList.Add(aFields[i].name);
+          SQL.Add(':'+aFields.Items[i].name);
+          UpdateList.Add(aFields.Items[i].name);
         end;
       end;
       SQL.Add(')') ;
@@ -1218,7 +1218,7 @@ begin
           begin
             if i>0 then
               SQL.Add(',');
-            if aFields[i].IsDelta then
+            if aFields.Items[i].IsDelta then
               SQL.Add( UpdateList[i]+' = '+UpdateList[i]+ '+:'+UpdateList[i])
             else
               SQL.Add( UpdateList[i]+' = :'+UpdateList[i]);
@@ -1238,31 +1238,31 @@ begin
     for k := 0 to UpdateList.Count - 1 do
     begin
       i := aFields.IndexOf(UpdateList[k]);
-      if aFields[i].IsLinkField then
+      if aFields.Items[i].IsLinkField then
       try
-        if  aFields[i].DataType = ftFloat then
-           paramByname(aFields[i].name).Value := aFields[i].AsExtended
+        if  aFields.Items[i].DataType = ftFloat then
+           paramByname(aFields.Items[i].name).Value := aFields.Items[i].AsExtended
         else
-        if  aFields[i].DataType = ftString then
-           paramByname(aFields[i].name).Value := aFields[i].AsString
+        if  aFields.Items[i].DataType = ftString then
+           paramByname(aFields.Items[i].name).Value := aFields.Items[i].AsString
         else
-        if  aFields[i].DataType = ftDate then
-           if CoalEsce(aFields[i].AsDateTime,0)=0 then
-             ParamByname(aFields[i].name).Clear
+        if  aFields.Items[i].DataType = ftDate then
+           if CoalEsce(aFields.Items[i].AsDateTime,0)=0 then
+             ParamByname(aFields.Items[i].name).Clear
            else
-             ParamByname(aFields[i].name).AsDateTime := aFields[i].AsDateTime
+             ParamByname(aFields.Items[i].name).AsDateTime := aFields.Items[i].AsDateTime
         else
-        if  aFields[i].DataType = ftBoolean then
-           paramByname(aFields[i].name).Value := aFields[i].AsBoolean
+        if  aFields.Items[i].DataType = ftBoolean then
+           paramByname(aFields.Items[i].name).Value := aFields.Items[i].AsBoolean
         else
-        if  (aFields[i].DataType = ftInteger) or (aFields[i].DataType = ftSmallInt) then
-           paramByname(aFields[i].name).Value := aFields[i].AsInteger
+        if  (aFields.Items[i].DataType = ftInteger) or (aFields.Items[i].DataType = ftSmallInt) then
+           paramByname(aFields.Items[i].name).Value := aFields.Items[i].AsInteger
         else
-           paramByname(aFields[i].name).Value := aFields[i].Value;
+           paramByname(aFields.Items[i].name).Value := aFields.Items[i].Value;
 
       except
         {$IFNDEF APP_SERVICE}
-          ShowMessage(' Error - '+aFields[i].name);
+          ShowMessage(' Error - '+aFields.Items[i].name);
         {$ENDIF}
         Raise;
       end;
@@ -1429,13 +1429,13 @@ var i: Integer;
 begin
   for I := 0 to aVarList.Count-1 do
   begin
-    f := aDs.FindField(aVarList[i].name);
+    f := aDs.FindField(aVarList.Items[i].name);
     if Assigned(f) then
     begin
       if f.DataType= ftInteger then
-        f.AsInteger := avarList[i].AsInteger
+        f.AsInteger := avarList.Items[i].AsInteger
       else
-        f.Value := aVarList[i].Value;
+        f.Value := aVarList.Items[i].Value;
     end;
   end;
 end;

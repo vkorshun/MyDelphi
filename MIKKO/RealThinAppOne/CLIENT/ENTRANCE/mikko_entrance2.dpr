@@ -23,7 +23,8 @@ uses
   dm_entrancemikkoclient in '..\MIKKOSERVER\dm_entrancemikkoclient.pas' {DmEntranceMikkoClient: TDataModule},
   SoundPlayerEntrance in 'SOUNDS\SoundPlayerEntrance.pas',
   sotrudinfo in 'sotrudinfo.pas',
-  FmAdditionalTest in 'FmAdditionalTest.pas' {AdditionalTestFm};
+  FmAdditionalTest in 'FmAdditionalTest.pas' {AdditionalTestFm},
+  fm_setfilter in '..\..\..\COMMON\fm_setfilter.pas' {FmSetFilter};
 
 {$R *.res}
 var
@@ -39,6 +40,7 @@ begin
       //if DmMikkoServer.nInterface<>2 then
 //      Application.CreateForm(TDmMikkoServer, DmMikkoServer);
       Application.CreateForm(TFmmikko_entrance, Fmmikko_entrance);
+  Application.CreateForm(TFmSetFilter, FmSetFilter);
   {else
       begin
         Application.CreateForm(TDmRegisterFingerPrint, DmRegisterFingerPrint);

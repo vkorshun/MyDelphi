@@ -1246,13 +1246,13 @@ BEGIN
 	System_SysConst_SDiskFull,	L"Disk full"
 END
 
-/* c:\program files (x86)\embarcadero\studio\14.0\lib\Win32\release\Controls.res */
-/* c:\program files (x86)\embarcadero\studio\14.0\lib\Win32\release\Buttons.res */
-/* c:\program files (x86)\embarcadero\studio\14.0\lib\Win32\release\ExtDlgs.res */
+/* C:\Program Files (x86)\Embarcadero\Studio\14.0\lib\win32\release\Controls.res */
+/* C:\Program Files (x86)\Embarcadero\Studio\14.0\lib\win32\release\Buttons.res */
+/* C:\Program Files (x86)\Embarcadero\Studio\14.0\lib\win32\release\ExtDlgs.res */
 /* C:\THIRDLIB.XE6\VKLIB\vkdialogs\ActionManagerDescription.res */
-/* c:\program files (x86)\embarcadero\studio\14.0\lib\Win32\release\Vcl.DBLogDlg.dfm */
-/* c:\program files (x86)\embarcadero\studio\14.0\lib\Win32\release\Vcl.DBPWDlg.dfm */
-/* c:\program files (x86)\embarcadero\studio\14.0\lib\Win32\release\DBCtrls.res */
+/* C:\Program Files (x86)\Embarcadero\Studio\14.0\lib\win32\release\Vcl.DBLogDlg.dfm */
+/* C:\Program Files (x86)\Embarcadero\Studio\14.0\lib\win32\release\Vcl.DBPWDlg.dfm */
+/* C:\Program Files (x86)\Embarcadero\Studio\14.0\lib\win32\release\DBCtrls.res */
 /* C:\THIRDLIB.XE6\EhLib\Lib\EhLibLangConsts.dfm */
 /* C:\THIRDLIB.XE6\EhLib\Lib\PictureEditFormsEh.dfm */
 /* C:\THIRDLIB.XE6\EhLib\Lib\MemoEditFormsEh.dfm */
@@ -1267,12 +1267,11 @@ END
 /* C:\THIRDLIB.XE6\EhLib\Lib\DBGridFilterDropDownFormsEh.dfm */
 /* C:\THIRDLIB.XE6\VKLIB\vkdialogs\wait.res */
 /* C:\THIRDLIB.XE6\VKLIB\vkdialogs\fm_wait.dfm */
-/* c:\program files (x86)\embarcadero\studio\14.0\lib\Win32\release\DBGrids.res */
+/* C:\Program Files (x86)\Embarcadero\Studio\14.0\lib\win32\release\DBGrids.res */
 /* C:\THIRDLIB.XE6\TXLSFILE\Source\XLSExportComp.dcr */
 /* C:\THIRDLIB.XE6\VKLIB\mycomponents\DbGridEhVk\fm_find.dfm */
 /* C:\THIRDLIB.XE6\VKLIB\mycomponents\DbGridEhVk\DBGridEhVk.res */
-/* C:\THIRDLIB.XE6\VKLIB\mycomponents\vkdialogs\fm_setfilter.dfm */
-/* C:\THIRDLIB.XE6\VKLIB\mycomponents\vkdialogs\btnlist.res */
+/* D:\DELPHI_XE6\MyDelphi\MIKKO\COMMON\fm_setfilter.dfm */
 /* C:\THIRDLIB.XE6\VKLIB\vkdialogs\DOC\fmVkDocDialog.DFM */
 /* C:\THIRDLIB.XE6\VKLIB\vkdialogs\fm_alert.dfm */
 /* C:\THIRDLIB.XE6\SynEdit\Source\SynEdit.res */
