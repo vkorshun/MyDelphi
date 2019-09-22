@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.504,=D:\MIKKO.XE2\RealThinAppOne\CLIENT\FUTRONIC\ftrscanapi.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.754,D:\MIKKO.XE2\RealThinAppOne\SERVER\AppOneRtc.dproj=C:\Users\vk\Documents\RAD Studio\Projects\Project28.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.772,D:\MIKKO.XE2\RealThinAppOne\SERVER\dm_personalentrance.pas=D:\MIKKO.XE2\RealThinAppOne\SERVER\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.840,D:\MIKKO.XE2\RealThinAppOne\CLIENT\MIKKOSERVER\dm_entrancemikkoclient.dfm=D:\MIKKO.XE2\RealThinAppOne\SERVER\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.772,D:\MIKKO.XE2\RealThinAppOne\SERVER\dm_personalentrance.dfm=D:\MIKKO.XE2\RealThinAppOne\SERVER\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.928,D:\MIKKO.XE2\RealThinAppOne\SERVER\dm_EntranceMethodsMikko.dfm=D:\MIKKO.XE2\RealThinAppOne\SERVER\dm_EntranseMethodsMikko.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.287,=D:\MIKKO.XE2\RealThinAppOne\SERVER\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.878,D:\MIKKO.XE2\RealThinAppOne\SERVER\fm_appone.dfm=C:\Users\vk\Documents\RAD Studio\Projects\Unit28.dfm</Transaction>
+  </Transactions>
+	<ProjectSortOrder AutoSort="0" SortType="0">
+    <File Path="fm_appone.pas"/>
+    <File Path="fm_appone.dfm"/>
+    <File Path="dm_entrance.pas"/>
+    <File Path="dm_entrance.dfm"/>
+    <File Path="dm_EntranceMethodsMikko.pas"/>
+    <File Path="dm_EntranceMethodsMikko.dfm"/>
+    <File Path="..\..\RealThinAppOne"/>
+    <File Path="..\CLIENT"/>
+    <File Path="..\CLIENT\FUTRONIC"/>
+    <File Path="..\CLIENT\FUTRONIC\fasapi.pas"/>
+    <File Path="..\CLIENT\FUTRONIC\ftrapi.pas"/>
+    <File Path="..\CLIENT\FUTRONIC\ftrscanapi.pas"/>
+    <File Path="..\..\..\MIKKO"/>
+    <File Path="..\..\COMMON"/>
+    <File Path="..\..\COMMON\dm_client.pas"/>
+    <File Path="..\..\COMMON\dm_client.dfm"/>
+    <File Path="..\..\COMMON\dm_mikkoads.pas"/>
+    <File Path="..\..\COMMON\dm_mikkoads.dfm"/>
+    <File Path="..\..\COMMON\fm_login.pas"/>
+    <File Path="..\..\COMMON\fm_login.dfm"/>
+    <File Path="..\..\COMMON\mikko_consts.pas"/>
+    <File Path="dm_personalentrance.pas"/>
+    <File Path="dm_personalentrance.dfm"/>
+  </ProjectSortOrder>
+</BorlandProject>

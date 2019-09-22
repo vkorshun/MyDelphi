@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{B3279D49-4492-40D3-9C80-C52F77498DE5}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="RemoteEntranceServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="AppOneRtc.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\CLIENT\REMOTEFINGERPRINT\remotefingerprint.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="RemoteEntranceServer">
+        <MSBuild Projects="RemoteEntranceServer.dproj"/>
+    </Target>
+    <Target Name="RemoteEntranceServer:Clean">
+        <MSBuild Projects="RemoteEntranceServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="RemoteEntranceServer:Make">
+        <MSBuild Projects="RemoteEntranceServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="AppOneRtc">
+        <MSBuild Projects="AppOneRtc.dproj"/>
+    </Target>
+    <Target Name="AppOneRtc:Clean">
+        <MSBuild Projects="AppOneRtc.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="AppOneRtc:Make">
+        <MSBuild Projects="AppOneRtc.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="remotefingerprint">
+        <MSBuild Projects="..\CLIENT\REMOTEFINGERPRINT\remotefingerprint.dproj"/>
+    </Target>
+    <Target Name="remotefingerprint:Clean">
+        <MSBuild Projects="..\CLIENT\REMOTEFINGERPRINT\remotefingerprint.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="remotefingerprint:Make">
+        <MSBuild Projects="..\CLIENT\REMOTEFINGERPRINT\remotefingerprint.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="RemoteEntranceServer;AppOneRtc;remotefingerprint"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="RemoteEntranceServer:Clean;AppOneRtc:Clean;remotefingerprint:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="RemoteEntranceServer:Make;AppOneRtc:Make;remotefingerprint:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

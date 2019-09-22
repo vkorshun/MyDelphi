@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2008.07.04 12:39:35.562.pas,C:\Documents and Settings\vk\Мои документы\Borland Studio Projects\Unit1.pas=D:\mikko_delphi\FINGERPRINT\READ_FINGERPRINT\fm_readfingerprint.pas</Transaction>
+    <Transaction>2008.07.04 12:39:35.562.dfm,C:\Documents and Settings\vk\Мои документы\Borland Studio Projects\Unit1.dfm=D:\mikko_delphi\FINGERPRINT\READ_FINGERPRINT\fm_readfingerprint.dfm</Transaction>
+    <Transaction>2008.07.04 12:39:44.781.bdsproj,C:\Documents and Settings\vk\Мои документы\Borland Studio Projects\Project1.bdsproj=D:\mikko_delphi\FINGERPRINT\READ_FINGERPRINT\ReadFingerPrint.bdsproj</Transaction>
+    <Transaction>2008.07.04 12:42:50.078.pas,D:\mikko_delphi\FINGERPRINT\READ_FINGERPRINT\Unit1.pas=D:\mikko_delphi\FINGERPRINT\READ_FINGERPRINT\fingerprintreader.pas</Transaction>
+  </Transactions>
+</BorlandProject>

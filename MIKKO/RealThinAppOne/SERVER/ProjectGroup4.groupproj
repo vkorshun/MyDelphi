@@ -1,0 +1,36 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{E80E06F5-F1AB-492D-A58B-19F8AB2F51BF}</ProjectGuid>
+		</PropertyGroup>
+		<ItemGroup>
+			<Projects Include="MikkoServer.dproj">
+				<Dependencies/>
+			</Projects>
+		</ItemGroup>
+		<ProjectExtensions>
+			<Borland.Personality>Default.Personality.12</Borland.Personality>
+			<Borland.ProjectType/>
+			<BorlandProject>
+				<Default.Personality/>
+			</BorlandProject>
+		</ProjectExtensions>
+		<Target Name="MikkoServer">
+			<MSBuild Projects="MikkoServer.dproj"/>
+		</Target>
+		<Target Name="MikkoServer:Clean">
+			<MSBuild Projects="MikkoServer.dproj" Targets="Clean"/>
+		</Target>
+		<Target Name="MikkoServer:Make">
+			<MSBuild Projects="MikkoServer.dproj" Targets="Make"/>
+		</Target>
+		<Target Name="Build">
+			<CallTarget Targets="MikkoServer"/>
+		</Target>
+		<Target Name="Clean">
+			<CallTarget Targets="MikkoServer:Clean"/>
+		</Target>
+		<Target Name="Make">
+			<CallTarget Targets="MikkoServer:Make"/>
+		</Target>
+		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+	</Project>

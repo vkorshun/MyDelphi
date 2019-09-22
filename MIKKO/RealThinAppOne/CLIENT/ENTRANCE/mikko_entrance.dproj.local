@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.dfm,D:\mikko2009\pro\FINGERPRINT\MIKKO_ENTRANCE\fm_waitbarcode.dfm=D:\mikko2009\pro\FINGERPRINT\MIKKO_ENTRANCE\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.398,D:\MIKKO.XE2\APPONE\CLIENT\MIKKOSERVER\dm_mikkoserver.dfm=D:\MIKKO.XE2\APPONE\CLIENT\ENTRANCE\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.dfm,D:\mikko2009\pro\FINGERPRINT\MIKKO_ENTRANCE\fm_graphics.dfm=D:\mikko2009\pro\FINGERPRINT\MIKKO_ENTRANCE\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.pas,D:\mikko2009\pro\FINGERPRINT\MIKKO_ENTRANCE\fm_waitbarcode.pas=D:\mikko2009\pro\FINGERPRINT\MIKKO_ENTRANCE\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.pas,D:\mikko2009\pro\FINGERPRINT\MIKKO_ENTRANCE\fm_graphics.pas=D:\mikko2009\pro\FINGERPRINT\MIKKO_ENTRANCE\Unit1.pas</Transaction>
+  </Transactions>
+</BorlandProject>

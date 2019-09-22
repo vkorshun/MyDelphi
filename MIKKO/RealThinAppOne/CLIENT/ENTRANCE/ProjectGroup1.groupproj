@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{FE0F190C-959B-46E8-8A38-B67BDAC4B348}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="mikko_entrance2.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\SERVER\RemoteEntranceServer.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="mikko_entrance2">
+        <MSBuild Projects="mikko_entrance2.dproj"/>
+    </Target>
+    <Target Name="mikko_entrance2:Clean">
+        <MSBuild Projects="mikko_entrance2.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="mikko_entrance2:Make">
+        <MSBuild Projects="mikko_entrance2.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="RemoteEntranceServer">
+        <MSBuild Projects="..\..\SERVER\RemoteEntranceServer.dproj"/>
+    </Target>
+    <Target Name="RemoteEntranceServer:Clean">
+        <MSBuild Projects="..\..\SERVER\RemoteEntranceServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="RemoteEntranceServer:Make">
+        <MSBuild Projects="..\..\SERVER\RemoteEntranceServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="mikko_entrance2;RemoteEntranceServer"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="mikko_entrance2:Clean;RemoteEntranceServer:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="mikko_entrance2:Make;RemoteEntranceServer:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

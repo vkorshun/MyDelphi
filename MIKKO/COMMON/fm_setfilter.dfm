@@ -1,0 +1,40 @@
+object FmSetFilter: TFmSetFilter
+  Left = 0
+  Top = 0
+  BorderStyle = bsDialog
+  Caption = #1042#1099#1073#1086#1088' '#1092#1080#1083#1100#1090#1088#1072
+  ClientHeight = 188
+  ClientWidth = 152
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poOwnerFormCenter
+  OnCreate = FormCreate
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object ListBox1: TListBox
+    Left = 0
+    Top = 0
+    Width = 152
+    Height = 188
+    Margins.Left = 2
+    Margins.Top = 2
+    Margins.Right = 2
+    Margins.Bottom = 2
+    Align = alClient
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Arial'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 0
+    OnDblClick = ListBox1DblClick
+    OnKeyDown = ListBox1KeyDown
+  end
+end

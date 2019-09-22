@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.554,C:\Users\vk\Documents\RAD Studio\Projects\ProjectGroup4.groupproj=D:\MIKKO.XE2\RealThinAppOne\SERVER\ProjectGroup4.groupproj</Transaction>
+  </Transactions>
+	<Default.Personality>
+		<Projects ActiveProject="D:\MIKKO.XE2\RealThinAppOne\SERVER\MikkoServer.dproj"/>
+	</Default.Personality>
+</BorlandProject>

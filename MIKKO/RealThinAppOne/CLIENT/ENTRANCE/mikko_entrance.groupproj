@@ -1,0 +1,36 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{FAED3C06-DD06-4887-990C-F7B71EDB1B93}</ProjectGuid>
+		</PropertyGroup>
+		<ItemGroup>
+			<Projects Include="mikko_entrance.dproj">
+				<Dependencies/>
+			</Projects>
+		</ItemGroup>
+		<ProjectExtensions>
+			<Borland.Personality>Default.Personality.12</Borland.Personality>
+			<Borland.ProjectType/>
+			<BorlandProject>
+				<Default.Personality/>
+			</BorlandProject>
+		</ProjectExtensions>
+		<Target Name="mikko_entrance">
+			<MSBuild Projects="mikko_entrance.dproj"/>
+		</Target>
+		<Target Name="mikko_entrance:Clean">
+			<MSBuild Projects="mikko_entrance.dproj" Targets="Clean"/>
+		</Target>
+		<Target Name="mikko_entrance:Make">
+			<MSBuild Projects="mikko_entrance.dproj" Targets="Make"/>
+		</Target>
+		<Target Name="Build">
+			<CallTarget Targets="mikko_entrance"/>
+		</Target>
+		<Target Name="Clean">
+			<CallTarget Targets="mikko_entrance:Clean"/>
+		</Target>
+		<Target Name="Make">
+			<CallTarget Targets="mikko_entrance:Make"/>
+		</Target>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')" Project="$(BDS)\Bin\CodeGear.Group.Targets"/>
+	</Project>
