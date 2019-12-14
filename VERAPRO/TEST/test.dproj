@@ -94,6 +94,11 @@
         <DCCReference Include="..\COMPONENTS\FIBPROVIDER\fbdatabase.pas"/>
         <DCCReference Include="..\COMPONENTS\FIBPROVIDER\FIbLib.pas"/>
         <DCCReference Include="..\COMPONENTS\FIBPROVIDER\fbresultset.pas"/>
+        <DCCReference Include="..\COMPONENTS\DmFibApi.pas">
+            <Form>FibApiDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

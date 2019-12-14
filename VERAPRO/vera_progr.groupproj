@@ -21,6 +21,24 @@
         <Projects Include="TEST\websocket_client.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="C:\THIRDLIB.XE6\RealThinClient\QuickStart\WebSockClient\WSockCliTest.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="CLIENT\LEDAPRAVO\ledapravo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="SERVER\LEDAPRAVO\ledapravoSrv.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="C:\THIRDLIB.XE6\VKLIB\mycomponents\DbGridEhVk\dbgridehvkd_xe6.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="C:\THIRDLIB.XE6\VKLIB\vklib_xe6.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="C:\THIRDLIB.XE6\VKLIB\vkdialogs\vkdialogs_xe6.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -83,14 +101,68 @@
     <Target Name="websocket_client:Make">
         <MSBuild Projects="TEST\websocket_client.dproj" Targets="Make"/>
     </Target>
+    <Target Name="WSockCliTest">
+        <MSBuild Projects="C:\THIRDLIB.XE6\RealThinClient\QuickStart\WebSockClient\WSockCliTest.dproj"/>
+    </Target>
+    <Target Name="WSockCliTest:Clean">
+        <MSBuild Projects="C:\THIRDLIB.XE6\RealThinClient\QuickStart\WebSockClient\WSockCliTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="WSockCliTest:Make">
+        <MSBuild Projects="C:\THIRDLIB.XE6\RealThinClient\QuickStart\WebSockClient\WSockCliTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ledapravo">
+        <MSBuild Projects="CLIENT\LEDAPRAVO\ledapravo.dproj"/>
+    </Target>
+    <Target Name="ledapravo:Clean">
+        <MSBuild Projects="CLIENT\LEDAPRAVO\ledapravo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ledapravo:Make">
+        <MSBuild Projects="CLIENT\LEDAPRAVO\ledapravo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ledapravoSrv">
+        <MSBuild Projects="SERVER\LEDAPRAVO\ledapravoSrv.dproj"/>
+    </Target>
+    <Target Name="ledapravoSrv:Clean">
+        <MSBuild Projects="SERVER\LEDAPRAVO\ledapravoSrv.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ledapravoSrv:Make">
+        <MSBuild Projects="SERVER\LEDAPRAVO\ledapravoSrv.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dbgridehvkd_xe6">
+        <MSBuild Projects="C:\THIRDLIB.XE6\VKLIB\mycomponents\DbGridEhVk\dbgridehvkd_xe6.dproj"/>
+    </Target>
+    <Target Name="dbgridehvkd_xe6:Clean">
+        <MSBuild Projects="C:\THIRDLIB.XE6\VKLIB\mycomponents\DbGridEhVk\dbgridehvkd_xe6.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dbgridehvkd_xe6:Make">
+        <MSBuild Projects="C:\THIRDLIB.XE6\VKLIB\mycomponents\DbGridEhVk\dbgridehvkd_xe6.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="vklib_xe6">
+        <MSBuild Projects="C:\THIRDLIB.XE6\VKLIB\vklib_xe6.dproj"/>
+    </Target>
+    <Target Name="vklib_xe6:Clean">
+        <MSBuild Projects="C:\THIRDLIB.XE6\VKLIB\vklib_xe6.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="vklib_xe6:Make">
+        <MSBuild Projects="C:\THIRDLIB.XE6\VKLIB\vklib_xe6.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="vkdialogs_xe6">
+        <MSBuild Projects="C:\THIRDLIB.XE6\VKLIB\vkdialogs\vkdialogs_xe6.dproj"/>
+    </Target>
+    <Target Name="vkdialogs_xe6:Clean">
+        <MSBuild Projects="C:\THIRDLIB.XE6\VKLIB\vkdialogs\vkdialogs_xe6.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="vkdialogs_xe6:Make">
+        <MSBuild Projects="C:\THIRDLIB.XE6\VKLIB\vkdialogs\vkdialogs_xe6.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="testsuite;test;fbintf;UIBD_XE6D;UIBD_XE6R;websocket_client"/>
+        <CallTarget Targets="testsuite;test;fbintf;UIBD_XE6D;UIBD_XE6R;websocket_client;WSockCliTest;ledapravo;ledapravoSrv;dbgridehvkd_xe6;vklib_xe6;vkdialogs_xe6"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="testsuite:Clean;test:Clean;fbintf:Clean;UIBD_XE6D:Clean;UIBD_XE6R:Clean;websocket_client:Clean"/>
+        <CallTarget Targets="testsuite:Clean;test:Clean;fbintf:Clean;UIBD_XE6D:Clean;UIBD_XE6R:Clean;websocket_client:Clean;WSockCliTest:Clean;ledapravo:Clean;ledapravoSrv:Clean;dbgridehvkd_xe6:Clean;vklib_xe6:Clean;vkdialogs_xe6:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="testsuite:Make;test:Make;fbintf:Make;UIBD_XE6D:Make;UIBD_XE6R:Make;websocket_client:Make"/>
+        <CallTarget Targets="testsuite:Make;test:Make;fbintf:Make;UIBD_XE6D:Make;UIBD_XE6R:Make;websocket_client:Make;WSockCliTest:Make;ledapravo:Make;ledapravoSrv:Make;dbgridehvkd_xe6:Make;vklib_xe6:Make;vkdialogs_xe6:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

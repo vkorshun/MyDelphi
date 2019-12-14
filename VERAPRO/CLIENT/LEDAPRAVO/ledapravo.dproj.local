@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.917,D:\DELPHI_XE6\MyDelphi\VERAPRO\COMMON\DOCS\docManagerPanel.pas=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.158,=D:\DELPHI_XE6\MyDelphi\VERAPRO\COMMON\DOCS\docManagerPanel.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.115,=D:\DELPHI_XE6\MyDelphi\VERAPRO\COMMON\AppManager.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.408,=D:\DELPHI_XE6\MyDelphi\LIB\menustructure.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.237,=D:\DELPHI_XE6\MyDelphi\VERAPRO\COMMON\TABS\FrameTab.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.129,=D:\DELPHI_XE6\MyDelphi\VERAPRO\COMMON\systemconsts.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.422,=D:\DELPHI_XE6\MyDelphi\LIB\SettingsStorage.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.850,D:\DELPHI_XE6\MyDelphi\VERAPRO\COMMON\MENUSTRU\frameMenuStru.pas=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.215,C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit5.dfm=D:\DELPHI_XE6\MyDelphi\VERAPRO\CLIENT\LEDAPRAVO\FmMain.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.139,=D:\DELPHI_XE6\MyDelphi\VERAPRO\COMMON\MENUSTRU\frameMenuStru.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.009,=D:\DELPHI_XE6\MyDelphi\VERAPRO\COMMON\MENUSTRU\dmMenuStru.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.158,D:\DELPHI_XE6\MyDelphi\VERAPRO\COMMON\MENUSTRU\dmMenuStru.pas=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.210,=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.250,=D:\DELPHI_XE6\MyDelphi\VERAPRO\COMMON\TABS\tabManagerPanel.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.215,C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit5.pas=D:\DELPHI_XE6\MyDelphi\VERAPRO\CLIENT\LEDAPRAVO\FmMain.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.343,=D:\DELPHI_XE6\MyDelphi\VERAPRO\COMMON\RTC\RtcQueryDataSet.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.857,=D:\DELPHI_XE6\MyDelphi\VERAPRO\SERVER\COMMON\INTERFACE\commoninterface.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.214,C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Project5.dproj=D:\DELPHI_XE6\MyDelphi\VERAPRO\CLIENT\LEDAPRAVO\ledapravo.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.356,=D:\DELPHI_XE6\MyDelphi\VERAPRO\COMMON\RTC\RtcSqlQuery.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.438,=D:\DELPHI_XE6\MyDelphi\LIB\uLog.pas</Transaction>
+  </Transactions>
+</BorlandProject>

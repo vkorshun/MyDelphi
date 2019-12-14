@@ -10,7 +10,7 @@ const
    TR_READ_CONCURENCY_PARAMS:  array[0..2] of byte = (isc_tpb_concurrency,isc_tpb_nowait,isc_tpb_write);
 
 type
-  TFBDatabaseParams = class(TObject)
+  TFBDatabaseParams = class(TComponent)
   private
     FDbName: String;
     FUserName: String;
@@ -27,7 +27,7 @@ type
     property LibPath: String read FLibPath write FLibPath;
     property DefaultCharSet: String read FDefaultCharSet write FDefaultCharSet;
     property Role: String read FRole write FRole;
-    constructor Create;
+    constructor Create(AOwner:TComponent);
   end;
 
   TFBDatabase = class(TComponent)
@@ -113,6 +113,7 @@ end;
 
 constructor TFBDatabaseParams.Create;
 begin
+  Inherited;
   FSqlDialect := 3;
   FDefaultCharSet := 'UTF8';
 end;

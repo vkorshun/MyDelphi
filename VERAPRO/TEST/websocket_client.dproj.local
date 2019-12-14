@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
-  <Transactions>
-    <Transaction>2019.12.05 18:05:21.902,=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
-    <Transaction>2019.12.05 18:06:02.172,D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\FmWebSocketTest.dfm=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit6.dfm</Transaction>
-    <Transaction>2019.12.05 18:06:02.172,D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\FmWebSocketTest.pas=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
-    <Transaction>2019.12.05 18:06:15.411,D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\websocket_client.dproj=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Project5.dproj</Transaction>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.172,C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit6.dfm=D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\FmWebSocketTest.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.411,C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Project5.dproj=D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\websocket_client.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.902,=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.172,C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit6.pas=D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\FmWebSocketTest.pas</Transaction>
   </Transactions>
 </BorlandProject>

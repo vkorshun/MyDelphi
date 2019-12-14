@@ -1,9 +1,9 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{6DA7D51F-D5B1-4790-B091-8927BE661AE9}</ProjectGuid>
+        <ProjectGuid>{05DAC90A-422D-4CD4-B86D-419A49E852DF}</ProjectGuid>
         <ProjectVersion>15.4</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
-        <MainSource>websocket_client.dpr</MainSource>
+        <MainSource>ledapravo.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
@@ -42,7 +42,7 @@
     <PropertyGroup Condition="'$(Base)'!=''">
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
-        <SanitizedProjectName>websocket_client</SanitizedProjectName>
+        <SanitizedProjectName>ledapravo</SanitizedProjectName>
         <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
         <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
@@ -52,11 +52,11 @@
         <DCC_K>false</DCC_K>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-        <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_UsePackage>frxe20;frxIBX20;FireDACSqliteDriver;FlexCel_Core;FireDACDSDriver;xf40_d_xe6;DBXSqliteDriver;FireDACPgDriver;fmx;IndySystem;TeeDB;tethering;inetdbbde;vclib;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;VCL_FlexCel_Components_DESIGN;DbxCommonDriver;VCL_FlexCel_Components;vclimg;dbxcds;MetropolisUILiveTile;vklib_xe6;SynEdit_RXE6;tmsscripter_xe6;vcldb;vcldsnap;EhLibADODataDrivers200;fmxFireDAC;CustomIPTransport;vclribbon;dsnap;IndyIPServer;fbintf;dbgridehvkd_xe6;fmxase;vcl;IndyCore;EhLibBDEDataDrivers200;IndyIPCommon;CloudService;CodeSiteExpressPkg;FmxTeeUI;FireDACIBDriver;FIBPlus_D20;DataSnapFireDAC;FireDACDBXDriver;soapserver;inetdbxpress;frxTee20;fsTee20;fsIBX20;dsnapxml;FireDACInfxDriver;FireDACDb2Driver;EhLib200;UIBD_XE6R;EhLibIBXDataDrivers200;adortl;frxDB20;madBasic_;vkuib;FireDACASADriver;superobjects_xe6;rtcSDKXE6;bindcompfmx;frx20;fsADO20;vcldbx;frxIntIO20;FireDACODBCDriver;RESTBackendComponents;rtl;dbrtl;DbxClientDriver;FireDACCommon;bindcomp;inetdb;Tee;ControlsCepEx_xe6;vclFireDAC;FlexCel_Render;frxDBX20;madDisAsm_;xmlrtl;svnui;ibxpress;IndyProtocols;DBXMySQLDriver;attabs_package_delphi;FireDACCommonDriver;adsdxe6studio;bindengine;vclactnband;bindcompdbx;soaprtl;FMXTee;TeeUI;bindcompvcl;VCL_FlexCel_Core;FlexCel_Pdf;vkdialogs_xe6;vclie;vkfib200;madExcept_;FireDACADSDriver;vcltouch;VclSmp;FireDACMSSQLDriver;FireDAC;VCLRESTComponents;rtcSDK_DBAXE6;frxIntIOIndy20;vkcomponents_xe6;tmsscripterfmx_xe6;tmsscriptervcl_xe6;dsnapcon;fsDB20;inet;fmxobj;FireDACMySQLDriver;soapmidas;vclx;fs20;svn;FireDACOracleDriver;fmxdae;RESTComponents;synapseXE6;FlexCel_XlsAdapter;bdertl;EhLibDBXDataDrivers200;VirtualTreesR;FireDACMSAccDriver;dbexpress;frxADO20;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
@@ -71,10 +71,10 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <DCC_ExeOutput>..\RUN\WEBSOCKET\$(Platform)\$(Config)</DCC_ExeOutput>
-        <DCC_DcuOutput>..\DCU\WEBSOCKET\$(Platform)\$(Config)</DCC_DcuOutput>
-        <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_DcuOutput>..\..\RUN\LEDAPRAVO\DCU\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_ExeOutput>..\..\RUN\LEDAPRAVO\$(Platform)\$(Config)</DCC_ExeOutput>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -87,10 +87,24 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="FmWebSocketTest.pas">
-            <Form>MainFnWSTest</Form>
+        <DCCReference Include="FmMain.pas">
+            <Form>MainFm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="..\..\COMMON\AppManager.pas"/>
+        <DCCReference Include="..\..\COMMON\systemconsts.pas"/>
+        <DCCReference Include="..\..\COMMON\TABS\FrameTab.pas">
+            <Form>TabFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\COMMON\TABS\tabManagerPanel.pas"/>
+        <DCCReference Include="..\..\..\LIB\menustructure.pas"/>
+        <DCCReference Include="..\..\..\LIB\SettingsStorage.pas"/>
+        <DCCReference Include="..\..\..\LIB\uLog.pas"/>
+        <DCCReference Include="..\..\COMMON\RTC\RtcQueryDataSet.pas"/>
+        <DCCReference Include="..\..\COMMON\RTC\RtcSqlQuery.pas"/>
+        <DCCReference Include="..\..\SERVER\COMMON\INTERFACE\commoninterface.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -109,7 +123,7 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">websocket_client.dpr</Source>
+                    <Source Name="MainSource">ledapravo.dpr</Source>
                 </Source>
                 <Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\EhLib200.bpl">EhLib 9.4</Excluded_Packages>
