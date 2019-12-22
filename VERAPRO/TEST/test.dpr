@@ -3,10 +3,13 @@ program test;
 uses
   Vcl.Forms,
   FmTest in 'FmTest.pas' {Form5},
-  fbdatabase in '..\COMPONENTS\FIBPROVIDER\fbdatabase.pas',
+  fbapidatabase in '..\COMPONENTS\FIBPROVIDER\fbapidatabase.pas',
   FIbLib in '..\COMPONENTS\FIBPROVIDER\FIbLib.pas',
   fbresultset in '..\COMPONENTS\FIBPROVIDER\fbresultset.pas',
-  DmFibApi in '..\COMPONENTS\DmFibApi.pas' {FibApiDm: TDataModule};
+  DmFibApi in '..\COMPONENTS\DmFibApi.pas' {FibApiDm: TDataModule},
+  VkUIBDataset in '..\COMPONENTS\FIBPROVIDER\VkUIBDataset.pas',
+  VkUib in '..\COMPONENTS\FIBPROVIDER\VkUib.pas',
+  fbapitransaction in '..\COMPONENTS\FIBPROVIDER\fbapitransaction.pas';
 
 {$R *.res}
 

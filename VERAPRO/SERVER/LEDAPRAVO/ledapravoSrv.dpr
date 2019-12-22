@@ -9,9 +9,11 @@ uses
   DmRtcObjects in '..\COMMON\DmRtcObjects.pas' {RtcObjectsDm: TDataModule},
   DmRtcUseMonth in '..\COMMON\DmRtcUseMonth.pas' {RtcUseMonthDm: TDataModule},
   uRtcDmList in '..\COMMON\uRtcDmList.pas',
-  fbdatabase in '..\..\COMPONENTS\FIBPROVIDER\fbdatabase.pas',
+  fbapidatabase in '..\..\COMPONENTS\FIBPROVIDER\fbapidatabase.pas',
   DmMain in '..\COMMON\DmMain.pas' {MainDm: TDataModule},
-  SettingsStorage in '..\..\..\LIB\SettingsStorage.pas';
+  SettingsStorage in '..\..\..\LIB\SettingsStorage.pas',
+  fbapitransaction in '..\..\COMPONENTS\FIBPROVIDER\fbapitransaction.pas',
+  fbapiquery in '..\..\COMPONENTS\FIBPROVIDER\fbapiquery.pas';
 
 {$R *.res}
 

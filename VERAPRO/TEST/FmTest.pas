@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, fbdatabase, IB, Vcl.StdCtrls, fbresultset, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery,
   pFIBQueryVk, pFIBDatabaseVk, Data.DB, FIBDataSet, pFIBDataSet, pFIBDataSetVk, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
-  DynVarsEh, MemTableDataEh, DataDriverEh, MemTableEh, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, DBGridEhVk, uibdataset;
+  DynVarsEh, MemTableDataEh, DataDriverEh, MemTableEh, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, DBGridEhVk, uibdataset, uib;
 
 type
   TForm5 = class(TForm)
@@ -20,6 +20,7 @@ type
     SQLDataDriverEh1: TSQLDataDriverEh;
     UIBDataSet1: TUIBDataSet;
     DataSource1: TDataSource;
+    UIBDataBase1: TUIBDataBase;
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
@@ -46,12 +47,12 @@ begin
    Exit;
 
    dbParams := TFBdatabaseParams.Create(self);
-   dbParams.DbName := 'inet://localhost:3050/d:\FBDATA\VERA_PRO\ledapravo.fdb';
-   dbParams.UserName := 'sysdba';
-   dbParams.Password := 'masterkey';
-   dbParams.LibPath := 'C:\FIREBIRD-4-32\fbclient.dll';
-   FDatabase := TFBDatabase.Create(self, dbParams);
-   FDatabase.connect;
+   FDatabase := TFBDatabase.Create(self);
+   FDatabase.Params.DbName := 'inet://localhost:3050/d:\FBDATA\VERA_PRO\ledapravo.fdb';
+   FDatabase.Params.UserName := 'sysdba';
+   FDatabase.Params.Password := 'masterkey';
+   FDatabase.Params.LibPath := 'C:\FIREBIRD-4-32\fbclient.dll';
+   FDatabase.Connect;
    try
      if FDatabase.IsConnected then
      begin

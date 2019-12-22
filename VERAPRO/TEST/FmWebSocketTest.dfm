@@ -42,14 +42,41 @@ object MainFnWSTest: TMainFnWSTest
       'Memo1')
     FontSmoothing = fsmNone
   end
-  object Button1: TButton
+  object btnCheck: TButton
     Left = 24
     Top = 8
     Width = 75
     Height = 25
-    Caption = 'Button1'
+    Caption = 'btnCheck'
     TabOrder = 1
-    OnClick = Button1Click
+    OnClick = CheckClick
+  end
+  object btnIncome: TButton
+    Left = 136
+    Top = 8
+    Width = 75
+    Height = 25
+    Caption = 'Income'
+    TabOrder = 2
+    OnClick = btnIncomeClick
+  end
+  object btnReconnect: TButton
+    Left = 24
+    Top = 39
+    Width = 75
+    Height = 25
+    Caption = 'btnReconnect'
+    TabOrder = 3
+    OnClick = btnReconnectClick
+  end
+  object btnCloseShift: TButton
+    Left = 424
+    Top = 48
+    Width = 75
+    Height = 25
+    Caption = 'Close Shift'
+    TabOrder = 4
+    OnClick = btnCloseShiftClick
   end
   object Client: TRtcHttpClient
     ServerAddr = 'LOCALHOST'

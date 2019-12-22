@@ -12,8 +12,11 @@ type
     Client: TRtcHttpClient;
     Memo1: TSynEdit;
     SockReq: TRtcDataRequest;
-    Button1: TButton;
-    procedure Button1Click(Sender: TObject);
+    btnCheck: TButton;
+    btnIncome: TButton;
+    btnReconnect: TButton;
+    btnCloseShift: TButton;
+    procedure CheckClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure SockReqConnectLost(Sender: TRtcConnection);
     procedure SockReqWSConnect(Sender: TRtcConnection);
@@ -22,6 +25,9 @@ type
     procedure SockReqWSDataOut(Sender: TRtcConnection);
     procedure SockReqWSDataSent(Sender: TRtcConnection);
     procedure SockReqWSDisconnect(Sender: TRtcConnection);
+    procedure btnIncomeClick(Sender: TObject);
+    procedure btnReconnectClick(Sender: TObject);
+    procedure btnCloseShiftClick(Sender: TObject);
   private
     { Private declarations }
     procedure MemoAdd( i:Integer; s: String; obj:TObject);
@@ -36,7 +42,71 @@ implementation
 
 {$R *.dfm}
 
-procedure TMainFnWSTest.Button1Click(Sender: TObject);
+procedure TMainFnWSTest.btnCloseShiftClick(Sender: TObject);
+var
+  _params: ISuperObject;
+  _command: ISuperObject;    checkPay: ISuperObject;
+  checkPayRow: ISuperObject;
+  checkTotal: ISuperObject;
+  list: ISuperObject;
+begin
+
+
+
+
+  _command := SO('{}');
+  _command.S['command'] := 'closeShift';//'openShift';
+//  _command.O['params'] := _params;
+  Client.wSend(wf_Text,UTF8String(_command.AsJSon()));
+
+end;
+
+procedure TMainFnWSTest.btnIncomeClick(Sender: TObject);
+var
+  _params: ISuperObject;
+  _command: ISuperObject;    checkPay: ISuperObject;
+  checkPayRow: ISuperObject;
+  checkTotal: ISuperObject;
+  list: ISuperObject;
+
+begin
+  _params := SO('{}');
+
+  checkTotal := SO('{}');
+  checkTotal.D['TOTALSUM']:=10;
+  _params.O['CHECKTOTAL']:= checkTotal;
+
+  checkPay := SA([]);
+
+  checkPayRow := SO('{}');
+  checkPayRow.I['ROWNUM'] := 1;
+  checkPayRow.S['PAYMENTFORM'] := '√Œ“≤¬ ¿';
+  checkPayRow.D['SUM'] := 10.00;
+  checkPay.AsArray.Add(checkPayRow);
+  list := SO('{}');
+  list.O['LIST'] := checkPay;
+  _params.O['CHECKPAY']:= list;
+
+  _command := SO('{}');
+  _command.S['command'] := 'sendIncomeCheck';//'openShift';
+  _command.O['params'] := _params;
+  Client.wSend(wf_Text,UTF8String(_command.AsJSon()));
+
+end;
+
+procedure TMainFnWSTest.btnReconnectClick(Sender: TObject);
+begin
+  if not Client.isConnected then
+  begin
+    SockReq.client.Connect();
+    SockReq.Request.URI:='/Universal9Assist/eReceiptHandler';
+    SockReq.Request.WSUpgrade:=True;
+    SockReq.PostMethod();
+  end;
+
+end;
+
+procedure TMainFnWSTest.CheckClick(Sender: TObject);
 var _params: ISuperObject;
     _command: ISuperObject;
     checkBody: ISuperObject;
@@ -68,7 +138,7 @@ begin
   checkPayRow := SO('{}');
   checkPayRow.I['ROWNUM'] := 1;
   checkPayRow.S['PAYMENTFORM'] := '√Œ“≤¬ ¿';
-  checkPayRow.D['SUM'] := 10.0;
+  checkPayRow.D['SUM'] := 10.00;
   checkPay.AsArray.Add(checkPayRow);
 
   checkPayRow := SO('{}');

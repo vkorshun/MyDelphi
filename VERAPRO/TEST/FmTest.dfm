@@ -95,4 +95,13 @@ object Form5: TForm5
     Left = 488
     Top = 296
   end
+  object UIBDataBase1: TUIBDataBase
+    Params.Strings = (
+      'sql_dialect=3'
+      'lc_ctype=UTF8')
+    CharacterSet = csUTF8
+    LibraryName = 'fbclient.dll'
+    Left = 656
+    Top = 248
+  end
 end

@@ -32,12 +32,12 @@ implementation
 
 procedure TFibApiDm.DataModuleCreate(Sender: TObject);
 begin
-   FDbParams := TFBdatabaseParams.Create(self);
-   FDbParams.DbName := 'inet://localhost:3050/d:\FBDATA\VERA_PRO\ledapravo.fdb';
+   FDatabase := TFBDatabase.Create(self);
+   FDatabase.Params.DbName := 'inet://localhost:3050/d:\FBDATA\VERA_PRO\ledapravo.fdb';
    FDbParams.UserName := 'sysdba';
    FDbParams.Password := 'masterkey';
    FDbParams.LibPath := 'C:\FIREBIRD-4-32\fbclient.dll';
-   FDatabase := TFBDatabase.Create(self, FDbParams);
+
    FDatabase.connect;
    testQuery('SELECT * FROM objects');
 end;
