@@ -31,6 +31,7 @@ type
   private
     { Private declarations }
     procedure MemoAdd( i:Integer; s: String; obj:TObject);
+    procedure OpenShift();
   public
     { Public declarations }
   end;
@@ -207,6 +208,17 @@ end;
 procedure TMainFnWSTest.MemoAdd(i: Integer; s: String; obj: TObject);
 begin
     Memo1.Lines.Add(s);
+end;
+
+procedure TMainFnWSTest.OpenShift;
+var v: TRtcRecord;
+begin
+  v := tRtcRecord.Create;
+  v.asString['command'] := 'OpenShift';
+  v.NewRecord('params');
+  v.asRecord['params'].asString['CASHIER'] := 'Тест К.А.';
+  Client.wSend(wf_Text,UTF8String(v.toJSON()));
+
 end;
 
 procedure TMainFnWSTest.SockReqConnectLost(Sender: TRtcConnection);

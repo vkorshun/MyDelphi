@@ -88,11 +88,11 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="FmLedapravoSrv.pas">
-            <Form>Form5</Form>
+            <Form>LedaPravoSrvFm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\COMMON\INTERFACE\commoninterface.pas"/>
-        <DCCReference Include="..\COMMON\dmrtccommonfunctions.pas">
+        <DCCReference Include="..\COMMON\DmRtcCommonFunctions.pas">
             <Form>RtcCommonFunctionsDm</Form>
         </DCCReference>
         <DCCReference Include="..\COMMON\DmRtcCustom.pas">
@@ -118,8 +118,13 @@
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="..\..\..\LIB\SettingsStorage.pas"/>
-        <DCCReference Include="..\..\COMPONENTS\FIBPROVIDER\fbapitransaction.pas"/>
         <DCCReference Include="..\..\COMPONENTS\FIBPROVIDER\fbapiquery.pas"/>
+        <DCCReference Include="..\COMMON\INTERFACE\ServerDocSqlManager.pas"/>
+        <DCCReference Include="..\COMMON\DmRtcTable.pas">
+            <Form>RtcTableDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

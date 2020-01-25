@@ -1,0 +1,2 @@
+inherited TestDocFrame: TTestDocFrame
+end

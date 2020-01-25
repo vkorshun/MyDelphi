@@ -1,6 +1,7 @@
 object MainDm: TMainDm
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Height = 150
-  Width = 215
+  OnDestroy = DataModuleDestroy
+  Height = 313
+  Width = 406
 end

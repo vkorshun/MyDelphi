@@ -4,11 +4,12 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, rtcInfo, rtcConn, rtcDataSrv, rtcHttpSrv;
 
 type
-  TForm5 = class(TForm)
+  TLedaPravoSrvFm = class(TForm)
     Button1: TButton;
+    RtcHttpServer1: TRtcHttpServer;
     procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
@@ -18,7 +19,7 @@ type
   end;
 
 var
-  Form5: TForm5;
+  LedaPravoSrvFm: TLedaPravoSrvFm;
 
 implementation
 
@@ -26,13 +27,14 @@ implementation
 
 uses DmMain;
 
-procedure TForm5.Button1Click(Sender: TObject);
+procedure TLedaPravoSrvFm.Button1Click(Sender: TObject);
 begin
 {  if (MainDm.FbDatabase.IsConnected) then
     MainDm.FbDatabase.Disconnect
   else
     MainDm.FbDatabase.Connect;}
-  MainDm.ValidUser('¿ƒÃ»Õ','¿ƒÃ»Õ');
+
+  MainDm.ValidUser('ADMIN','ADMIN');
   ShowMessage('Ok1');
 
 end;

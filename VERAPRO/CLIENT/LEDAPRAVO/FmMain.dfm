@@ -1,7 +1,7 @@
 object MainFm: TMainFm
   Left = 0
   Top = 0
-  Caption = 'FlexoPrint'
+  Caption = 'Ledapravo'
   ClientHeight = 509
   ClientWidth = 689
   Color = clBtnFace
@@ -117,6 +117,7 @@ object MainFm: TMainFm
     end
     object aTest: TAction
       Caption = 'Test'
+      OnExecute = aTestExecute
     end
     object aSettings: TAction
       Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080

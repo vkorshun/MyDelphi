@@ -40,6 +40,7 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
+        <DCC_UnitSearchPath>$(BDS)\Source\DUnit\src;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
         <SanitizedProjectName>ledapravo</SanitizedProjectName>
@@ -71,6 +72,7 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <Debugger_RunParams>ADMIN ADMIN</Debugger_RunParams>
         <DCC_DcuOutput>..\..\RUN\LEDAPRAVO\DCU\$(Platform)\$(Config)</DCC_DcuOutput>
         <DCC_ExeOutput>..\..\RUN\LEDAPRAVO\$(Platform)\$(Config)</DCC_ExeOutput>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
@@ -91,20 +93,65 @@
             <Form>MainFm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\..\COMMON\AppManager.pas"/>
-        <DCCReference Include="..\..\COMMON\systemconsts.pas"/>
-        <DCCReference Include="..\..\COMMON\TABS\FrameTab.pas">
+        <DCCReference Include="..\..\..\LIB\menustructure.pas"/>
+        <DCCReference Include="..\..\..\LIB\SettingsStorage.pas"/>
+        <DCCReference Include="..\..\..\LIB\uLog.pas"/>
+        <DCCReference Include="..\..\SERVER\COMMON\INTERFACE\commoninterface.pas"/>
+        <DCCReference Include="..\COMMON\DmMainRtc.pas">
+            <Form>MainRtcDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\COMMON\RTC\RtcQueryDataSet.pas"/>
+        <DCCReference Include="..\COMMON\RTC\RtcSqlQuery.pas"/>
+        <DCCReference Include="..\COMMON\TABS\FrameTab.pas">
             <Form>TabFrame</Form>
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\..\COMMON\TABS\tabManagerPanel.pas"/>
-        <DCCReference Include="..\..\..\LIB\menustructure.pas"/>
-        <DCCReference Include="..\..\..\LIB\SettingsStorage.pas"/>
-        <DCCReference Include="..\..\..\LIB\uLog.pas"/>
-        <DCCReference Include="..\..\COMMON\RTC\RtcQueryDataSet.pas"/>
-        <DCCReference Include="..\..\COMMON\RTC\RtcSqlQuery.pas"/>
-        <DCCReference Include="..\..\SERVER\COMMON\INTERFACE\commoninterface.pas"/>
+        <DCCReference Include="..\COMMON\TABS\tabManagerPanel.pas"/>
+        <DCCReference Include="..\COMMON\systemconsts.pas"/>
+        <DCCReference Include="..\COMMON\DOCS\RTC\rtc.dmDoc.pas">
+            <Form>DocDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\COMMON\DOCS\RTC\rtc.docbinding.pas"/>
+        <DCCReference Include="..\COMMON\DOCS\RTC\rtc.fmCustomDoc.pas"/>
+        <DCCReference Include="..\COMMON\DOCS\RTC\rtc.framedoc.pas">
+            <Form>DocFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\..\..\LIB\FORMS\fmhopedialogform.pas">
+            <Form>HopeDialogFormFm</Form>
+        </DCCReference>
+        <DCCReference Include="..\..\..\LIB\FORMS\fmhopeform.pas">
+            <Form>HopeFormFm</Form>
+        </DCCReference>
+        <DCCReference Include="..\..\..\LIB\FORMS\fmLoginRtc.pas">
+            <Form>LoginFm</Form>
+        </DCCReference>
+        <DCCReference Include="..\..\..\LIB\FORMS\FmSelectDbAlias.pas"/>
+        <DCCReference Include="..\COMMON\DOCS\vkdocinstance.pas"/>
+        <DCCReference Include="..\COMMON\DOCS\DocSqlManager.pas"/>
+        <DCCReference Include="..\COMMON\DOCS\uDocDescription.pas"/>
+        <DCCReference Include="..\COMMON\DOCS\fmSetupForm.pas">
+            <Form>SetUpFormFm</Form>
+        </DCCReference>
+        <DCCReference Include="..\..\SERVER\COMMON\INTERFACE\ServerDocSqlManager.pas"/>
+        <DCCReference Include="..\COMMON\RTC\RtcFuncResult.pas"/>
+        <DCCReference Include="..\COMMON\DOCS\docManagerPanel.pas"/>
+        <DCCReference Include="DOCS\DmTestDoc.pas">
+            <Form>TestDocDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="DOCS\FrameTestDoc.pas">
+            <Form>TestDocFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -136,6 +183,9 @@
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">False</Platform>
             </Platforms>
+            <UnitTesting>
+                <TestProjectName>D:\DELPHI_XE6\MyDelphi\VERAPRO\CLIENT\LEDAPRAVO\Test\ledapravoTests.dproj</TestProjectName>
+            </UnitTesting>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>
