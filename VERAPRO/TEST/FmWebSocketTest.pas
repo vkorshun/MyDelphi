@@ -16,6 +16,7 @@ type
     btnIncome: TButton;
     btnReconnect: TButton;
     btnCloseShift: TButton;
+    btnOpen: TButton;
     procedure CheckClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure SockReqConnectLost(Sender: TRtcConnection);
@@ -28,6 +29,7 @@ type
     procedure btnIncomeClick(Sender: TObject);
     procedure btnReconnectClick(Sender: TObject);
     procedure btnCloseShiftClick(Sender: TObject);
+    procedure btnOpenClick(Sender: TObject);
   private
     { Private declarations }
     procedure MemoAdd( i:Integer; s: String; obj:TObject);
@@ -95,6 +97,11 @@ begin
 
 end;
 
+procedure TMainFnWSTest.btnOpenClick(Sender: TObject);
+begin
+  OpenShift;
+end;
+
 procedure TMainFnWSTest.btnReconnectClick(Sender: TObject);
 begin
   if not Client.isConnected then
@@ -119,6 +126,60 @@ var _params: ISuperObject;
     list: ISuperObject;
     checkPay: ISuperObject;
     checkPayRow: ISuperObject;
+
+    function getCheck():String;
+    var check: TRtcRecord;
+        _command:TRtcRecord;
+    begin
+      check := TRtcRecord.Create;
+      _command := TRtcRecord.Create;
+      try
+      check.NewRecord('CHECKTOTAL');
+      check.asRecord['CHECKTOTAL'].asFloat['TOTALSUM'] := 12;
+
+      //-------------------------------
+      check.NewArray('CHECKPAY');
+      check.asArray['CHECKPAY'].NewRecord(0);
+//      check.asArray['CHECKPAY'].AsRecord[0].asInteger['ROWNUM'] = 1;
+      check.asArray['CHECKPAY'].AsRecord[0].asInteger['PAYFORMCODE'] := 0;
+      check.asArray['CHECKPAY'].AsRecord[0].asFloat['SUM'] := 12;
+      check.asArray['CHECKPAY'].AsRecord[0].asFloat['SUMPROVIDED'] := 12;
+
+{      check.asArray['CHECKPAY'].NewRecord(1);
+      check.asArray['CHECKPAY'].AsRecord[1].asInteger['PAYFORMCODE'] := 1;
+      check.asArray['CHECKPAY'].AsRecord[1].asFloat['SUM'] := 0;
+ }
+      //------------------------------- CHECKTAX
+      check.NewArray('CHECKTAX');
+      check.asArray['CHECKTAX'].NewRecord(0);
+      check.asArray['CHECKTAX'].AsRecord[0].asInteger['TYPE'] := 0;
+      check.asArray['CHECKTAX'].AsRecord[0].asString['NAME'] := 'ПДВ';
+      check.asArray['CHECKTAX'].AsRecord[0].asString['LETTER'] := 'А';
+      check.asArray['CHECKTAX'].AsRecord[0].asFloat['PRC'] := 12;
+      check.asArray['CHECKTAX'].AsRecord[0].asFloat['TURNOVER'] := 12;
+      check.asArray['CHECKTAX'].AsRecord[0].asFloat['SUM'] := 2;
+
+      //------------------------------- CHECKBODY
+      check.NewArray('CHECKBODY');
+      check.asArray['CHECKBODY'].NewRecord(0);
+      check.asArray['CHECKBODY'].AsRecord[0].asString['NAME'] := 'Продукт';
+      check.asArray['CHECKBODY'].AsRecord[0].asString['UNITNAME'] := 'кг';
+      check.asArray['CHECKBODY'].AsRecord[0].asFloat['AMOUNT'] := 2;
+      check.asArray['CHECKBODY'].AsRecord[0].asFloat['PRICE'] := 6;
+      check.asArray['CHECKBODY'].AsRecord[0].asFloat['COST'] := 12;
+      check.asArray['CHECKBODY'].AsRecord[0].asString['LETTERS'] := 'А';
+
+      _command.asString['command'] := 'sendCheck';
+      _command.NewRecord('params').asRecord['CHECK'] := check;
+      Client.wSend(wf_Text,UTF8String(_command.toJSon()));
+
+      Result := _command.toJSON;
+      finally
+        _command.Free;
+        check.Free;
+      end;
+    end;
+
 begin
   if not Client.isConnected then
   begin
@@ -127,6 +188,9 @@ begin
     SockReq.Request.WSUpgrade:=True;
     SockReq.PostMethod();
   end;
+
+  ShowMessage(getCheck);
+  Exit;
 
   _params := SO('{}');
 
@@ -214,7 +278,7 @@ procedure TMainFnWSTest.OpenShift;
 var v: TRtcRecord;
 begin
   v := tRtcRecord.Create;
-  v.asString['command'] := 'OpenShift';
+  v.asString['command'] := 'openShift';
   v.NewRecord('params');
   v.asRecord['params'].asString['CASHIER'] := 'Тест К.А.';
   Client.wSend(wf_Text,UTF8String(v.toJSON()));

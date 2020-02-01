@@ -34,7 +34,8 @@ begin
   else
     MainDm.FbDatabase.Connect;}
 
-  MainDm.ValidUser('ADMIN','ADMIN');
+//  MainDm.ValidUser('ADMIN','ADMIN');
+  MainDm.TestQuery;
   ShowMessage('Ok1');
 
 end;

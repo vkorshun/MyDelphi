@@ -13,8 +13,11 @@ uses
   DmMain in '..\COMMON\DmMain.pas' {MainDm: TDataModule},
   SettingsStorage in '..\..\..\LIB\SettingsStorage.pas',
   fbapiquery in '..\..\COMPONENTS\FIBPROVIDER\fbapiquery.pas',
-  ServerDocSqlManager in '..\COMMON\INTERFACE\ServerDocSqlManager.pas',
-  DmRtcTable in '..\COMMON\DmRtcTable.pas' {RtcTableDm: TDataModule};
+  ClientDocSqlManager in '..\COMMON\INTERFACE\ClientDocSqlManager.pas',
+  DmRtcTable in '..\COMMON\DmRtcTable.pas' {RtcTableDm: TDataModule},
+  DmSrvDoc in '..\COMMON\DmSrvDoc.pas' {SrvDocDm: TDataModule},
+  SQLTableProperties in '..\COMMON\INTERFACE\SQLTableProperties.pas',
+  ServerDocSqlManager in '..\COMMON\INTERFACE\ServerDocSqlManager.pas';
 
 {$R *.res}
 
@@ -23,11 +26,12 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TRtcCustomDm, RtcCustomDm);
   Application.CreateForm(TRtcCommonFunctionsDm, RtcCommonFunctionsDm);
+  Application.CreateForm(TMainDm, MainDm);
   Application.CreateForm(TLedaPravoSrvFm, LedaPravoSrvFm);
   Application.CreateForm(TRtcTableDm, RtcTableDm);
+  Application.CreateForm(TSrvDocDm, SrvDocDm);
   //  Application.CreateForm(TRtcObjectsDm, RtcObjectsDm);
 //  Application.CreateForm(TRtcUseMonthDm, RtcUseMonthDm);
-  Application.CreateForm(TMainDm, MainDm);
   RtcCommonFunctionsDm.SetRtcServer(LedaPravoSrvFm.RtcHttpServer1);
   LedaPravoSrvFm.RtcHttpServer1.Listen();
   Application.Run;

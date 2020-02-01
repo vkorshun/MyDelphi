@@ -78,6 +78,15 @@ object MainFnWSTest: TMainFnWSTest
     TabOrder = 4
     OnClick = btnCloseShiftClick
   end
+  object btnOpen: TButton
+    Left = 424
+    Top = 104
+    Width = 75
+    Height = 25
+    Caption = 'Open Shift'
+    TabOrder = 5
+    OnClick = btnOpenClick
+  end
   object Client: TRtcHttpClient
     ServerAddr = 'LOCALHOST'
     ServerPort = '6275'

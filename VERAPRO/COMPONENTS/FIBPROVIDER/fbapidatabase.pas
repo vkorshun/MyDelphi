@@ -270,7 +270,7 @@ type
   public
     constructor Create(AOwner: TComponent);override;
     destructor Destroy;override;
-
+    procedure Close;
     procedure Commit;
     procedure CommitRetaining;
     procedure Rollback;
@@ -761,6 +761,12 @@ begin
   if not Assigned(FTransaction) then
     raise Exception.Create('Transaction not started');
   Result := true;
+end;
+
+procedure TFbApiTransaction.Close;
+begin
+  if InTransaction then
+    EndTransaction(FDefaultAction, True);
 end;
 
 procedure TFbApiTransaction.Commit;

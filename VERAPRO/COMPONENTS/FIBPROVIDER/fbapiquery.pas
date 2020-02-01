@@ -170,9 +170,9 @@ begin
   if ((IsTransactionOwner or FBase.IsTransactionOwner) and
     Assigned(FBase.Transaction)) then
   begin
-    // if FBase.Transaction.Active then
+     if FBase.Transaction.Active then
     // FBase.Transaction.Commit;
-    FBase.Transaction.Free;
+       FBase.Transaction.Close;
   end;
   FreeAndNil(FSQL);
   FreeAndNil(FBase);

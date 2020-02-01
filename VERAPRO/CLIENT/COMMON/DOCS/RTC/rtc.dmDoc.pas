@@ -10,10 +10,10 @@ uses
   Forms, Variants, VariantUtils, Dialogs, pFIBQueryVk, FIBDatabase,
   pFIBDatabase,
   FIBDataSet, pFIBDataSet, pFIBDataSetVk, FIBQuery, pFIBQuery, DmMainRtc,
-  rtcInfo, rtcConn, rtcDataCli, rtcCliModule, commoninterface, RtcFuncResult, RtcQueryDataSet;
+  rtcInfo, rtcConn, rtcDataCli, rtcCliModule, commoninterface, RtcFuncResult,
+  RtcQueryDataSet;
 
 type
-  TDocOperation = (docInsert, docUpdate, docDelete);
   TFieldViewState = (fvsRead, fvsInsert, fvsEdit);
   TOnStoreVariablesEvent = procedure(Sender: TObject; ASatatus: TUpdateStatus)
     of object;
@@ -250,24 +250,24 @@ end;
 procedure TDocDm.DataSetDriverEhDocUpdateRecord(DataDriver: TDataDriverEh;
   MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh);
 begin
-{
-  if FDocSqlManager.DocVariableList.Count = 0 then
+  {
+    if FDocSqlManager.DocVariableList.Count = 0 then
     Exit;
 
-  if Assigned(FOnStoreVariables) then
+    if Assigned(FOnStoreVariables) then
     FOnStoreVariables(Self, MemRec.UpdateStatus);
 
-  if (MemRec.UpdateStatus = usInserted) then
+    if (MemRec.UpdateStatus = usInserted) then
     DirectInsertDoc
-  else if (MemRec.UpdateStatus = usModified) then
-  begin
+    else if (MemRec.UpdateStatus = usModified) then
+    begin
     if not FDocSqlManager.DocVariableList.IsChanged then
-      FDocSqlManager.UpdateVariablesOnDeltaDs(MemTableEhDoc,
-        FDocSqlManager.DocVariableList);
+    FDocSqlManager.UpdateVariablesOnDeltaDs(MemTableEhDoc,
+    FDocSqlManager.DocVariableList);
     DirectEditDoc;
-  end
-  else if (MemRec.UpdateStatus = usDeleted) then
-    DirectDeleteDoc;}
+    end
+    else if (MemRec.UpdateStatus = usDeleted) then
+    DirectDeleteDoc; }
 
 end;
 
@@ -408,8 +408,8 @@ begin
     // FDQueryDoc.Refresh;
     // Close();
     // FDQueryDoc.Open();
-    //MemTableEhDoc.Close;
-    //MemTableEhDoc.Open;
+    // MemTableEhDoc.Close;
+    // MemTableEhDoc.Open;
     FRtcQueryDataSet.Close;
     FRtcQueryDataSet.Open;
 
@@ -470,7 +470,8 @@ begin
     Prepare('RtcGetSqlManager');
     Param.AsString['TABLENAME'] := ATableName;
     MainRtcDm.setUser(Param);
-    SetLastRetval(MainRtcDm.rtcExecute(MainRtcDm.RtcClientModule1, MainRtcDm.RtcClientModule1.Data.asFunction));
+    SetLastRetval(MainRtcDm.rtcExecute(MainRtcDm.RtcClientModule1,
+      MainRtcDm.RtcClientModule1.Data.asFunction));
     TUtils.RtcValueToObject(FLastRetval.getRtcValue.asRecord, FDocSqlManager);
   end;
 end;
@@ -562,17 +563,8 @@ procedure TDocDm.rtcEditDoc(operation: TDocOperation);
 var
   i: Integer;
   retval: TRtcValue;
-  function getCommand(operation: TDocOperation): String;
-  begin
-    Result := 'undefined';
-    if operation = docInsert then
-      Result := 'insert'
-    else if operation = docUpdate then
-      Result := 'update'
-    else if operation = docDelete then
-      Result := 'delete'
+  changedList: TStringList;
 
-  end;
 
 begin
   FillKeyFields;
@@ -581,18 +573,18 @@ begin
   begin
     Prepare('rtcDocedit');
     Param.AsString['TABLENAME'] := FDocSqlManager.TableName;
-    Param.AsString['COMMAND'] := getCommand(operation);
-    Param.NewArray('PARAMS');
+    Param.AsString['COMMAND'] := TUtils.getDocCommand(operation);
+    Param.NewRecord('PARAMS');
     if (operation = docDelete) then
       for i := 0 to SqlManager.KeyFieldsList.Count - 1 do
       begin
-        Param.asArray['PARAMS'].NewRecord(i);
-        Param.asArray['PARAMS'].asRecord[i].AsString['name'] :=
-          SqlManager.KeyFieldsList[i];
-        Param.asArray['PARAMS'].asRecord[i].AsString['value'] :=
+        Param.asRecord['PARAMS'].asValue[SqlManager.KeyFieldsList[i]] :=
           DocVariableList[SqlManager.KeyFieldsList[i]].Value;
       end
-    else
+    else if (operation = docInsert) then
+    begin
+      TUtils.VkVariableColectionsToRtc(DocVariableList,
+        Param.asRecord['PARAMS']);
       for i := 0 to DocVariableList.Count - 1 do
       begin
         Param.asArray['PARAMS'].NewRecord(i);
@@ -601,6 +593,29 @@ begin
         Param.asArray['PARAMS'].asRecord[i].AsString['value'] :=
           DocVariableList.Items[i].Value;
       end;
+    end
+    else
+    begin
+      changedList := TStringList.Create;
+      try
+        DocVariableList.GetChangedList(changedList);
+        if changedList.Count>0 then
+        begin
+          Param.asRecord['PARAMS'].NewRecord('NEW');
+          Param.asRecord['PARAMS'].NewRecord('OLD');
+          for i := 0 to changedList.Count - 1 do
+          begin
+            Param.asRecord['PARAMS'].asRecord['NEW'].asValue[changedList[i]] :=
+              DocVariableList[changedList[i]].Value;
+            Param.asRecord['PARAMS'].asRecord['OLD'].asValue[changedList[i]] :=
+              DocVariableList[changedList[i]].InitValue;
+          end;
+        end;
+      finally
+        FreeAndNil(changedList);
+      end;
+    end;
+
     SetLastRetval(MainRtcDm.rtcExecute(MainRtcDm.RtcClientModule1,
       MainRtcDm.RtcClientModule1.Data.asFunction))
   end;
@@ -786,9 +801,10 @@ begin
   with FRtcQueryDataSet do
   begin
     DsMemTableEh := MemTableEhDoc;
-    InitAllSQL(FDocSqlManager.TableName, FDocSqlManager.KeyFields, FDocSqlManager.GenId);
+    InitAllSQL(FDocSqlManager.TableName, FDocSqlManager.KeyFields,
+      FDocSqlManager.GenId);
     SelectSQL.Clear;
-    SelectSQL.Text := 'SELECT * FROM '+FDocSqlManager.TableName;
+    SelectSQL.Text := 'SELECT * FROM ' + FDocSqlManager.TableName;
     Open;
   end;
   { pFIBDataSetVkDoc.Close;
