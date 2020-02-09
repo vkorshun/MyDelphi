@@ -27,9 +27,13 @@ type
     RtcServModuleEntrance: TRtcServerModule;
     RtcDataServerLink1: TRtcDataServerLink;
     RtcFunction1: TRtcFunction;
+    WebSockProvider: TRtcDataProvider;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure fillSotrudInfo(Sender: TRtcConnection; var ARec:TRtcRecord);
+    procedure WebSockProviderWSConnect(Sender: TRtcConnection);
+    procedure WebSockProviderCheckRequest(Sender: TRtcConnection);
+    procedure WebSockProviderWSDataReceived(Sender: TRtcConnection);
   private
     { Private declarations }
     ListDmEntrance: TList<PDmEntranceListItem>;
@@ -126,6 +130,7 @@ begin
   RegisterEntranceFunction('GetSystemTime', RtcGetSystemTime);
   RegisterEntranceFunction('GetGrTimeOut', RtcGetGrTimeOut);
   CritSection := TCriticalSection.Create;
+  WebSockProvider.Server := RtcDataServerLink1.Server;
 end;
 
 procedure TDmEntranceMethodsMikko.DataModuleDestroy(Sender: TObject);
@@ -654,6 +659,72 @@ begin
       Raise;
     end;
   end;
+end;
+
+procedure TDmEntranceMethodsMikko.WebSockProviderCheckRequest(Sender: TRtcConnection);
+begin
+  if Sender.Request.FileName='/ws' then
+  begin
+    Sender.Accept;
+    Sender.Response.WSUpgrade:=True; // Prepare Upgrade Response
+    Sender.Write; // Send Upgrade Response
+  end;
+end;
+
+procedure TDmEntranceMethodsMikko.WebSockProviderWSConnect(Sender: TRtcConnection);
+begin
+   XLog(' WS connect:' +Sender.PeerAddr);
+end;
+
+procedure TDmEntranceMethodsMikko.WebSockProviderWSDataReceived(Sender: TRtcConnection);
+ var
+    wf:TRtcWSFrame;
+    s:RtcString;
+  begin
+  wf:=Sender.wsFrameIn; // <- Web Socket Frame currenty being received
+
+  //if wf.wfStarted and (wf.wfOpcode=wf.waOpcode) then // Started receiving a new Frame set
+  //  MemoAdd(2,'---> IN: '+wf.wfHeadInfo, Sender);
+
+  // We want to analyze all text message with less than 500 characters total ...
+  if wf.waFinal and (wf.waOpcode=wf_Text) and (wf.waPayloadLength<500) then
+    begin
+    // wait until the entire Payload has been received.
+    // This should NOT be more than 500 bytes (see above) ...
+    if wf.wfComplete then
+      begin
+      s:=wf.wfRead;
+
+
+      // We have received a text message we want to respond to ...
+      if s='WebSocket rocks' then
+        { We can send a new Frame as a response to the Client that sent us the
+          Web Socket Frame, by using the "Sender.wSend" method like this ... }
+        Sender.wSend(wf_Text,'Absolutely!');
+      end;
+    end
+  else
+    begin
+    s:=wf.wfRead;  // <- reading Frame's "Payload" data ...
+    //if wf.wfOpcode=wf_Text then
+    //    MemoAdd(3,'IN ('+
+    //      IntToStr(wf.wfTotalInOut)+'/'+
+    //      IntToStr(wf.wfTotalLength)+') TXT >>> '+
+    //      s, Sender)
+    //else
+    //    MemoAdd(3,'IN ('+
+    //      IntToStr(wf.wfTotalInOut)+'/'+
+     //     IntToStr(wf.wfTotalLength)+') BIN('+IntToStr(length(s))+') >>>', Sender);
+    end;
+
+  if wf.wfDone then // <- Frame Done (all read)
+    begin
+    if wf.waFinal then // <- final Frame?
+      //MemoAdd(2,'IN DONE, '+
+       // IntToStr(wf.wfTotalInOut)+'/'+IntToStr(wf.wfTotalLength)+' bytes <-----', Sender)
+    else // More data shoud arrive in the next Frame ...
+      //MemoAdd(3,'<--- IN ... MORE --->', Sender);
+    end;
 end;
 
 Initialization;

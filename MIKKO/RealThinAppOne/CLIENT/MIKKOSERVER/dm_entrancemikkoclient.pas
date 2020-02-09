@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, Windows,rtcConn, rtcDataCli, rtcHttpCli, rtcInfo, rtcCliModule, Dialogs, rtcFunction,
-  rtcDB,  DB, DbClient, Variants, DateVk, MemTableDataEh, MemTableEh, hostdate, rtcSyncObjs, sotrudinfo;
+  rtcDB,  DB, DbClient, Variants, DateVk, MemTableDataEh, MemTableEh, hostdate, rtcSyncObjs, sotrudinfo, RtcLog;
 
 type
   TDmEntranceMikkoClient = class(TDataModule)
@@ -13,6 +13,7 @@ type
     RtcResult1: TRtcResult;
     MemTableEhDc162: TMemTableEh;
     RtcDataSetMonitor1: TRtcDataSetMonitor;
+    WebSocketRequest: TRtcDataRequest;
     procedure RtcResult1Return(Sender: TRtcConnection; Data, Result: TRtcValue);
 //    procedure RtcDataSetMonitor1DataChange(Sender: TObject);
 //    procedure RtcMemDataSetDc162DataChange(Sender: TObject);
@@ -23,6 +24,8 @@ type
     procedure RtcHttpClient1Disconnect(Sender: TRtcConnection);
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
+    procedure WebSocketRequestWSConnect(Sender: TRtcConnection);
+    procedure WebSocketRequestWSDisconnect(Sender: TRtcConnection);
   private
     { Private declarations }
     cs: TRtcCritSec;
@@ -931,6 +934,16 @@ begin
     end;
   end;
 
+end;
+
+procedure TDmEntranceMikkoClient.WebSocketRequestWSConnect(Sender: TRtcConnection);
+begin
+  XLog('Connect to Server');
+end;
+
+procedure TDmEntranceMikkoClient.WebSocketRequestWSDisconnect(Sender: TRtcConnection);
+begin
+  XLog('Disconnect from Server');
 end;
 
 end.

@@ -38,7 +38,9 @@ uses
   FilterDropDownFormsEh in 'C:\THIRDLIB.XE260\Eh\Lib\FilterDropDownFormsEh.pas' {FilterDropDownForm: TCustomDropDownFormEh},
   DBGridEh in 'C:\THIRDLIB.XE260\Eh\Lib\DBGridEh.pas',
   fdsqlquery in '..\..\COMMON\DOCS\FDAC\fdsqlquery.pas',
-  DmWorkRange in '..\..\COMMON\WORKRANGE\DmWorkRange.pas' {WorkRangeDm: TDataModule};
+  DmWorkRange in '..\..\COMMON\WORKRANGE\DmWorkRange.pas' {WorkRangeDm: TDataModule},
+  docManagerPanel in '..\..\COMMON\DOCS\docManagerPanel.pas',
+  FrameTab in '..\..\COMMON\TABS\FrameTab.pas' {TabFrame: TFrame};
 
 {$R *.res}
 

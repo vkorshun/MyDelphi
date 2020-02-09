@@ -141,12 +141,13 @@ begin
 
    _ABI := AAm.ActionBars.Add;
    _ABI.ActionBar := AMenuBar;
-
+   if (Assigned(FRoot)) then
+   begin
    for i := 0 to FRoot.Items.Count-1 do
    begin
       FillAction(FRoot.Items[i], nil);
    end;
-
+  end;
 end;
 
 end.

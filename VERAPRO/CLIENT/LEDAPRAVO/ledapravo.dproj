@@ -139,7 +139,6 @@
         <DCCReference Include="..\COMMON\DOCS\fmSetupForm.pas">
             <Form>SetUpFormFm</Form>
         </DCCReference>
-        <DCCReference Include="..\..\SERVER\COMMON\INTERFACE\ServerDocSqlManager.pas"/>
         <DCCReference Include="..\COMMON\RTC\RtcFuncResult.pas"/>
         <DCCReference Include="..\COMMON\DOCS\docManagerPanel.pas"/>
         <DCCReference Include="DOCS\DmTestDoc.pas">
@@ -152,6 +151,7 @@
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
+        <DCCReference Include="..\..\SERVER\COMMON\INTERFACE\ClientDocSqlManager.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

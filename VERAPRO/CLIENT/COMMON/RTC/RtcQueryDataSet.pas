@@ -8,6 +8,7 @@ uses
   doc.variablelist, Dialogs, commoninterface;
 
 type
+  TUpdateOrInsertEvent = procedure (Sender:TObject; ANew: Boolean) of object;
 
   TRtcQueryDataSet = class(TObject)
   private
@@ -29,6 +30,7 @@ type
 //    FDatasetDriverEh: TDataSetDriverEh;
     FTableVariableList: TDocVariableList;
     FOnStoreVariables: TNotifyEvent;
+    FOnUpdateOrInsert: TUpdateOrInsertEvent;
 
     FMemTableEhAfterEdit: TDataSetNotifyEvent;
     FMemTableEhAfterInsert: TDataSetNotifyEvent;
@@ -108,6 +110,8 @@ type
     property RtcQuery:TRtcQuery read FRtcQuery;
     property KeyFields:String read FKeyFields;
     property Params:TParams read GetParams;
+    property OnUpdateOrInsert: TUpdateOrInsertEvent read    FOnUpdateOrInsert write FOnUpdateOrInsert;
+
   end;
 
 implementation
@@ -658,7 +662,7 @@ end;
 procedure TRtcQueryDataSet.UpdateOrInsertData(ANew: Boolean);
 var i: Integer;
 begin
-  if FDinamicSQL then
+  {if FDinamicSQL then
   begin
     if ANew then
       DinamicSQLInsert
@@ -676,7 +680,9 @@ begin
   for i := 0 to FRtcExecute.Params.Count-1 do
     FRtcExecute.Params[i].Value := FTableVariableList.VarByName(FRtcExecute.Params[i].Name).Value;
   FRtcExecute.ExecQuery(ttStability);
-
+  }
+  if Assigned(FOnUpdateOrInsert) then
+    FOnUpdateOrInsert(self, ANew)
 end;
 
 class procedure TRtcQueryDataSet.UpdateVariablesOnDeltaDs(DataSet: TDataSet; aVarList: TDocVariableList);

@@ -24,4 +24,12 @@ object DmEntranceMethodsMikko: TDmEntranceMethodsMikko
     Left = 416
     Top = 144
   end
+  object WebSockProvider: TRtcDataProvider
+    Link = RtcDataServerLink1
+    OnCheckRequest = WebSockProviderCheckRequest
+    OnWSConnect = WebSockProviderWSConnect
+    OnWSDataReceived = WebSockProviderWSDataReceived
+    Left = 288
+    Top = 232
+  end
 end

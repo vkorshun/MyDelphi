@@ -63,7 +63,7 @@ procedure TTabManagerPanel.ShowTab(const AFrameDocClassName: String; AParams:TVk
 var _FrameDocClass : TTabFrameClass;
     docFrame : TTabFrame;
     i: Integer;
-    control: TWinControl;
+    //control: TWinControl;
 begin
    _FrameDocClass := TTabFrameClass(FindClass(AFrameDocClassName));
    for I := 0 to FFrameTabs.Tabs.Count-1 do
@@ -81,15 +81,15 @@ begin
 
    docFrame := CreateFrameDoc(_FrameDocClass);
    docFrame.CheckParams(AParams);
-   control := docFrame.getActiveControl;
+   //control := docFrame.getActiveControl;
    FFrameTabs.AddTab(FFrameTabs.TabCount,docFrame.GetCaption, docFrame);
-   if (Assigned(control) and  control.visible and control.Enabled) then
+   {if (Assigned(control) and  control.visible and control.Enabled) then
    try
      // PostMessage(WM_SETFOCUS,control.Handle,0,0);
      TForm(Owner).ActiveControl := control;
    except
 
-   end;
+   end;}
 //   if (Assigned(AParams)) then
 //     docFrame.checkParams(AParams);
 end;
@@ -119,7 +119,7 @@ end;}
 //  var _dmDoc: TDocDm;
   begin
 //    _dmDoc :=  AFrameDocClass.GetDmDoc; //.Create(FDmMain);
-    Result := AFrameDocClass.Create(self);
+    Result := AFrameDocClass.Create(self, nil);
     Result.Name := Result.Name+'_'+IntToStr(GetTickCount);
     Result.Parent := self;
     Result.Align := alClient;

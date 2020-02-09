@@ -3,7 +3,7 @@ object DmEntranceMikkoClient: TDmEntranceMikkoClient
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
   Height = 326
-  Width = 318
+  Width = 425
   object RtcHttpClient1: TRtcHttpClient
     MultiThreaded = True
     OnDisconnect = RtcHttpClient1Disconnect
@@ -40,5 +40,11 @@ object DmEntranceMikkoClient: TDmEntranceMikkoClient
     OnDataChange = RtcDataSetMonitor1DataChange
     Left = 96
     Top = 144
+  end
+  object WebSocketRequest: TRtcDataRequest
+    OnWSConnect = WebSocketRequestWSConnect
+    OnWSDisconnect = WebSocketRequestWSDisconnect
+    Left = 328
+    Top = 160
   end
 end

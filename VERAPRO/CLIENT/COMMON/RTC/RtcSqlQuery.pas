@@ -236,9 +236,9 @@ begin
       for i := 0 to FParams.Count-1 do
       begin
         if (FParams[i].DataType =ftDate) or (FParams[i].DataType =ftDateTime) then
-          Param.asRecord['SQL_PARSMS'].asDateTime[FParams[i].Name] := FParams[i].AsDateTime
+          Param.asRecord['SQL_PARAMS'].asDateTime[FParams[i].Name] := FParams[i].AsDateTime
         else
-          Param.asRecord['SQL_PARSMS'].asValue[FParams[i].Name] := FParams[i].Value;
+          Param.asRecord['SQL_PARAMS'].asValue[FParams[i].Name] := FParams[i].Value;
       end;
       try
         FQrResult := Execute(False,0,False);

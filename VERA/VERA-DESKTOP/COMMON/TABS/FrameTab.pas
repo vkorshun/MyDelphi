@@ -12,7 +12,6 @@ type
   TTabFrameClass = class of TTabFrame;
   TTabFrame = class(TFrame)
     ActionToolBar1: TActionToolBar;
-    Panel2: TPanel;
     StatusBar1: TStatusBar;
     ImageList1: TImageList;
     PopupMenu1: TPopupMenu;
@@ -28,13 +27,14 @@ type
 
   public
     { Public declarations }
-    constructor Create(AOwner: TComponent);
+    constructor Create(AOwner: TComponent; AParams: TVkVariableCollection);
+    destructor destroy;override;
     function CheckParams(AParams: TVkVariableCollection): Boolean;
     function IsEqualParams(AParams: TVkVariableCollection): Boolean;
     procedure InitActionManager(AForm: TForm);
     function GetActiveControl: TWinControl; virtual; abstract;
     function GetCaption:String;virtual; abstract;
-    property OnCreate: TNotifyEvent read FOnCreate write FOnCreate;
+//    property OnCreate: TNotifyEvent read FOnCreate write FOnCreate;
     property ParentForm:TForm read FParentForm write FParentForm;
     property OnInitActionManager: TNotifyEvent read FOnInitActionManager write FOnInitActionManager;
     property  ActionDescription: TActionListDescriptionList read FActionDescription;
@@ -44,13 +44,22 @@ implementation
 
 {$R *.dfm}
 
-constructor TTabFrame.Create(AOwner: TComponent);
+constructor TTabFrame.Create(AOwner: TComponent; AParams: TVkVariableCollection);
 begin
   inherited create(AOwner);
-  if Assigned(FOnCreate) then
-    FOnCreate(self);
+  //Parent := TWinControl(AOwner);
+  Align := alClient;
+  FActionDescription := TActionListDescriptionList.Create;
+//  if Assigned(FOnCreate) then
+//    FOnCreate(self);
 end;
 
+
+destructor TTabFrame.destroy;
+begin
+  FActionDescription.Free;
+  inherited;
+end;
 
 procedure TTabFrame.InitActionManager(AForm: TForm);
 var

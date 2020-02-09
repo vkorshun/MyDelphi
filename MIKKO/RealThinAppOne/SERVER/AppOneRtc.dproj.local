@@ -11,12 +11,6 @@
     <Transaction>1899.12.30 00:00:00.000.878,D:\MIKKO.XE2\RealThinAppOne\SERVER\fm_appone.dfm=C:\Users\vk\Documents\RAD Studio\Projects\Unit28.dfm</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
-    <File Path="fm_appone.pas"/>
-    <File Path="fm_appone.dfm"/>
-    <File Path="dm_entrance.pas"/>
-    <File Path="dm_entrance.dfm"/>
-    <File Path="dm_EntranceMethodsMikko.pas"/>
-    <File Path="dm_EntranceMethodsMikko.dfm"/>
     <File Path="..\..\RealThinAppOne"/>
     <File Path="..\CLIENT"/>
     <File Path="..\CLIENT\FUTRONIC"/>
@@ -32,7 +26,13 @@
     <File Path="..\..\COMMON\fm_login.pas"/>
     <File Path="..\..\COMMON\fm_login.dfm"/>
     <File Path="..\..\COMMON\mikko_consts.pas"/>
+    <File Path="dm_entrance.pas"/>
+    <File Path="dm_entrance.dfm"/>
+    <File Path="dm_EntranceMethodsMikko.pas"/>
+    <File Path="dm_EntranceMethodsMikko.dfm"/>
     <File Path="dm_personalentrance.pas"/>
     <File Path="dm_personalentrance.dfm"/>
+    <File Path="fm_appone.pas"/>
+    <File Path="fm_appone.dfm"/>
   </ProjectSortOrder>
 </BorlandProject>

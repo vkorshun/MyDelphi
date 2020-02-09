@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, MemTableDataEh, Db, MemTableEh, DataDriverEh,
-  ServerDocSqlManager, VkVariable,
+  ClientDocSqlManager, VkVariable,
   Generics.Collections, vkdocinstance, Controls, vkvariablebinding,
   fmVkDocDialog, uDocDescription,
   Forms, Variants, VariantUtils, Dialogs, pFIBQueryVk, FIBDatabase,
@@ -75,7 +75,7 @@ type
     { Private declarations }
     FDmMain: TMainRtcDm;
     FDocInstance: TDocInstance;
-    FDocSqlManager: TServerDocSqlManager;
+    FDocSqlManager: TClientDocSqlManager;
     FDocStruDescriptionList: TDocStruDescriptionList;
     FDocValidator: TDocValidator;
     FLastRetval: IRtcFuncResult;
@@ -107,8 +107,8 @@ type
     FEditOrderList: TStringList;
     FDefineDebug: Boolean;
     FRtcQueryDataSet: TRtcQueryDataSet;
-    procedure DoInsertAdditionalFields;
-    procedure DoUpdateAdditionalFields;
+    //procedure DoInsertAdditionalFields;
+    //procedure DoUpdateAdditionalFields;
     // procedure OnFillFiledList(Sender: TObject);
     procedure FillKeyFields;
     procedure rtcEditDoc(operation: TDocOperation);
@@ -139,13 +139,14 @@ type
     procedure WriteVariables(AInsert: Boolean);
     function ValidFmEditItems(Sender: TObject): Boolean; virtual;
     procedure VarLog(AVarList: TVkVariableCollection);
+    procedure UpdateOrInsert(Sender:TObject; bNew: Boolean);
 
     class procedure SetParamValues(AQuery: TpFIBQueryVk;
       AVarList: TVkVariableCollection);
     class function GetDm: TDocDm; virtual;
     property IsInternalTransaction: Boolean read FIsInternalTransaction;
     property LastRetval: IRtcFuncResult read FLastRetval write SetLastRetval;
-    property SqlManager: TServerDocSqlManager read FDocSqlManager
+    property SqlManager: TClientDocSqlManager read FDocSqlManager
       write FDocSqlManager;
     property DmMain: TMainRtcDm read FDmMain;
     property DocVariableList: TVkVariableCollection read GetDocVariableList;
@@ -223,12 +224,13 @@ end;
 procedure TDocDm.DataModuleCreate(Sender: TObject);
 begin
   inherited;
-  FDocSqlManager := TServerDocSqlManager.Create;
+  FDocSqlManager := TClientDocSqlManager.Create;
   // FDocSqlManager.OnFillFieldNameList := OnFillFiledList;
   FDocStruDescriptionList := TDocStruDescriptionList.Create;
   FGridOrderList := TStringList.Create;
   FEditOrderList := TStringList.Create;
   FRtcQueryDataSet := MainRtcDm.NewRtcQueryDataSet;
+  FRtcQueryDataSet.OnUpdateOrInsert := UpdateOrInsert;
   // FDmMain.LinkWithDataSet(pFIBDataSetVkDoc,FDmMain.pFIBTransactionReadOnly, FDmMain.pFIBTransactionUpdate,'','','');
   // FDmMain.LinkWithQuery(pFIBQueryVkLock,FDmMain.pFIBTransactionUpdate);
   // FDmMain.LinkWithQuery(pFIBQueryVkUpdate,FDmMain.pFIBTransactionUpdate);
@@ -328,7 +330,7 @@ begin
     Result := FOnBeforeDocInsert(Self);
 end;
 
-procedure TDocDm.DoInsertAdditionalFields;
+{procedure TDocDm.DoInsertAdditionalFields;
 var
   i: Integer;
 begin
@@ -347,7 +349,7 @@ begin
       if FDocSqlManager.AdditionalList[i].FieldList.Count > 0 then
         FOnUpdateAdditionalFields(FDocSqlManager.AdditionalList[i]);
 end;
-
+}
 procedure TDocDm.DirectEditDoc;
 var
   bMyTransaction: Boolean;
@@ -467,12 +469,14 @@ procedure TDocDm.InitClientSqlManager(const ATableName: String);
 begin
   with MainRtcDm.RtcClientModule1 do
   begin
-    Prepare('RtcGetSqlManager');
+    Prepare('RtcGetSqlTableProperties');
     Param.AsString['TABLENAME'] := ATableName;
     MainRtcDm.setUser(Param);
     SetLastRetval(MainRtcDm.rtcExecute(MainRtcDm.RtcClientModule1,
       MainRtcDm.RtcClientModule1.Data.asFunction));
+    //ShowMessage(FLastRetval.getRtcValue.asRecord.toJSON);
     TUtils.RtcValueToObject(FLastRetval.getRtcValue.asRecord, FDocSqlManager);
+    FRtcQueryDataSet.TableName := ATableName;
   end;
 end;
 
@@ -562,13 +566,12 @@ end;
 procedure TDocDm.rtcEditDoc(operation: TDocOperation);
 var
   i: Integer;
-  retval: TRtcValue;
+  ret: TRtcRecord;
   changedList: TStringList;
-
 
 begin
   FillKeyFields;
-  retval := nil;
+  ret := nil;
   with MainRtcDm.RtcClientModule1 do
   begin
     Prepare('rtcDocedit');
@@ -585,14 +588,14 @@ begin
     begin
       TUtils.VkVariableColectionsToRtc(DocVariableList,
         Param.asRecord['PARAMS']);
-      for i := 0 to DocVariableList.Count - 1 do
+      {for i := 0 to DocVariableList.Count - 1 do
       begin
         Param.asArray['PARAMS'].NewRecord(i);
         Param.asArray['PARAMS'].asRecord[i].AsString['name'] :=
           DocVariableList.Items[i].Name;
         Param.asArray['PARAMS'].asRecord[i].AsString['value'] :=
           DocVariableList.Items[i].Value;
-      end;
+      end;}
     end
     else
     begin
@@ -617,7 +620,19 @@ begin
     end;
 
     SetLastRetval(MainRtcDm.rtcExecute(MainRtcDm.RtcClientModule1,
-      MainRtcDm.RtcClientModule1.Data.asFunction))
+      MainRtcDm.RtcClientModule1.Data.asFunction));
+    if (FLastRetval.RtcValue.isType=rtc_Record) then
+    begin
+      ret := FLastRetval.RtcValue.asRecord.asRecord['RESULT']; //.asRecord['RESULT']);
+      MemTableEhDoc.Edit;
+      for i:=0  to ret.FieldCount-1 do
+      begin
+
+        MemTableEhDoc.FieldByName(ret.FieldName[i]).Value :=
+                      ret.asValue[ret.FieldName[i]];
+      end;
+      MemTableEhDoc.Post;
+    end;
   end;
 end;
 
@@ -801,10 +816,11 @@ begin
   with FRtcQueryDataSet do
   begin
     DsMemTableEh := MemTableEhDoc;
-    InitAllSQL(FDocSqlManager.TableName, FDocSqlManager.KeyFields,
-      FDocSqlManager.GenId);
+    //InitAllSQL(FDocSqlManager.TableName, FDocSqlManager.KeyFields,
+    //  FDocSqlManager.GenId);
     SelectSQL.Clear;
-    SelectSQL.Text := 'SELECT * FROM ' + FDocSqlManager.TableName;
+    SelectSQL.Text := FDocSqlManager.SelectSQL.Text;
+    Params.AssignValues(FDocSqlManager.Params);
     Open;
   end;
   { pFIBDataSetVkDoc.Close;
@@ -860,6 +876,15 @@ end;
 procedure TDocDm.SetPrepared(const Value: Boolean);
 begin
   FPrepared := Value;
+end;
+
+procedure TDocDm.UpdateOrInsert(Sender: TObject; bNew: Boolean);
+begin
+  if bNew then
+    rtcEditDoc(TDocOperation.docInsert)
+  else
+    rtcEditDoc(TDocOperation.docUpdate);
+
 end;
 
 { procedure TDocDm.UnLockDoc(bCommit: Boolean = True);

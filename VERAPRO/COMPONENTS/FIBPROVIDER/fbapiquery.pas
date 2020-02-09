@@ -36,6 +36,7 @@ type
     function GetEOF: Boolean;
     function GetFieldCount: Integer;
     function GetFieldIndex(FieldName: String): Integer;
+    function GetFieldMetadata(const Idx: Integer): IColumnMetaData;
     function GetFields(const Idx: Integer): ISQLData;
     function GetOpen: Boolean;
     function GetPlan: String;
@@ -72,6 +73,7 @@ type
     property Eof: Boolean read GetEOF;
     property Current: IResults read FResults;
     property Fields[const Idx: Integer]: ISQLData read GetFields; default;
+    property FieldsMetadata[const Idx: Integer]: IColumnMetaData read GetFieldMetadata;
     property FieldIndex[FieldName: String]: Integer read GetFieldIndex;
     property FieldCount: Integer read GetFieldCount;
     property IsOpen: Boolean read GetOpen;
@@ -286,6 +288,17 @@ begin
     Result := -1
   else
     Result := Field.GetIndex;
+end;
+
+function TFbApiQuery.GetFieldMetadata(const Idx: Integer): IColumnMetaData;
+var
+  Field: IColumnMetaData;
+begin
+  if FMetaData = nil then
+    IBError(ibxeNoFieldAccess, [nil]);
+
+  Result := FMetaData.getColumnMetadata(Idx);
+
 end;
 
 function TFbApiQuery.GetFields(const Idx: Integer): ISQLData;

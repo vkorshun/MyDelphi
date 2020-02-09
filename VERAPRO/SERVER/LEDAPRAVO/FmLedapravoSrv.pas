@@ -28,6 +28,7 @@ implementation
 uses DmMain;
 
 procedure TLedaPravoSrvFm.Button1Click(Sender: TObject);
+var mainDm: TMainDm;
 begin
 {  if (MainDm.FbDatabase.IsConnected) then
     MainDm.FbDatabase.Disconnect
@@ -35,6 +36,7 @@ begin
     MainDm.FbDatabase.Connect;}
 
 //  MainDm.ValidUser('ADMIN','ADMIN');
+  mainDm := TMainDm.Create(Application);
   MainDm.TestQuery;
   ShowMessage('Ok1');
 

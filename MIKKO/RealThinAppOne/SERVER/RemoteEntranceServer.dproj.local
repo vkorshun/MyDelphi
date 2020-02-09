@@ -7,8 +7,8 @@
     <Transaction>1899.12.30 00:00:00.000.680,=D:\MIKKO.XE2\RealThinAppOne\SERVER\dm_personalentrance.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.502,D:\MIKKO.XE2\RealThinAppOne\SERVER\dm_ServerMethodsMikko.pas=D:\MIKKO.XE2\RealThinAppOne\SERVER\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.897,D:\MIKKO.XE2\RealThinAppOne\SERVER\dm_EntranseMethodsMikko.pas=D:\MIKKO.XE2\RealThinAppOne\SERVER\dm_EntranceMethodsMikko.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.897,D:\MIKKO.XE2\RealThinAppOne\SERVER\dm_EntranseMethodsMikko.dfm=D:\MIKKO.XE2\RealThinAppOne\SERVER\dm_EntranceMethodsMikko.dfm</Transaction>
     <Transaction>1899.12.30 00:00:00.000.153,D:\MIKKO.XE2\RealThinAppOne\SERVER\dm_EntranseMethodsMikko.dfm=D:\MIKKO.XE2\RealThinAppOne\SERVER\dm_ServerMethodsMikko.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.897,D:\MIKKO.XE2\RealThinAppOne\SERVER\dm_EntranseMethodsMikko.dfm=D:\MIKKO.XE2\RealThinAppOne\SERVER\dm_EntranceMethodsMikko.dfm</Transaction>
     <Transaction>1899.12.30 00:00:00.000.502,D:\MIKKO.XE2\RealThinAppOne\SERVER\dm_ServerMethodsMikko.dfm=D:\MIKKO.XE2\RealThinAppOne\SERVER\Unit1.dfm</Transaction>
     <Transaction>1899.12.30 00:00:00.000.317,D:\MIKKO.XE2\RealThinAppOne\SERVER\ServerMikkoEntrance.dfm=D:\MIKKO.XE2\RealThinAppOne\SERVER\ServerMikko.dfm</Transaction>
     <Transaction>1899.12.30 00:00:00.000.717,D:\MIKKO.XE2\RealThinAppOne\SERVER\RemoteEntranceServer.dproj=D:\MIKKO.XE2\RealThinAppOne\SERVER\MikkoServer.dproj</Transaction>

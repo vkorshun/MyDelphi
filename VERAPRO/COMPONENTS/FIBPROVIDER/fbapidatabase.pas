@@ -245,7 +245,7 @@ type
     procedure EndTransaction(Action: TTransactionAction; Force: Boolean);
     procedure SetDatabase(const Value: TFbApiDatabase);
     procedure SetParams(const Value: TByteArray);
-    function GretInTransaction: Boolean;
+    function GetInTransaction: Boolean;
     procedure SetDefaultCompletion(const Value: TTransactionCompletion);
     function CheckTransaction:Boolean;
     procedure CreateNewTransaction;
@@ -255,7 +255,7 @@ type
     procedure TRParamsChanging(Sender: TObject);
     function GetDatabase(Index: Integer): TFbApiDatabase;
     function GetDatabaseCount: Integer;
-    function GetInTransaction: Boolean;
+    //function GetInTransaction: Boolean;
     procedure SetActive(const Value: Boolean);
     procedure SetDefaultDatabase(const Value: TFbApiDatabase);
     procedure SetTRParams(const Value: TStrings);
@@ -1036,10 +1036,10 @@ begin
   result := (TransactionIntf <> nil) and TransactionIntf.InTransaction;
 end;
 
-function TFbApiTransaction.GretInTransaction: Boolean;
+{function TFbApiTransaction.GretInTransaction: Boolean;
 begin
   Result := Assigned(FTransaction) and FTransaction.InTransaction;
-end;
+end;}
 
 procedure TFbApiTransaction.Loaded;
 begin

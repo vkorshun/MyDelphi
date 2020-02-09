@@ -17,7 +17,8 @@ uses
   DmRtcTable in '..\COMMON\DmRtcTable.pas' {RtcTableDm: TDataModule},
   DmSrvDoc in '..\COMMON\DmSrvDoc.pas' {SrvDocDm: TDataModule},
   SQLTableProperties in '..\COMMON\INTERFACE\SQLTableProperties.pas',
-  ServerDocSqlManager in '..\COMMON\INTERFACE\ServerDocSqlManager.pas';
+  ServerDocSqlManager in '..\COMMON\INTERFACE\ServerDocSqlManager.pas',
+  QueryUtils in '..\COMMON\INTERFACE\QueryUtils.pas';
 
 {$R *.res}
 
@@ -26,10 +27,10 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TRtcCustomDm, RtcCustomDm);
   Application.CreateForm(TRtcCommonFunctionsDm, RtcCommonFunctionsDm);
-  Application.CreateForm(TMainDm, MainDm);
+//  Application.CreateForm(TMainDm, MainDm);
   Application.CreateForm(TLedaPravoSrvFm, LedaPravoSrvFm);
-  Application.CreateForm(TRtcTableDm, RtcTableDm);
-  Application.CreateForm(TSrvDocDm, SrvDocDm);
+//  Application.CreateForm(TRtcTableDm, RtcTableDm);
+ // Application.CreateForm(TSrvDocDm, SrvDocDm);
   //  Application.CreateForm(TRtcObjectsDm, RtcObjectsDm);
 //  Application.CreateForm(TRtcUseMonthDm, RtcUseMonthDm);
   RtcCommonFunctionsDm.SetRtcServer(LedaPravoSrvFm.RtcHttpServer1);

@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, CommonInterface, fbapidatabase,
   SettingsStorage, FB30Statement, fbapiquery, SQLTableProperties, FBSQLData, Variants,
-  System.Generics.Collections, VkVariable, IB, RtcLog, ServerDocSQLManager, Dialogs;
+  System.Generics.Collections, VkVariable, IB, RtcLog, ServerDocSQLManager, Dialogs, QueryUtils;
 
 type
   TMainDm = class(TDataModule)
@@ -50,7 +50,6 @@ type
     procedure RegisterAdmin;
     procedure registerError(const ASQLText, ErrorMessage :String);
     function ValidUser(const AUserName, aPassword: String): boolean;
-    procedure SetQueryParams(AQuery:TFBApiQuery; AParams: TVkVariableCollection);
     // property QuerySelect: TFbApiQuery read FQuerySelect;
     // property CommandQuery: TFbApiQuery read FCommand;
     procedure TestQuery;
@@ -65,12 +64,12 @@ type
     property ReadCommitedTransactionOptions: TStringList
       read FReadCommitedTransactionOptions
       write SetReadCommitedTransactionOptions;
-    property ServerDocSqlManager[const key: String]: TServerDocSqlManager
-      read GetServerDocSqlManager;
+    //property ServerDocSqlManager[const key: String]: TServerDocSqlManager
+    //  read GetServerDocSqlManager;
   end;
 
 var
-  MainDm: TMainDm;
+  MainDm_unused1: TMainDm;
 
 implementation
 
@@ -101,7 +100,7 @@ begin
   FReadOnlyTransactionOptions.Add('nowait');
 
   FSnapshotTransactionOptions := TStringList.Create;
-  FSnapshotTransactionOptions.Add('concurency');
+  FSnapshotTransactionOptions.Add('concurrency');
   FSnapshotTransactionOptions.Add('nowait');
 
   FStabilityTransactionOptions := TStringList.Create;
@@ -197,13 +196,13 @@ var
   realKey: String;
 begin
   realKey := key.ToUpper;
-  if FServerDocSqlManagerList.ContainsKey(realKey) then
+  {if FServerDocSqlManagerList.ContainsKey(realKey) then
     Result := FServerDocSqlManagerList[realKey]
   else
-  begin
+  begin}
     Result := CreateServerDocSQLManager(realKey);
-    FServerDocSqlManagerList.Add(realKey, Result);
-  end;
+{    FServerDocSqlManagerList.Add(realKey, Result);
+  end; }
 end;
 
 procedure TMainDm.Login(const UserName, Password: String);
@@ -287,23 +286,6 @@ begin
 
 end;
 
-procedure TMainDm.SetQueryParams(AQuery: TFBApiQuery; AParams: TVkVariableCollection);
-var i: Integer;
-    pname: String;
-begin
-  with AQuery do
-  begin
-    for I := 0 to (Params.Count-1) do
-    begin
-      pname := String(Params[i].Name);
-      if Assigned(AParams.VarByName(pname)) then
-      begin
-        Params[i].Value := AParams.VarByName(pname).Value;
-      end;
-    end;
-  end;
-end;
-
 procedure TMainDm.SetReadCommitedTransactionOptions(const Value: TStringList);
 begin
   FReadCommitedTransactionOptions := Value;
@@ -337,20 +319,26 @@ const qr ='EXECUTE BLOCK(NAME VARCHAR(255) = :NAME) RETURNS (IDDOC BIGINT) '
 + ' RETURNING IDDOC INTO :IDDOC;'
 + ' SUSPEND; '
 + ' END';
+
+ qr2 = ' INSERT INTO TESTDOC(NAME) VALUES(:NAME)'
++ ' RETURNING IDDOC ;';
+
 var query: TFbApiQuery;
     AParams: TVkVariableCollection;
     tr: TFbApiTransaction;
 begin
   tr := GetNewTransaction(FStabilityTransactionOptions, nil);
   query := GetNewQuery(tr);
-  query.SQL.Text := qr;
+  query.SQL.Text := qr2;
   AParams := TVkVariableCollection.Create(self);
   try
-    AParams.CreateVkVariable('NAME','реяр');
-    SetQueryParams(query, AParams);
+    AParams.CreateVkVariable('NAME','реяр3');
+    TQueryUtils.SetQueryParams(query, AParams);
     query.ExecQuery;
-    if not query.Eof then
-    ShowMessage(IntToStr(query.FieldByName('IDDOC').AsInt64));
+    if Assigned(query.Current) then
+      ShowMessage(IntToStr(query.Current.ByName('IDDOC').AsInt64));
+//    if not query.Eof then
+//    ShowMessage(IntToStr(query.FieldByName('IDDOC').AsInt64));
   finally
     query.Free;
     tr.Free;

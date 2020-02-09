@@ -132,6 +132,7 @@
         </DCCReference>
         <DCCReference Include="..\COMMON\INTERFACE\SQLTableProperties.pas"/>
         <DCCReference Include="..\COMMON\INTERFACE\ServerDocSqlManager.pas"/>
+        <DCCReference Include="..\COMMON\INTERFACE\QueryUtils.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

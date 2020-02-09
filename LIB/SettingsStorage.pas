@@ -3,7 +3,7 @@ unit SettingsStorage;
 interface
 
 uses
-  Classes, SysUtils, Variants, VariantUtils, vkvariable, inifiles, System.Generics.Collections;
+  Classes, SysUtils, Variants, VariantUtils, vkvariable, inifiles, System.Generics.Collections, Rtti, System.TypInfo;
 
 type
 
@@ -19,6 +19,8 @@ type
     constructor Create(AName: String);
     destructor Destroy;override;
     function getItemValues: TStringList;
+    procedure ToObject(  AObject: TObject);
+
   end;
 
   TSettingsStorage = class(TObject)
@@ -78,6 +80,66 @@ begin
   if Value.IsEmpty then
     raise Exception.Create('Empty section name');
   FName := Value;
+end;
+
+procedure TSettingsStorageItem.ToObject(AObject: TObject);
+var
+  ctx: TRttiContext;
+  RttiType, DestType: TRttiType;
+  RttiProperty: TRttiProperty;
+  _obj: TObject;
+  v: TVkVariable;
+begin
+   if Assigned(AObject) then
+   begin
+     ctx := TRttiContext.Create;
+     try
+       RttiType := ctx.GetType(AObject.ClassType);
+       for RttiProperty in RttiType.GetProperties do
+       begin
+          v := Items.VarByName(RttiProperty.Name);
+          if Assigned(v) and (RttiProperty.IsWritable or RttiProperty.GetValue(AObject).IsObject)then
+          case RttiProperty.PropertyType.TypeKind of
+            tkInteger: RttiProperty.SetValue(AObject, v.asInteger);
+            tkChar: RttiProperty.SetValue(AObject, v.asString) ;
+            tkFloat: RttiProperty.SetValue(AObject,v.asFloat);
+            tkString,
+            tkUString,
+            tkLString: RttiProperty.SetValue(AObject,v.AsString);
+            tkInt64: RttiProperty.SetValue(AObject,v.AsLargeInt);
+            tkVariant: RttiProperty.SetValue(AObject,TValue.FromVariant(v.Value));
+            tkEnumeration:
+            if (RttiProperty.PropertyType.IsOrdinal and SameText('Boolean',RttiProperty.PropertyType.Name)) then
+              RttiProperty.SetValue(AObject,v.asBoolean);
+            tkClass,
+            tkRecord,
+            tkClassRef:
+              begin
+                if (RttiProperty.GetValue(AObject).IsObject) then
+                begin
+                  _obj := RttiProperty.GetValue(AObject).AsObject;
+                  if _obj is TStrings then
+                  begin
+//                    if (TStrings(_obj).Count > 0) then
+                    TStrings(_obj).Text :=  v.asString;
+//                    else
+//                      ARecord.asString[RttiProperty.Name] := '';
+                  end
+                  else
+                  begin
+//                    TUtils.RtcValueToObject(ARecord.asRecord[RttiProperty.Name], _obj);
+                  end;
+                end;
+              end;
+
+          end;
+       end;
+     finally
+       ctx.Free;
+     end;
+
+   end
+
 end;
 
 { TSettingsStorage }
@@ -260,5 +322,7 @@ begin
     FItems.Add(_Section);
   end;
 end;
+
+
 
 end.

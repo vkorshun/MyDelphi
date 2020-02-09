@@ -25,11 +25,11 @@ uses
   DocSqlManager in '..\COMMON\DOCS\DocSqlManager.pas',
   uDocDescription in '..\COMMON\DOCS\uDocDescription.pas',
   fmSetupForm in '..\COMMON\DOCS\fmSetupForm.pas' {SetUpFormFm},
-  ServerDocSqlManager in '..\..\SERVER\COMMON\INTERFACE\ServerDocSqlManager.pas',
   RtcFuncResult in '..\COMMON\RTC\RtcFuncResult.pas',
   docManagerPanel in '..\COMMON\DOCS\docManagerPanel.pas',
   DmTestDoc in 'DOCS\DmTestDoc.pas' {TestDocDm: TDataModule},
-  FrameTestDoc in 'DOCS\FrameTestDoc.pas' {TestDocFrame: TFrame};
+  FrameTestDoc in 'DOCS\FrameTestDoc.pas' {TestDocFrame: TFrame},
+  ClientDocSqlManager in '..\..\SERVER\COMMON\INTERFACE\ClientDocSqlManager.pas';
 
 {$R *.res}
 
@@ -38,7 +38,7 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TMainRtcDm, MainRtcDm);
   Application.CreateForm(TMainFm, MainFm);
-//  Application.CreateForm(TTestDocDm, TestDocDm);
+  //  Application.CreateForm(TTestDocDm, TestDocDm);
   if TLoginFm.Login then
   begin
   //  Application.CreateForm(TDocDm, DocDm);

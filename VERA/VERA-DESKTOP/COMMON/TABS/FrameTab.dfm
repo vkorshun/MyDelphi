@@ -2,7 +2,7 @@ object TabFrame: TTabFrame
   Left = 0
   Top = 0
   Width = 482
-  Height = 528
+  Height = 283
   TabOrder = 0
   object ActionToolBar1: TActionToolBar
     Left = 0
@@ -23,27 +23,16 @@ object TabFrame: TTabFrame
     ParentFont = False
     Spacing = 0
   end
-  object Panel2: TPanel
-    Left = 0
-    Top = 36
-    Width = 482
-    Height = 452
-    Align = alClient
-    BevelOuter = bvNone
-    Caption = 'Panel0'
-    TabOrder = 1
-    Visible = False
-    ExplicitHeight = 197
-  end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 488
+    Top = 243
     Width = 482
     Height = 40
     Panels = <
       item
         Width = 500
       end>
+    ExplicitTop = 488
   end
   object ImageList1: TImageList
     Left = 248

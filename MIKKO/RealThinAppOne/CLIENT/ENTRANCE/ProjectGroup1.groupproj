@@ -12,6 +12,9 @@
         <Projects Include="C:\THIRDLIB.XE6\VKLIB\vklib_xe6.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="..\..\SERVER\AppOneRtc.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -47,14 +50,23 @@
     <Target Name="vklib_xe6:Make">
         <MSBuild Projects="C:\THIRDLIB.XE6\VKLIB\vklib_xe6.dproj" Targets="Make"/>
     </Target>
+    <Target Name="AppOneRtc">
+        <MSBuild Projects="..\..\SERVER\AppOneRtc.dproj"/>
+    </Target>
+    <Target Name="AppOneRtc:Clean">
+        <MSBuild Projects="..\..\SERVER\AppOneRtc.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="AppOneRtc:Make">
+        <MSBuild Projects="..\..\SERVER\AppOneRtc.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="mikko_entrance2;RemoteEntranceServer;vklib_xe6"/>
+        <CallTarget Targets="mikko_entrance2;RemoteEntranceServer;vklib_xe6;AppOneRtc"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="mikko_entrance2:Clean;RemoteEntranceServer:Clean;vklib_xe6:Clean"/>
+        <CallTarget Targets="mikko_entrance2:Clean;RemoteEntranceServer:Clean;vklib_xe6:Clean;AppOneRtc:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="mikko_entrance2:Make;RemoteEntranceServer:Make;vklib_xe6:Make"/>
+        <CallTarget Targets="mikko_entrance2:Make;RemoteEntranceServer:Make;vklib_xe6:Make;AppOneRtc:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
