@@ -31,6 +31,7 @@ type
     FTableVariableList: TDocVariableList;
     FOnStoreVariables: TNotifyEvent;
     FOnUpdateOrInsert: TUpdateOrInsertEvent;
+    FOnDelete: TNotifyEvent;
 
     FMemTableEhAfterEdit: TDataSetNotifyEvent;
     FMemTableEhAfterInsert: TDataSetNotifyEvent;
@@ -110,6 +111,7 @@ type
     property RtcQuery:TRtcQuery read FRtcQuery;
     property KeyFields:String read FKeyFields;
     property Params:TParams read GetParams;
+    property OnDelete: TNotifyEvent read FOnDelete write FOnDelete;
     property OnUpdateOrInsert: TUpdateOrInsertEvent read    FOnUpdateOrInsert write FOnUpdateOrInsert;
 
   end;
@@ -305,7 +307,7 @@ end;
 procedure TRtcQueryDataSet.DeleteData;
 var i: integer;
 begin
-  DinamicSQLDelete;
+  {DinamicSQLDelete;
 
   with FRtcExecute do
   begin
@@ -314,7 +316,9 @@ begin
     for i := 0 to Params.Count-1 do
       Params[i].Value := FTableVariableList.VarByName(Params[i].Name).Value;
     ExecQuery(ttStability);
-  end;
+  end; }
+  if Assigned(FOnDelete) then
+    FOnDelete(self);
 end;
 
 destructor TRtcQueryDataSet.Destroy;

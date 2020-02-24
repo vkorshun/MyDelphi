@@ -122,6 +122,8 @@ type
     FOnEditAction: TProcOnActionEvent;
     FIsSelect: Boolean;
     FPrepare: Boolean;
+    _bDocInsert: Boolean;
+    _bDocClone: Boolean;
 
     procedure Init(Component: TComponent);
 //    function bHaveSod: Boolean;
@@ -147,6 +149,7 @@ type
     FSelected: TVkVariableCollection;
     FInEdit: Boolean;
     FCurrentParams: TVkVariableCollection;
+    FActionSuccess: Boolean;
 
     FOnDefineActionManager: TNotifyDefineactionManager;
     FOnDeleteGetMessage: TFuncgetMessage;
@@ -195,6 +198,7 @@ type
     procedure SetParentForm(aForm:TForm);
     procedure SetSumMarked;
     function ValidAccess(aIdAccess:LargeInt): boolean;
+    function onSaveDialog(Sender: TObject):Boolean;
   public
     { Public declarations }
     VarMDoc: TVkVariableCollection;
@@ -570,6 +574,7 @@ begin
   Name:= AOwner.Name+name;
   FActionDescription    := TActionListDescriptionList.Create;
   FFmEdit := TVkDocDialogFm.Create(self);
+  FFmEdit.OnSaveData := onSaveDialog;
   DbGridEhVkDoc.PopupMenu := PopUpMenu1;
   FFmSetUp := TSetUpFormFm.Create(Self);
 
@@ -1051,6 +1056,22 @@ begin
   StatusBar1.Panels[0].Text :=    ' '+DocDm.GetFilterCaption;
 end;
 
+function TDocFrame.onSaveDialog(Sender: TObject): Boolean;
+begin
+  try
+    if _bDocInsert or DocDm.DocVariableList.IsChanged then
+      DocDm.WriteVariables(_bDocInsert or _bDocClone);
+    Result := true;
+  except
+     on e:Exception  do
+     begin
+       ShowMessage(e.message);
+       Result := false;
+     end;
+  end;
+
+end;
+
 procedure TDocFrame.DbGridEhVkDocAfterApplayUserFilter(Sender: TObject);
 begin
   DoUnmarkAll;
@@ -1271,8 +1292,6 @@ var
   _FmEdit: TForm;
   bExternal: Boolean;
   _IsMyTransaction: Boolean;
-  _bDocInsert: Boolean;
-  _bDocClone: Boolean;
   _pBinding: TVkVariableBinding;
 begin
 
@@ -1324,12 +1343,11 @@ begin
       _FmEdit.PopupParent := Screen.ActiveForm;
       if _FmEdit.ShowModal = mrOk then
       begin
-        if not _bDocInsert and not _bDocClone then
-        begin
+        //if not _bDocInsert and not _bDocClone then
+        //begin
           //DocDm.LockDoc;
-        end;
-        if _bDocInsert or DocDm.DocVariableList.IsChanged then
-          DocDm.WriteVariables(_bDocInsert or _bDocClone);
+        //end;
+        FActionSuccess := True;
       end;
     end
     else
@@ -1371,6 +1389,7 @@ begin
       //  FDmMikkoads.AdsConnection1.Rollback;
     //DocDm.UnLockDoc(False);
     DocDm.FullRefreshDoc;
+    FActionSuccess := False;
     Raise;
   end
 {  finally
@@ -1515,17 +1534,17 @@ begin
         else
           DBGridEhVkDoc.DataSource.DataSet.FieldByName(PField.name).Visible := True;
       end;
-{*      FFmSetUp.Prepare(DBGridEhVkDoc.DataSource.DataSet,DocDm.DmMain.XmlInit.GetXmlIni(ClassName,true) ,DbGridEhVkDoc.Name);
-*}
+      FFmSetUp.Prepare(DBGridEhVkDoc.DataSource.DataSet,DocDm.DmMain.XmlInit.GetXmlIni(ClassName,true) ,DbGridEhVkDoc.Name);
+
       DocDm.Prepared := true;
     end
     else
-    { To DO
+    // To DO
       for i := 0 to DBGridEhVkDoc.DataSource.DataSet.FieldCount - 1 do
         DBGridEhVkDoc.DataSource.DataSet.Fields[i].Visible := False;
 
     FFmSetUp.SetUpDataSet(DBGridEhVkDoc.DataSource.DataSet);
-     }
+
 end;
 
 procedure TDocFrame.DoDocEvent(aId: Integer);

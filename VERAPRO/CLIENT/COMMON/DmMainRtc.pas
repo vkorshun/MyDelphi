@@ -4,8 +4,8 @@ interface
 
 uses
   System.SysUtils, System.Classes, rtcInfo, rtcConn, rtcDataCli, rtcHttpCli,
-  RtcSqlQuery, rtcCliModule, commoninterface, Dialogs,
-  DCPsha256, Rtti, rtcFunction, RtcFuncResult, RtcQueryDataSet;
+  RtcSqlQuery, rtcCliModule, commoninterface, Dialogs, Forms, Variants,
+  DCPsha256, Rtti, rtcFunction, RtcFuncResult, RtcQueryDataSet, u_xmlinit;
 
 type
 
@@ -16,11 +16,13 @@ type
     procedure DataModuleCreate(Sender: TObject);
     procedure RtcHttpClient1ConnectLost(Sender: TRtcConnection);
     procedure RtcClientModule1ConnectLost(Sender: TRtcConnection);
+    procedure DataModuleDestroy(Sender: TObject);
   private
     { Private declarations }
     DCP_sha2561: TDCP_sha256;
     FUserInfo: PUserInfo;
     query: TRtcQuery;
+    FXmlIni: TXmlIni;
     procedure test;
     function rtcLogin(): Boolean;
   public
@@ -29,10 +31,14 @@ type
     function getPasswordHash(const pwd: String): UTF8String;
     function Login(const userName, password: String): Boolean;
     function NewRtcQueryDataSet: TRtcQueryDataSet;
+    function Gen_ID(const key:String):Int64;
+    function QueryValue(const SQL:String; params: array of Variant):Variant;
     procedure SetUser(Param: TRtcFunctionInfo);
 //    class function rtcExecute(clientModule:TRtcClientModule;func: TRtcFunctionInfo): variant; overload;
     class procedure CloneComponent(const aSource, aDestination: TComponent);
     class function rtcExecute(clientModule:TRtcClientModule;func: TRtcFunctionInfo): IRtcFuncResult; overload;
+    property XmlInit: TXmlIni read FXmlIni;
+    property UserInfo:PUserInfo read FUserInfo;
   end;
 
 var
@@ -48,7 +54,30 @@ procedure TMainRtcDm.DataModuleCreate(Sender: TObject);
 begin
   DCP_sha2561 := TDCP_sha256.Create(self);
   RtcHttpClient1.Connect();
+  FXmlIni := TXmlIni.Create(self,ChangeFileExt(Application.ExeName,'.xml'));
+end;
 
+procedure TMainRtcDm.DataModuleDestroy(Sender: TObject);
+begin
+  FreeAndNil(FXmlIni);
+end;
+
+function TMainRtcDm.Gen_ID(const key: String): Int64;
+begin
+  with RtcClientModule1 do
+  begin
+    try
+    with Prepare('RtcGen_ID') do
+    begin
+      Param.asWideString['username'] := FUserInfo.user_name;
+      Param.asWideString['password'] := FUserInfo.user_password;
+      Param.asWideString['ID_NAME']  := key;
+      Result := rtcExecute(RtcClientModule1, RtcClientModule1.Data.asFunction).getRtcValue.asLargeInt;
+    end;
+    finally
+//      FreeAndNil(Retval);
+    end;
+  end;
 end;
 
 function TMainRtcDm.getPasswordHash(const pwd: String): UTF8String;
@@ -84,6 +113,28 @@ end;
 function TMainRtcDm.NewRtcQueryDataSet: TRtcQueryDataSet;
 begin
    Result := TRtcQueryDataSet.Create(RtcClientModule1,FUserInfo);
+end;
+
+function TMainRtcDm.QueryValue(const SQL: String; params: array of Variant): Variant;
+var i: Integer;
+begin
+  Result := null;
+  with RtcClientModule1 do
+  begin
+    with Prepare('RtcQueryValue') do
+    begin
+      Param.asWideString['username'] := FUserInfo.user_name;
+      Param.asWideString['password'] := FUserInfo.user_password;
+      Param.asWideString['SQL'] := SQL;
+      Param.NewArray('SQL_PARAMS'); //:= TRtcArray.Create();
+//      Param.asInteger['Param_count'] := High(AParams);
+      for I := 0 to High(params) do
+        Param.asArray['SQL_PARAMS'][i] := params[i];
+      Result := rtcExecute(RtcClientModule1, RtcClientModule1.Data.asFunction).RtcValue.asValue;
+
+    end;
+  end;
+
 end;
 
 procedure TMainRtcDm.RtcClientModule1ConnectLost(Sender: TRtcConnection);

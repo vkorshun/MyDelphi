@@ -152,6 +152,16 @@
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\..\SERVER\COMMON\INTERFACE\ClientDocSqlManager.pas"/>
+        <DCCReference Include="DOCS\MENUSTRU\frameMenuStru.pas">
+            <Form>MenuStruFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="DOCS\MENUSTRU\DmMenuStru.pas">
+            <Form>MenuStruDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

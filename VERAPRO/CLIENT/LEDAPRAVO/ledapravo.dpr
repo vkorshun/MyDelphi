@@ -29,7 +29,9 @@ uses
   docManagerPanel in '..\COMMON\DOCS\docManagerPanel.pas',
   DmTestDoc in 'DOCS\DmTestDoc.pas' {TestDocDm: TDataModule},
   FrameTestDoc in 'DOCS\FrameTestDoc.pas' {TestDocFrame: TFrame},
-  ClientDocSqlManager in '..\..\SERVER\COMMON\INTERFACE\ClientDocSqlManager.pas';
+  ClientDocSqlManager in '..\..\SERVER\COMMON\INTERFACE\ClientDocSqlManager.pas',
+  frameMenuStru in 'DOCS\MENUSTRU\frameMenuStru.pas' {MenuStruFrame: TFrame},
+  DmMenuStru in 'DOCS\MENUSTRU\DmMenuStru.pas' {MenuStruDm: TDataModule};
 
 {$R *.res}
 
@@ -38,6 +40,7 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TMainRtcDm, MainRtcDm);
   Application.CreateForm(TMainFm, MainFm);
+  Application.CreateForm(TMenuStruDm, MenuStruDm);
   //  Application.CreateForm(TTestDocDm, TestDocDm);
   if TLoginFm.Login then
   begin

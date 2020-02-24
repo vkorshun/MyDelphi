@@ -139,6 +139,7 @@ type
     procedure WriteVariables(AInsert: Boolean);
     function ValidFmEditItems(Sender: TObject): Boolean; virtual;
     procedure VarLog(AVarList: TVkVariableCollection);
+    procedure DeleteDoc(ender: TObject);
     procedure UpdateOrInsert(Sender:TObject; bNew: Boolean);
 
     class procedure SetParamValues(AQuery: TpFIBQueryVk;
@@ -231,6 +232,7 @@ begin
   FEditOrderList := TStringList.Create;
   FRtcQueryDataSet := MainRtcDm.NewRtcQueryDataSet;
   FRtcQueryDataSet.OnUpdateOrInsert := UpdateOrInsert;
+  FRtcQueryDataSet.OnDelete := DeleteDoc;
   // FDmMain.LinkWithDataSet(pFIBDataSetVkDoc,FDmMain.pFIBTransactionReadOnly, FDmMain.pFIBTransactionUpdate,'','','');
   // FDmMain.LinkWithQuery(pFIBQueryVkLock,FDmMain.pFIBTransactionUpdate);
   // FDmMain.LinkWithQuery(pFIBQueryVkUpdate,FDmMain.pFIBTransactionUpdate);
@@ -271,6 +273,11 @@ begin
     else if (MemRec.UpdateStatus = usDeleted) then
     DirectDeleteDoc; }
 
+end;
+
+procedure TDocDm.DeleteDoc(ender: TObject);
+begin
+  rtcEditDoc(TDocOperation.docDelete);
 end;
 
 procedure TDocDm.DirectDeleteDoc;
@@ -424,6 +431,7 @@ begin
           raise Exception.Create('Error locate!'+ _CurKey); }
     end;
   finally
+  //  RestoreState(MemTableEhDoc);
 
     MemTableEhDoc.EnableControls;
 
@@ -575,19 +583,35 @@ begin
   with MainRtcDm.RtcClientModule1 do
   begin
     Prepare('rtcDocedit');
+    Param.asWideString['username'] := MainRtcDm.UserInfo.user_name;
+    Param.asWideString['password'] := MainRtcDm.UserInfo.user_password;
     Param.AsString['TABLENAME'] := FDocSqlManager.TableName;
     Param.AsString['COMMAND'] := TUtils.getDocCommand(operation);
     Param.NewRecord('PARAMS');
     if (operation = docDelete) then
-      for i := 0 to SqlManager.KeyFieldsList.Count - 1 do
+    begin
+      Param.asRecord['PARAMS'].NewRecord('OLD');
+          Param.asRecord['PARAMS'].NewRecord('KEY');
+          for i := 0 to SqlManager.KeyFieldsList.Count - 1 do
+            Param.asRecord['PARAMS'].asRecord['KEY'].asValue[SqlManager.KeyFieldsList[i]] :=
+              DocVariableList[SqlManager.KeyFieldsList[i]].Value;
+          {for i := 0 to changedList.Count - 1 do
+          begin
+            Param.asRecord['PARAMS'].asRecord['OLD'].asValue[changedList[i]] :=
+              DocVariableList[changedList[i]].InitValue;
+          end;}
+
+{      for i := 0 to SqlManager.KeyFieldsList.Count - 1 do
       begin
         Param.asRecord['PARAMS'].asValue[SqlManager.KeyFieldsList[i]] :=
           DocVariableList[SqlManager.KeyFieldsList[i]].Value;
-      end
+      end}
+    end
     else if (operation = docInsert) then
     begin
+      Param.asRecord['PARAMS'].NewRecord('NEW');
       TUtils.VkVariableColectionsToRtc(DocVariableList,
-        Param.asRecord['PARAMS']);
+        Param.asRecord['PARAMS'].asRecord['NEW']);
       {for i := 0 to DocVariableList.Count - 1 do
       begin
         Param.asArray['PARAMS'].NewRecord(i);
@@ -598,6 +622,7 @@ begin
       end;}
     end
     else
+    if (operation = docUpdate) then
     begin
       changedList := TStringList.Create;
       try
@@ -613,25 +638,39 @@ begin
             Param.asRecord['PARAMS'].asRecord['OLD'].asValue[changedList[i]] :=
               DocVariableList[changedList[i]].InitValue;
           end;
-        end;
+          Param.asRecord['PARAMS'].NewRecord('KEY');
+          for i := 0 to SqlManager.KeyFieldsList.Count - 1 do
+            Param.asRecord['PARAMS'].asRecord['KEY'].asValue[SqlManager.KeyFieldsList[i]] :=
+              DocVariableList[SqlManager.KeyFieldsList[i]].Value;
+        end
+        else
+          exit;
       finally
         FreeAndNil(changedList);
       end;
+    end
+    else
+    if (operation = docDelete) then
+    begin
+      Param.asRecord['PARAMS'].NewRecord('KEY');
+      for i := 0 to SqlManager.KeyFieldsList.Count - 1 do
+        Param.asRecord['PARAMS'].asRecord['KEY'].asValue[SqlManager.KeyFieldsList[i]] :=
+          DocVariableList[SqlManager.KeyFieldsList[i]].Value;
     end;
 
-    SetLastRetval(MainRtcDm.rtcExecute(MainRtcDm.RtcClientModule1,
-      MainRtcDm.RtcClientModule1.Data.asFunction));
-    if (FLastRetval.RtcValue.isType=rtc_Record) then
+      SetLastRetval(MainRtcDm.rtcExecute(MainRtcDm.RtcClientModule1,
+        MainRtcDm.RtcClientModule1.Data.asFunction));
+    if (operation <> docDelete) then
     begin
-      ret := FLastRetval.RtcValue.asRecord.asRecord['RESULT']; //.asRecord['RESULT']);
-      MemTableEhDoc.Edit;
-      for i:=0  to ret.FieldCount-1 do
+      if (FLastRetval.RtcValue.isType=rtc_Record) then
       begin
-
-        MemTableEhDoc.FieldByName(ret.FieldName[i]).Value :=
+        ret := FLastRetval.RtcValue.asRecord.asRecord['RESULT']; //.asRecord['RESULT']);
+        for i:=0  to ret.FieldCount-1 do
+        begin
+          DocVariableList.VarByName(ret.FieldName[i]).Value :=
                       ret.asValue[ret.FieldName[i]];
+        end;
       end;
-      MemTableEhDoc.Post;
     end;
   end;
 end;

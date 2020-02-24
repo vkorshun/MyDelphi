@@ -45,6 +45,8 @@ type
       FnParams: TRtcFunctionInfo; Result: TRtcValue);
     procedure RtcGetSqltableProperties(Sender: TRtcConnection; FnParams: TRtcFunctionInfo;
       Result: TRtcValue);
+    procedure RtcGen_ID(Sender: TRtcConnection;
+      FnParams: TRtcFunctionInfo; Result: TRtcValue);
     function GetDmMainUib(AConnection: TRtcConnection;
       const AUsername, APassword: string): TMainDm;
     procedure ConnectUser(Sender: TRtcConnection);
@@ -82,6 +84,7 @@ begin
   RegisterRtcFunction('RtcTransactionRollback', RtcTransactionRollback);
   RegisterRtcFunction('RtcGetSqlTableProperties', RtcGetSqlTableProperties);
   RegisterRtcFunction('RtcDocEdit', RtcDocEdit);
+  RegisterRtcFunction('RtcGen_ID', RtcGen_ID);
 end;
 
 procedure TRtcCommonFunctionsDm.DisconnectUser(Sender: TRtcConnection);
@@ -119,6 +122,21 @@ begin
     if mDmMain.Connected then
       Result.asInteger := 0;
 end;
+
+procedure TRtcCommonFunctionsDm.RtcGen_ID(Sender: TRtcConnection;
+  FnParams: TRtcFunctionInfo; Result: TRtcValue);
+var
+  mUserName, mPassword: string;
+  mDmMain: TMainDm;
+begin
+  Result.asInteger := -1;
+  mUserName := FnParams.AsWideString['username'];
+  mPassword := FnParams.AsWideString['password'];
+  mDmMain := GetDmMainUib(Sender, mUserName, mPassword);
+  if Assigned(mDmMain) then
+      Result.asLargeInt := mDmMain.Gen_ID(FnParams.AsWideString['ID_NAME']);
+end;
+
 
 procedure TRtcCommonFunctionsDm.RtcDocEdit(Sender: TRtcConnection; FnParams: TRtcFunctionInfo; Result: TRtcValue);
 var
@@ -199,47 +217,14 @@ var
   nField: Integer;
   _params: TRtcArray;
   query: TFbApiQuery;
+  v: variant;
 begin
   mUserName := FnParams.AsString['username'];
   mPassword := FnParams.AsString['password'];
   mDmMainUib := GetDmMainUib(Sender, mUserName, mPassword);
-  query := mDmMainUib.GetNewQuery;
-  try
-    with query do
-    begin
-      Close;
-      try
-        SQL.Clear;
-        SQL.Text := FnParams.AsString['SQL'];
-        _params := FnParams.asArray['SQL_PARAMS'];
-        for i := 0 to Params.Count - 1 do
-        begin
-          // if (Params[i].
-          // FieldType[i]=uftDate) or (Params.FieldType[i]=uftTimeStamp) then
-          // Params[i].AsDateTime := Param.AsDateTime['PARAM'+IntToStr(i)+'_VALUE']
-          // else
-          Params[i].AsVariant := _params.asValue[i];
-        end;
-        ExecQuery;
-        nField := FnParams.asInteger['FieldNum'];
-
-        Result.asValue := Fields[nField].AsVariant;
-        Close;
-      except
-        on E: Exception do
-        begin
-          // Result.asException := E.Message;
-          XLog(E.Message);
-          Close;
-          raise;
-        end;
-        // finally
-      end;
-    end;
-  finally
-    query.Free;
-  end;
-
+  _params := FnParams.asArray['SQL_PARAMS'];
+  v := TUtils.RtcArrayToVarArray(_params);
+  Result.asValue := mDmMainUIB.FbDatabase.QueryValue(FnParams.AsString['SQL'], v);
 end;
 
 procedure TRtcCommonFunctionsDm.RtcSelectSql(Sender: TRtcConnection;

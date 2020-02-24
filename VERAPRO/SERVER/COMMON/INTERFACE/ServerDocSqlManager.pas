@@ -46,7 +46,9 @@ var
 begin
   sb := TStringBuilder.Create;
   try
-    sb.Append(' DELETE FROM ').Append(FSQLTableProperties.TableName)
+    sb.Append(' DELETE FROM ').Append(FSQLTableProperties.TableName);
+    sb.Append(GetWhereOnKeyFields);
+    Result := sb.toString();
   finally
     sb.Free;
   end;
@@ -145,14 +147,19 @@ begin
     with sb do
     begin
       Append(' UPDATE ' + FSQLTableProperties.TableName);
+      AppendLine;
       Append(' SET');
+      AppendLine;
       for i := 0 to _UpdateList.Count - 1 do
       begin
         if (FSQLTableProperties.FieldNameList.IndexOf(_UpdateList[i]) > -1) and
           (IndexOfInAdditionalFields(_UpdateList[i]) = -1) then
         begin
           if not bFirst then
-            Append(',')
+          begin
+            Append(',');
+            AppendLine;
+          end
           else
           begin
             bFirst := False;
@@ -164,6 +171,7 @@ begin
             Append(_UpdateList[i] + ' = :' + _UpdateList[i]);
         end;
       end;
+      AppendLine;
       Append(GetWhereOnKeyFields);
       Result := sb.ToString;
     end;

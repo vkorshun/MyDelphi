@@ -16,8 +16,6 @@ type
 //    procedure SetMainDm(const Value: TMainDm);
   public
     { Public declarations }
-    procedure WriteEventLog(AMainDm:TMainDm;sqlManager: TServerDocSqlManager; ATr: TFbApiTransaction; operation: TDocOperation;
-       new, old:TVkVariableCollection);
     procedure RtcDocEdit(AMainDm:TMainDm;FnParams: TRtcFunctionInfo; Result: TRtcValue);
   //  property MainDm: TMainDm  read FMainDm write SetMainDm;
   end;
@@ -44,6 +42,7 @@ var fbQuery: TFbApiQuery;
     tablename: String;
     new_params: TVkVariableCollection;
     old_params: TVkVariableCollection;
+    key_params: TVkVariableCollection;
     operation: TDocOperation;
     i:Integer;
 
@@ -53,7 +52,7 @@ var fbQuery: TFbApiQuery;
       begin
         fbQueryLock := AMainDm.GetNewQuery(tr);
         fbQueryLock.SQL.Text := sqlManager.GenerateLockSQL;
-        TQueryUtils.SetQueryParams(fbQueryLock, new_params);
+        TQueryUtils.SetQueryParams(fbQueryLock, key_params);
         fbQueryLock.ExecQuery;
       end;
     end;
@@ -74,15 +73,22 @@ begin
   sqlmanager := AMainDm.GetServerDocSqlManager(tablename);
   new_params := TVkVariableCollection.Create(self);
   old_params := TVkVariableCollection.Create(self);
+  key_params := TVkVariableCollection.Create(self);
   try
     try
       if (operation = docUpdate) then
       begin
         TUtils.RtcToVkVariableColections(FnParams.asRecord['PARAMS'].asRecord['NEW'], new_params);
         TUtils.RtcToVkVariableColections(FnParams.asRecord['PARAMS'].asRecord['OLD'], old_params);
+        TUtils.RtcToVkVariableColections(FnParams.asRecord['PARAMS'].asRecord['KEY'], key_params);
+      end else
+      if (operation = docDelete) then
+      begin
+        //TUtils.RtcToVkVariableColections(FnParams.asRecord['PARAMS'].asRecord['OLD'], old_params);
+        TUtils.RtcToVkVariableColections(FnParams.asRecord['PARAMS'].asRecord['KEY'], key_params);
       end
       else
-        TUtils.RtcToVkVariableColections(FnParams.asRecord['PARAMS'], new_params);
+        TUtils.RtcToVkVariableColections(FnParams.asRecord['PARAMS'].asRecord['NEW'], new_params);
 
       fbQuery.SQL.Text := sqlManager.GenerateSQL(operation, new_params);
 {      case (operation) of
@@ -92,6 +98,7 @@ begin
       end;}
       LockDoc;
       TQueryUtils.SetQueryParams(fbQuery, new_params);
+      TQueryUtils.SetQueryParams(fbQuery, key_params);
       fbQuery.ExecQuery;
       if Assigned(fbQuery.Current) then
       begin
@@ -100,6 +107,18 @@ begin
         begin
           Result.asRecord.asRecord['RESULT'].asValue[fbQuery.Current.Data[i].Name] := fbQuery.Current.Data[i].AsVariant;
         end;
+      end;
+      if (operation = docInsert) then
+      begin
+        AMainDm.WriteEventLog(sqlManager, tr, operation, FnParams.asRecord['PARAMS'].asRecord['NEW'],
+          FnParams.asRecord['PARAMS'].asRecord['OLD'],
+           Result.asRecord.asRecord['RESULT']);
+      end
+      else
+      begin
+        AMainDm.WriteEventLog(sqlManager, tr, operation, FnParams.asRecord['PARAMS'].asRecord['NEW'],
+          FnParams.asRecord['PARAMS'].asRecord['OLD'],
+          FnParams.asRecord['PARAMS'].asRecord['KEY']);
       end;
       tr.Commit;
       UnLockDoc;
@@ -127,29 +146,5 @@ begin
   FMainDm := Value;
 end;}
 
-procedure TSrvDocDm.WriteEventLog(AMainDm:TMainDm;sqlManager: TServerDocSqlManager;  ATr: TFbApiTransaction; operation: TDocOperation;
-       new, old:TVkVariableCollection);
-var fbQuery: TFbApiQuery;
-    insVars: TVkVariableCollection;
-begin
-//  FEventLogSqlManager.GenerateDinamicSQLInsert
-  fbQuery := AMainDm.GetNewQuery(ATr);
-  insVars:= TVkVariableCollection.Create(nil);
-  try
-
-    insVars.CreateVkVariable('tablename', sqlManager.SQLTableProperties.TableName);
-    insvars.CreateVkVariable('tablekey', TQueryUtils.getTableKeyAsJSON(sqlManager, new));
-
-    fbQuery.SQL.Add(FEventLogSqlManager.GenerateSQL(docInsert, insVars));
-    TQueryUtils.SetQueryParams(fbQuery, insVars);
-    fbQuery.ExecQuery;
-  finally
-    insVars.Free;
-    fbQuery.Free;
-  end;
-//  fbQuery.ParamByName('idtransaction').AsInt64  := tr.;
-
-  //SET PARAMS
-end;
 
 end.

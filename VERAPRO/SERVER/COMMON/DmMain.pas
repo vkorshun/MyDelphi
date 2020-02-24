@@ -4,7 +4,7 @@ interface
 
 uses
   System.SysUtils, System.Classes, CommonInterface, fbapidatabase,
-  SettingsStorage, FB30Statement, fbapiquery, SQLTableProperties, FBSQLData, Variants,
+  SettingsStorage, FB30Statement, fbapiquery, SQLTableProperties, FBSQLData, Variants, RtcInfo,
   System.Generics.Collections, VkVariable, IB, RtcLog, ServerDocSQLManager, Dialogs, QueryUtils;
 
 type
@@ -26,6 +26,7 @@ type
     FStabilityTransactionOptions: TStringList;
     FReadCommitedTransactionOptions: TStringList;
     FServerDocSqlManagerList: TDictionary<String, TServerDocSqlManager>;
+    FEventLogSqlManager: TServerDocSqlManager;
     //FServerDocSqlManager: TServerDocSqlManager;
     function CheckValidPassword(const aPassword: String): boolean;
     procedure SetReadCommitedTransactionOptions(const Value: TStringList);
@@ -40,6 +41,7 @@ type
 
     function CreateServerDocSQLManager(const key: String):TServerDocSqlManager;
     procedure Login(const UserName, Password: String);
+    function Gen_ID(const key:String):Int64;
     function GetNewQuery: TFbApiQuery; overload;
     function GetNewQuery(const ATransaction: TFbApiTransaction)
       : TFbApiQuery; overload;
@@ -55,6 +57,10 @@ type
     procedure TestQuery;
     procedure QueryValue(query: TFbApiQuery; AParams: TVkVariableCollection;
       Result: TVkVariableCollection);
+    procedure WriteEventLog(sqlManager: TServerDocSqlManager; ATr: TFbApiTransaction; operation: TDocOperation;
+       new, old, key: TRtcRecord);
+    procedure WriteErrorLog(const ErrorText:String);
+
     property ReadOnlyTransactionOptions: TStringList
       read FReadOnlyTransactionOptions write SetReadOnlyTransactionOptions;
     property SnapshotTransactionOptions: TStringList
@@ -158,11 +164,18 @@ begin
     FCommand.Database := FbDatabase;
     FCommand.Transaction := FSnapshotTransaction;
   }
+  FEventLogSqlManager := GetServerDocSqlManager('EVENTLOG');
+
 end;
 
 procedure TMainDm.DataModuleDestroy(Sender: TObject);
 begin
   FServerDocSqlManagerList.Free;
+end;
+
+function TMainDm.Gen_ID(const key: String): Int64;
+begin
+  Result := FbDatabase.QueryValue(Format('SELECT NEXT VALUE FOR %s FROM RDB$DATABASE',[key]),[]);
 end;
 
 function TMainDm.GetNewQuery(const ATransaction: TFbApiTransaction)
@@ -265,6 +278,81 @@ begin
 
 end;
 
+procedure TMainDm.WriteErrorLog(const ErrorText: String);
+var qr: TFbApiQuery;
+    tr: TFbApiTransaction;
+begin
+  tr := GetNewTransaction(FStabilityTransactionOptions);
+  qr := GetNewQuery(tr);
+  try
+    qr.SQL.Add('INSERT INTO ERRORLOG(description) VALUES(:description)');
+    qr.ParamByName('description').Value := ErrorText;
+    qr.ExecQuery;
+    tr.Commit;
+  finally
+    tr.Rollback;
+    FreeAndNil(qr);
+    FreeAndNil(tr);
+  end;
+end;
+
+procedure TMainDm.WriteEventLog(sqlManager: TServerDocSqlManager; ATr: TFbApiTransaction; operation: TDocOperation; new, old,
+  key: TRtcRecord);
+var fbQuery: TFbApiQuery;
+    insVars: TVkVariableCollection;
+    i: Integer;
+    content: TRtcRecord;
+    _arr: TRtcArray;
+begin
+//  FEventLogSqlManager.GenerateDinamicSQLInsert
+  fbQuery := GetNewQuery(ATr);
+  insVars:= TVkVariableCollection.Create(nil);
+  content := TRtcRecord.Create;
+  _arr := TRtcArray.Create;
+  try
+
+    insVars.CreateVkVariable('tablename', sqlManager.SQLTableProperties.TableName);
+    insVars.CreateVkVariable('tablekey', key.toJSON);
+    insVars.CreateVkVariable('iduser', CurrentUser.id_user);
+    insVars.CreateVkVariable('datetime', now);
+    if operation = TDocOperation.docUpdate then
+    begin
+      insVars.CreateVkVariable('idevent', 2);
+      for i:=0  to new.Count-1 do
+      begin
+         _arr.NewRecord(i);
+         _arr.asRecord[i].asString['name'] := new.FieldName[i];
+         _arr.asRecord[i].asValue['new'] := new.Value[new.FieldName[i]];
+         _arr.asRecord[i].asValue['old'] := old.asValue[new.FieldName[i]];
+      end;
+      insVars.CreateVkVariable('content', _arr.toJSON);
+
+    end
+    else
+    if operation = TDocOperation.docInsert then
+    begin
+      insVars.CreateVkVariable('idevent', 1);
+      insVars.CreateVkVariable('content', key.toJSON);
+
+    end
+    else
+    if operation = TDocOperation.docDelete then
+    begin
+      insVars.CreateVkVariable('idevent', 3);
+      insVars.CreateVkVariable('content', key.toJSON);
+    end;
+    fbQuery.SQL.Add(FEventLogSqlManager.GenerateSQL(docInsert, insVars));
+    TQueryUtils.SetQueryParams(fbQuery, insVars);
+    fbQuery.ExecQuery;
+  finally
+    insVars.Free;
+    fbQuery.Free;
+    content.Free;
+    _arr.Free;
+  end;
+
+end;
+
 procedure TMainDm.RegisterAdmin();
 //var
 //  qr: TFbApiQuery;
@@ -282,8 +370,16 @@ begin
 end;
 
 procedure TMainDm.registerError(const ASQLText, ErrorMessage: String);
+var v: TRtcRecord;
 begin
-
+  v := TRtcRecord.Create;
+  try
+    v.asString['SQL_QUERY'] := ASQLText;
+    v.asString['ERROR_MESSAGE'] := ErrorMessage;
+    WriteErrorLog(v.toJSON);
+  finally
+    v.Free;
+  end;
 end;
 
 procedure TMainDm.SetReadCommitedTransactionOptions(const Value: TStringList);

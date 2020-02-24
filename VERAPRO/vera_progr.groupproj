@@ -42,6 +42,9 @@
         <Projects Include="D:\HOPE2.UIB\CLIENT\HPU_CLIENT\HPUCLIENT_DIPLOM\hpuclient_diplom.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="SERVER\LEDAPRAVO\Test\ledapravoSrvTests.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -167,14 +170,23 @@
     <Target Name="hpuclient_diplom:Make">
         <MSBuild Projects="D:\HOPE2.UIB\CLIENT\HPU_CLIENT\HPUCLIENT_DIPLOM\hpuclient_diplom.dproj" Targets="Make"/>
     </Target>
+    <Target Name="ledapravoSrvTests">
+        <MSBuild Projects="SERVER\LEDAPRAVO\Test\ledapravoSrvTests.dproj"/>
+    </Target>
+    <Target Name="ledapravoSrvTests:Clean">
+        <MSBuild Projects="SERVER\LEDAPRAVO\Test\ledapravoSrvTests.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ledapravoSrvTests:Make">
+        <MSBuild Projects="SERVER\LEDAPRAVO\Test\ledapravoSrvTests.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="testsuite;test;fbintf;UIBD_XE6D;UIBD_XE6R;websocket_client;WSockCliTest;ledapravo;ledapravoSrv;dbgridehvkd_xe6;vklib_xe6;vkdialogs_xe6;hpuclient_diplom"/>
+        <CallTarget Targets="testsuite;test;fbintf;UIBD_XE6D;UIBD_XE6R;websocket_client;WSockCliTest;ledapravo;ledapravoSrv;dbgridehvkd_xe6;vklib_xe6;vkdialogs_xe6;hpuclient_diplom;ledapravoSrvTests"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="testsuite:Clean;test:Clean;fbintf:Clean;UIBD_XE6D:Clean;UIBD_XE6R:Clean;websocket_client:Clean;WSockCliTest:Clean;ledapravo:Clean;ledapravoSrv:Clean;dbgridehvkd_xe6:Clean;vklib_xe6:Clean;vkdialogs_xe6:Clean;hpuclient_diplom:Clean"/>
+        <CallTarget Targets="testsuite:Clean;test:Clean;fbintf:Clean;UIBD_XE6D:Clean;UIBD_XE6R:Clean;websocket_client:Clean;WSockCliTest:Clean;ledapravo:Clean;ledapravoSrv:Clean;dbgridehvkd_xe6:Clean;vklib_xe6:Clean;vkdialogs_xe6:Clean;hpuclient_diplom:Clean;ledapravoSrvTests:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="testsuite:Make;test:Make;fbintf:Make;UIBD_XE6D:Make;UIBD_XE6R:Make;websocket_client:Make;WSockCliTest:Make;ledapravo:Make;ledapravoSrv:Make;dbgridehvkd_xe6:Make;vklib_xe6:Make;vkdialogs_xe6:Make;hpuclient_diplom:Make"/>
+        <CallTarget Targets="testsuite:Make;test:Make;fbintf:Make;UIBD_XE6D:Make;UIBD_XE6R:Make;websocket_client:Make;WSockCliTest:Make;ledapravo:Make;ledapravoSrv:Make;dbgridehvkd_xe6:Make;vklib_xe6:Make;vkdialogs_xe6:Make;hpuclient_diplom:Make;ledapravoSrvTests:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, Windows, rtcInfo, rtcConn, rtcDataSrv, rtcHttpSrv,rtcHttpCli, rtti, System.TypInfo,
-  vkvariable;
+  vkvariable, Variants;
 
 //const
 {  TRDefault                 : TTransParams = [tpConcurrency,tpWait,tpWrite];
@@ -39,6 +39,7 @@ type
     class procedure RtcToVkVariableColections( ARecord: TRtcRecord; AVariables: TVkVariableCollection);
     class function getDocCommand(AOperation: TDocOperation):String;
     class function getDocOperation(ACommand: String):TDocOperation;
+    class function RtcArrayToVarArray(const ARtcArray: TRtcArray): Variant;
   end;
 
   TTableAction = class(TObject)
@@ -175,19 +176,31 @@ begin
    end
 end;
 
+class function TUtils.RtcArrayToVarArray(const ARtcArray: TRtcArray): Variant;
+var v: Variant;
+    i: Integer;
+begin
+  Result := VarArrayCreate([0, ARtcArray.Count-1], varVariant);
+  for I := 0 to ARtcArray.Count-1 do
+    Result[i] := ArtcArray.asValue[i];
+end;
+
 class procedure TUtils.RtcToVkVariableColections(ARecord: TRtcRecord; AVariables: TVkVariableCollection);
 var i: Integer;
     name: String;
     vk: TVkVariable;
 begin
-  for i:=0 to ARecord.FieldCount-1 do
+  if Assigned(ARecord) then
   begin
-    name := ARecord.FieldName[i];
-    vk := AVariables.FindVkVariable(name);
-    if Assigned(vk) then
-      vk.Value := ARecord.asValue[name]
-    else
-      AVariables.AddItem(name, ARecord.asValue[name]);
+    for i:=0 to ARecord.FieldCount-1 do
+    begin
+      name := ARecord.FieldName[i];
+      vk := AVariables.FindVkVariable(name);
+      if Assigned(vk) then
+        vk.Value := ARecord.asValue[name]
+      else
+        AVariables.AddItem(name, ARecord.asValue[name]);
+    end;
   end;
 end;
 

@@ -1,6 +1,7 @@
 object MainRtcDm: TMainRtcDm
   OldCreateOrder = False
   OnCreate = DataModuleCreate
+  OnDestroy = DataModuleDestroy
   Height = 323
   Width = 492
   object RtcHttpClient1: TRtcHttpClient
