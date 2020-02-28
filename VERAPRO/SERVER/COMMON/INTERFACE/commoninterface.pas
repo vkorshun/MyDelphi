@@ -28,6 +28,7 @@ type
     g_role_name   :string;
   end;
   TDocOperation = (docInsert, docUpdate, docDelete);
+  TVariants = array of variant;
 
   TUtils = class(TObject)
   private
@@ -39,7 +40,7 @@ type
     class procedure RtcToVkVariableColections( ARecord: TRtcRecord; AVariables: TVkVariableCollection);
     class function getDocCommand(AOperation: TDocOperation):String;
     class function getDocOperation(ACommand: String):TDocOperation;
-    class function RtcArrayToVarArray(const ARtcArray: TRtcArray): Variant;
+    class function RtcArrayToVarArray(const ARtcArray: TRtcArray): TVariants;
   end;
 
   TTableAction = class(TObject)
@@ -176,11 +177,11 @@ begin
    end
 end;
 
-class function TUtils.RtcArrayToVarArray(const ARtcArray: TRtcArray): Variant;
+class function TUtils.RtcArrayToVarArray(const ARtcArray: TRtcArray): TVariants;
 var v: Variant;
     i: Integer;
 begin
-  Result := VarArrayCreate([0, ARtcArray.Count-1], varVariant);
+  SetLength(Result,ARtcArray.Count);
   for I := 0 to ARtcArray.Count-1 do
     Result[i] := ArtcArray.asValue[i];
 end;

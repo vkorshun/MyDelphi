@@ -40,7 +40,6 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TMainRtcDm, MainRtcDm);
   Application.CreateForm(TMainFm, MainFm);
-  Application.CreateForm(TMenuStruDm, MenuStruDm);
   //  Application.CreateForm(TTestDocDm, TestDocDm);
   if TLoginFm.Login then
   begin

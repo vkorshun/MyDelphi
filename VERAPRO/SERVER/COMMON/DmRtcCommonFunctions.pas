@@ -217,7 +217,7 @@ var
   nField: Integer;
   _params: TRtcArray;
   query: TFbApiQuery;
-  v: variant;
+  v: TVariants;
 begin
   mUserName := FnParams.AsString['username'];
   mPassword := FnParams.AsString['password'];

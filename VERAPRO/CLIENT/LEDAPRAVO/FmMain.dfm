@@ -125,6 +125,10 @@ object MainFm: TMainFm
     object aCertLoad: TAction
       Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1089#1077#1088#1090#1080#1092#1080#1082#1072#1090#1099
     end
+    object aTest2: TAction
+      Caption = 'Test MenuStru'
+      OnExecute = aTest2Execute
+    end
   end
   object ActionManager1: TActionManager
     ActionBars = <

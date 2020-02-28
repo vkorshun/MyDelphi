@@ -646,13 +646,16 @@ end; }
 
 procedure TRtcQueryDataSet.SetMemTableEh(const Value: TMemTableEh);
 begin
-  FMemTableEh := Value;
-  FMemTableEhAfterOpen := FMemTableEh.AfterOpen;
-  FMemTableEhAfterEdit := FMemTableEh.AfterEdit;
-  FMemTableEhAfterInsert := FMemTableEh.AfterInsert;
-  FMemTableEhBeforeDelete := FMemTableEh.BeforeDelete;
-  FMemTableEhBeforePost := FMemTableEh.BeforePost;
+  if (FMemTableEh <> Value) then
+  begin
+    FMemTableEh := Value;
 
+    FMemTableEhAfterOpen := FMemTableEh.AfterOpen;
+    FMemTableEhAfterEdit := FMemTableEh.AfterEdit;
+    FMemTableEhAfterInsert := FMemTableEh.AfterInsert;
+    FMemTableEhBeforeDelete := FMemTableEh.BeforeDelete;
+    FMemTableEhBeforePost := FMemTableEh.BeforePost;
+  end;
   FMemTableEh.AfterOpen := nil;
 
 //  FMemTableEh.DataDriver := FDatasetDriverEh;

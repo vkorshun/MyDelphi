@@ -11,10 +11,4 @@ object DocDm: TDocDm
     Left = 224
     Top = 56
   end
-  object DataSetDriverEhDoc: TDataSetDriverEh
-    OnUpdateRecord = DataSetDriverEhDocUpdateRecord
-    ResolveToDataSet = False
-    Left = 72
-    Top = 56
-  end
 end

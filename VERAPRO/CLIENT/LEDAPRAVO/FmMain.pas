@@ -26,11 +26,13 @@ type
     StatusBar1: TStatusBar;
     MainTabs: TATTabs;
     ActionManager1: TActionManager;
+    aTest2: TAction;
     procedure FormCreate(Sender: TObject);
     procedure aExitExecute(Sender: TObject);
     procedure aViewAttributesOAUExecute(Sender: TObject);
     procedure aViewOAUExecute(Sender: TObject);
     procedure aTestExecute(Sender: TObject);
+    procedure aTest2Execute(Sender: TObject);
   private
     { Private declarations }
     FMenuStru: TMenuStructure;
@@ -54,6 +56,12 @@ uses systemconsts, DmMainRtc;
 procedure TMainFm.aExitExecute(Sender: TObject);
 begin
   Close;
+end;
+
+procedure TMainFm.aTest2Execute(Sender: TObject);
+begin
+  docManager.ShowDocument('TMenuStruFrame');
+
 end;
 
 procedure TMainFm.aTestExecute(Sender: TObject);
@@ -90,6 +98,7 @@ begin
    }
   FMenuStru.Add('Документы',1);
   FMenuStru.Root.Items[0].Add('',10,aTest);
+  FMenuStru.Root.Items[0].Add('Test MENUSTRU',11,aTest2);
 {  FMenuStru.Add('Справочники',2);
   FMenuStru.Add('Настройки',3);
   FMenuStru.Root.Items[0].Add('',4,aCertStore);

@@ -105,7 +105,7 @@ var
 
 implementation
 
-uses systemconsts;
+uses systemconsts, DmMainRtc;
 {$R *.dfm}
 { TFrameAttributes }
 
@@ -116,6 +116,7 @@ begin
   if internalBeforeDocDelete then
   begin
     inherited;
+    RefreshTree(nil);
   end;
 end;
 
@@ -127,7 +128,10 @@ begin
   if Assigned(Data) and (Data.id_level > 0) then
   begin
     FMenuStruDm.MemTableEhDoc.Locate('id_item', Data.id_item, []);
+    FActionSuccess := false;
     inherited;
+    if FActionSuccess then
+      RefreshTree(nil);
   end;
 end;
 
@@ -455,8 +459,7 @@ begin
   else
   begin
     if AVar.Count = 1 then
-      result := IfVarEmpty
-        (MainDm.QueryValue('SELECT name FROM menulist WHERE id_menu=:id_menu',
+      result := IfVarEmpty(MainRtcDm.QueryValue('SELECT name FROM menulist WHERE id_menu=:id_menu',
         [AVar.Items[0].AsLargeInt]), '')
     else
       result := 'not defined';

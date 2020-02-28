@@ -63,7 +63,6 @@ type
 
   TDocDm = class(TDataModule)
     MemTableEhDoc: TMemTableEh;
-    DataSetDriverEhDoc: TDataSetDriverEh;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataSetDriverEhDocUpdateRecord(DataDriver: TDataDriverEh;
       MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh);
