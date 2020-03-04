@@ -208,7 +208,7 @@ type
              write FAllowStreamedConnected;
 
     function QueryValue(const SQL: String;
-      const AParams: array of variant): variant;
+      const AParams: array of variant): Variant;
 
     function AddTransaction(TR: TIBTransaction): Integer;
     function FindDefaultTransaction(): TIBTransaction;
@@ -612,7 +612,17 @@ begin
     end;
       rs := statement.OpenCursor();
       if rs.FetchNext then
-        Result := rs.Data[0].AsVariant;
+      begin
+        if (rs.Count>1) then
+        begin
+          Result := VarArrayCreate([0,rs.Count-1],varVariant);
+          for i:=0 to rs.Count-1 do
+             Result[i] := rs.Data[i].AsVariant;
+        end
+        else
+          Result := rs.Data[0].AsVariant;
+
+      end;
   finally
     tr.commit;
     statement := nil;

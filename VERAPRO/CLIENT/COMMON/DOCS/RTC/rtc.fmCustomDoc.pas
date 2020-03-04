@@ -114,7 +114,7 @@ begin
   FFrameDoc.Align := alClient;
   FFrameDoc.ParentForm := self;
   FFrameDoc.InitActionManager(Self);
-  FFrameDoc.Prepare := FPrepare;
+  FFrameDoc.Prepared := FPrepare;
   Caption := FFrameDoc.GetCaption;
 end;
 

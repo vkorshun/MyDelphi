@@ -121,7 +121,7 @@ type
     FOnGetDeleteMessage: TFuncGetMessage;
     FOnEditAction: TProcOnActionEvent;
     FIsSelect: Boolean;
-    FPrepare: Boolean;
+    FPrepared: Boolean;
     _bDocInsert: Boolean;
     _bDocClone: Boolean;
 
@@ -260,7 +260,7 @@ type
     property OnEditAction: TProcOnActionEvent read FOnEditAction write SetOnEditAction;
     property IsSelect: Boolean read FIsSelect write SetIsSelect;
     property Selected: TVkVariableCollection read GetSelected;
-    property Prepare: Boolean  read FPrepare write SetPrepare;
+    property Prepared: Boolean  read FPrepared write SetPrepare;
   end;
 
 implementation
@@ -1201,7 +1201,7 @@ end;
 
 procedure TDocFrame.SetPrepare(const Value: Boolean);
 begin
-  FPrepare := Value;
+  FPrepared := Value;
 end;
 
 procedure TDocFrame.SetSumMarked;

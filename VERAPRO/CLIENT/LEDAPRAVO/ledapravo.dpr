@@ -31,7 +31,13 @@ uses
   FrameTestDoc in 'DOCS\FrameTestDoc.pas' {TestDocFrame: TFrame},
   ClientDocSqlManager in '..\..\SERVER\COMMON\INTERFACE\ClientDocSqlManager.pas',
   frameMenuStru in 'DOCS\MENUSTRU\frameMenuStru.pas' {MenuStruFrame: TFrame},
-  DmMenuStru in 'DOCS\MENUSTRU\DmMenuStru.pas' {MenuStruDm: TDataModule};
+  DmMenuStru in 'DOCS\MENUSTRU\DmMenuStru.pas' {MenuStruDm: TDataModule},
+  dmAttributes in '..\COMMON\DOCS\ATTRIBUTES\dmAttributes.pas' {AttributesDm: TDataModule},
+  dmAttributesOfGroup in '..\COMMON\DOCS\ATTRIBUTES\dmAttributesOfGroup.pas' {AttributesOfGroupDm: TDataModule},
+  dmAttributesSet in '..\COMMON\DOCS\ATTRIBUTES\dmAttributesSet.pas' {AttributesSetDm: TDataModule},
+  frameAttributes in '..\COMMON\DOCS\ATTRIBUTES\frameAttributes.pas' {AttributesFrame: TFrame},
+  frameAttributesOfGroup in '..\COMMON\DOCS\ATTRIBUTES\frameAttributesOfGroup.pas' {AttributesOfGroupFrame: TFrame},
+  frameAttributesSet in '..\COMMON\DOCS\ATTRIBUTES\frameAttributesSet.pas' {AttributesSetFrame: TFrame};
 
 {$R *.res}
 

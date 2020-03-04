@@ -17,6 +17,7 @@ uses
 
 type
   //userInfo record
+  LargeInt = Int64;
   PUserInfo = ^RUserInfo;
   RUserInfo = Record
     id_group      :Integer;

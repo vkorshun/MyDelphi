@@ -19,6 +19,7 @@ type
     property OnChange:TNotifyEvent Read FOnChange write FOnChange;
   end; }
   TRemoteTransactionType = (ttReadCommited=0,ttStability=1, ttSnapshot=2  );
+  TOnRequest = reference to procedure(AQuery: TRtcDataSet );
 
   TRtcQuery = class (TObject)
   private
@@ -50,6 +51,7 @@ type
 
     function ParamByName(const Aname: String):TParam;
     procedure Select(ADataSet:TDataSet);
+    procedure DoRequest(_proc:TOnRequest);
     function QueryValue(const ASql:String; AParams: array of variant ):Variant;
 
     property Active:Boolean read GetActive write SetActive;
@@ -127,6 +129,45 @@ begin
   FOnSelectResponse := nil;
   FOnQueryResponse := nil;
   inherited;
+end;
+
+procedure TRtcQuery.DoRequest(_proc: TOnRequest);
+var i: Integer;
+    ds: TRtcDataSet;
+begin
+  with FClientModule do
+  begin
+    with Prepare('RtcSelectSql') do
+    begin
+      FQrResult.Clear;
+      Param.asWideString['username'] := FCurrentUser.user_name;
+      Param.asWideString['password'] := FCurrentUser.user_password;
+      Param.asString['SQL'] := FSql.Text;
+      Param.NewRecord('SQL_PARAMS');
+      for i := 0 to FParams.Count-1 do
+      begin
+        if (FParams[i].DataType =ftDate) or (FParams[i].DataType =ftDateTime) then
+          Param.asRecord['SQL_PARAMS'].asDateTime[FParams[i].Name] := FParams[i].AsDateTime
+        else
+          Param.asRecord['SQL_PARAMS'].asValue[FParams[i].Name] := FParams[i].Value;
+      end;
+      try
+        FQrResult := Execute(False,0,False);
+        if FQrResult.isType=rtc_Exception then
+          Raise Exception.Create(FQrResult.asException)
+        else
+        begin
+          if (FQrResult.isType = rtc_DataSet) and Assigned(_proc) then
+          begin
+            _proc(FQrResult.asDataSet);
+          end;
+        end;
+      finally
+          FQrResult.Clear;
+      end;
+    end;
+  end;
+
 end;
 
 procedure TRtcQuery.DoSQlListOnChange(Sender: TObject);

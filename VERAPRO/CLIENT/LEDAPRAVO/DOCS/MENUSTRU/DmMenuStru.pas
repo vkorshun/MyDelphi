@@ -95,7 +95,7 @@ end;
 function TMenuStruDm.getNextNumLevel(const AIdMenu,AIdLevel: Integer): Integer;
 var bk: TBookMark;
 begin
-  Result := MainRtcDm.QueryValue('SELECT coalesce(MAX(num_level),0) FROM MENUSTRU WHERE id_menu=:id_menu AND id_level=:id_level',[AIdMenu, AIdLevel]);
+  Result := MainRtcDm.QueryValue('SELECT coalesce(MAX(num_level),0) FROM MENUSTRU WHERE id_menu=:id_menu AND id_level=:id_level',[AIdMenu, AIdLevel]).RtcValue.asInteger;
 end;
 
 procedure TMenuStruDm.setNumLevel(id_item, id_level, num_level: Integer);

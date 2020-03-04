@@ -162,6 +162,36 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="..\COMMON\DOCS\ATTRIBUTES\dmAttributes.pas">
+            <Form>AttributesDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\COMMON\DOCS\ATTRIBUTES\dmAttributesOfGroup.pas">
+            <Form>AttributesOfGroupDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\COMMON\DOCS\ATTRIBUTES\dmAttributesSet.pas">
+            <Form>AttributesSetDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\COMMON\DOCS\ATTRIBUTES\frameAttributes.pas">
+            <Form>AttributesFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\COMMON\DOCS\ATTRIBUTES\frameAttributesOfGroup.pas">
+            <Form>AttributesOfGroupFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\COMMON\DOCS\ATTRIBUTES\frameAttributesSet.pas">
+            <Form>AttributesSetFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -129,6 +129,10 @@ object MainFm: TMainFm
       Caption = 'Test MenuStru'
       OnExecute = aTest2Execute
     end
+    object actAttributeSet: TAction
+      Caption = #1043#1088#1091#1087#1087#1099' '#1072#1090#1088#1080#1073#1091#1090#1086#1074
+      OnExecute = actAttributeSetExecute
+    end
   end
   object ActionManager1: TActionManager
     ActionBars = <

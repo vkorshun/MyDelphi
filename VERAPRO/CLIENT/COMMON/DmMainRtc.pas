@@ -32,7 +32,10 @@ type
     function Login(const userName, password: String): Boolean;
     function NewRtcQueryDataSet: TRtcQueryDataSet;
     function Gen_ID(const key:String):Int64;
+    function GetTypeGroup( AId: LargeInt): LargeInt;
+
     function QueryValue(const SQL:String; params: array of Variant):Variant;
+    procedure DoRequest(const ASql:String;const AParams: TVariants; AOnRequest: TOnRequest = nil);
     procedure SetUser(Param: TRtcFunctionInfo);
 //    class function rtcExecute(clientModule:TRtcClientModule;func: TRtcFunctionInfo): variant; overload;
     class procedure CloneComponent(const aSource, aDestination: TComponent);
@@ -60,6 +63,22 @@ end;
 procedure TMainRtcDm.DataModuleDestroy(Sender: TObject);
 begin
   FreeAndNil(FXmlIni);
+end;
+
+procedure TMainRtcDm.DoRequest(const ASql: String; const AParams: TVariants; AOnRequest: TOnRequest);
+var qr: TRtcQuery;
+    i: Integer;
+begin
+  qr := TRtcQuery.Create(RtcClientModule1, FUserInfo);
+  try
+    qr.SQL.Text := ASql;
+    if Assigned(AParams) then
+      for i:=Low(AParams)  to High(AParams) do
+        qr.Params[i].Value := AParams[i];
+    qr.DoRequest(AOnRequest);
+  finally
+    qr.Free;
+  end;
 end;
 
 function TMainRtcDm.Gen_ID(const key: String): Int64;
@@ -118,7 +137,7 @@ end;
 function TMainRtcDm.QueryValue(const SQL: String; params: array of Variant): Variant;
 var i: Integer;
 begin
-  Result := null;
+//  Result := null;
   with RtcClientModule1 do
   begin
     with Prepare('RtcQueryValue') do
@@ -130,6 +149,8 @@ begin
 //      Param.asInteger['Param_count'] := High(AParams);
       for I := 0 to High(params) do
         Param.asArray['SQL_PARAMS'][i] := params[i];
+//      Result := TRtcFuncResult.Create(retval);
+
       Result := rtcExecute(RtcClientModule1, RtcClientModule1.Data.asFunction).RtcValue.asValue;
 
     end;
@@ -257,6 +278,37 @@ begin
     end;
   finally
     Buffer.Free;
+  end;
+end;
+
+function TMainRtcDm.GetTypeGroup( AId: LargeInt): LargeInt;
+var id : LargeInt;
+    retval:Variant;
+begin
+  id := -1;
+  Result := -1;
+  retval := QueryValue('SELECT idgroup, idobject FROM objects WHERE idobject=:idobject',[AId]);
+{  FDQuerySelect.Active := False;
+  FDQuerySelect.SQL.Clear;
+  FDQuerySelect.SQL.Add('SELECT idgroup, idobject FROM objects WHERE idobject=:idobject');
+  FDQuerySelect.ParamByName('idobject').AsLargeInt := AId;}
+  while id<>0 do
+  begin
+    if (not VarIsEmpty(retval)) and (VarIsArray(retval)) and (VarArrayHighBound(retval,0)>=1) then
+    begin
+      id := retval[0];
+      if id = 0 then
+      begin
+        Result := retval[1];
+        Break;
+      end
+      else
+      begin
+        retval := QueryValue('SELECT idgroup, idobject FROM objects WHERE idobject=:idobject',[id]);
+      end;
+    end
+    else
+      raise Exception.Create('Error group');
   end;
 end;
 

@@ -62,7 +62,7 @@ type
 
 //    function GetReturningOnKeyFields: String;
 //    function GetWhereOnKeyFields: String;
-    procedure InitCommonParams(const ATableName: String = '';
+    procedure InitCommonParamsDT(const ATableName: String = '';
        const AGenId: String = '');
     procedure SaveVariablesInDataSet(ADataSet: TDataSet;
       AVarList: TVkVariableCollection);
@@ -491,7 +491,7 @@ begin
   Result := -1;
 end;}
 
-procedure TClientDocSQLManager.InitCommonParams(const ATableName, AGenId: String);
+procedure TClientDocSQLManager.InitCommonParamsDT(const ATableName, AGenId: String);
 begin
   if ATableName <> '' then
     FTableName := UpperCase(ATableName);

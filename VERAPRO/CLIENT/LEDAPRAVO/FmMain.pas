@@ -27,12 +27,14 @@ type
     MainTabs: TATTabs;
     ActionManager1: TActionManager;
     aTest2: TAction;
+    actAttributeSet: TAction;
     procedure FormCreate(Sender: TObject);
     procedure aExitExecute(Sender: TObject);
     procedure aViewAttributesOAUExecute(Sender: TObject);
     procedure aViewOAUExecute(Sender: TObject);
     procedure aTestExecute(Sender: TObject);
     procedure aTest2Execute(Sender: TObject);
+    procedure actAttributeSetExecute(Sender: TObject);
   private
     { Private declarations }
     FMenuStru: TMenuStructure;
@@ -53,6 +55,11 @@ implementation
 
 uses systemconsts, DmMainRtc;
 
+procedure TMainFm.actAttributeSetExecute(Sender: TObject);
+begin
+  docManager.ShowDocument('TAttributesSetFrame');
+end;
+
 procedure TMainFm.aExitExecute(Sender: TObject);
 begin
   Close;
@@ -72,7 +79,7 @@ end;
 
 procedure TMainFm.aViewAttributesOAUExecute(Sender: TObject);
 begin
-  //docManager.ShowDocument('TAttributesFrameOAU');
+  docManager.ShowDocument('TAttributesFrameOAU');
 end;
 
 procedure TMainFm.aViewOAUExecute(Sender: TObject);
@@ -99,6 +106,9 @@ begin
   FMenuStru.Add('Документы',1);
   FMenuStru.Root.Items[0].Add('',10,aTest);
   FMenuStru.Root.Items[0].Add('Test MENUSTRU',11,aTest2);
+  FMenuStru.Root.Items[0].Add('Attributes OAU',12,aViewAttributesOAU);
+  FMenuStru.Root.Items[0].Add('Attributes gr',13,actAttributeSet);
+
 {  FMenuStru.Add('Справочники',2);
   FMenuStru.Add('Настройки',3);
   FMenuStru.Root.Items[0].Add('',4,aCertStore);

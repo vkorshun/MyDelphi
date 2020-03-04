@@ -102,6 +102,7 @@ type
     property Active:Boolean read GetActive write SetActive;
     property TableName: String read FTableName write SetTableName;
     property GenId: String read FgenId write FGenId;
+    property SQL: TStringList read GetSQLSelect;
     property SelectSQL: TStringList read GetSQLSelect;
     property UpdateSQL: TStringList read FSQLUpdate;
     property InsertSQL: TStringList read FSQlInsert;
