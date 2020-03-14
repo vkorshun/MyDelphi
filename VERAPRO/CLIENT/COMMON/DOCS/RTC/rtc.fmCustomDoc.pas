@@ -42,6 +42,7 @@ type
     FCurrentFrame: TDocFrame;
     FPrepare: Boolean;
     procedure CreateFrameDoc;virtual;
+    function GetFrameDoc: TDocFrame;
   public
     { Public declarations }
     function GetActionManager(const Aname: String): TActionManager;
@@ -53,7 +54,7 @@ type
     property FrameDocClass: TDocFrameClass read FFrameDocClass;
     property IsSelect: Boolean read FIsSelect write SetIsSelect;
     property InitSelectValue: TVkVariableCollection read FInitSelectValue ;
-    property FrameDoc: TDocFrame read FFrameDoc;
+    property FrameDoc: TDocFrame read GetFrameDoc;
     property CurrentFrame: TDocFrame read GetCurrentFrame write SetCurrentFrame;
   end;
 
@@ -160,7 +161,7 @@ begin
   inherited;
   if Assigned(FFrameDoc) then
   begin
-    FFrameDoc.aDocRefresh.Execute;
+    //FFrameDoc.aDocRefresh.Execute;
     if Assigned(FFrameDoc.CurrentFrame) then
       FFrameDoc.CurrentFrame.DBGridEhVkDoc.SetFocus;
   end;
@@ -220,6 +221,11 @@ end;
 function TCustomDocFm.GetCurrentFrame: TDocFrame;
 begin
   Result := FCurrentFrame;
+end;
+
+function TCustomDocFm.GetFrameDoc: TDocFrame;
+begin
+  Result := FFrameDoc;
 end;
 
 procedure TCustomDocFm.pnBottomResize(Sender: TObject);

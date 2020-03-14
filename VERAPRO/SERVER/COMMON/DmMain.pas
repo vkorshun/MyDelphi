@@ -27,6 +27,8 @@ type
     FReadCommitedTransactionOptions: TStringList;
     FServerDocSqlManagerList: TDictionary<String, TServerDocSqlManager>;
     FEventLogSqlManager: TServerDocSqlManager;
+    FUserAccessTypes: TVkVariableCollection;
+    FUserAccessValues: TVkVariableCollection;
     //FServerDocSqlManager: TServerDocSqlManager;
     function CheckValidPassword(const aPassword: String): boolean;
     procedure SetReadCommitedTransactionOptions(const Value: TStringList);
@@ -60,7 +62,10 @@ type
     procedure WriteEventLog(sqlManager: TServerDocSqlManager; ATr: TFbApiTransaction; operation: TDocOperation;
        new, old, key: TRtcRecord);
     procedure WriteErrorLog(const ErrorText:String);
+    procedure InitConstsList(var AVarList: TVkVariableCollection; const ATableName, AIdName: String);
 
+    property UserAccessTypes: TVkVariableCollection read FUserAccessTypes;
+    property UsersAccessValues: TVkVariableCollection read FUserAccessValues;
     property ReadOnlyTransactionOptions: TStringList
       read FReadOnlyTransactionOptions write SetReadOnlyTransactionOptions;
     property SnapshotTransactionOptions: TStringList
@@ -273,7 +278,12 @@ begin
   // begin
   // finally
   if not Result then
-    Raise Exception.Create('Неверное имя пользователя или пароль.');
+    Raise Exception.Create('Неверное имя пользователя или пароль.')
+  else
+  begin
+    InitConstsList(FUserAccessTypes,'USERSACCESSTYPE','IDUATYPE');
+    InitConstsList(FUserAccessValues,'USERSACCESSVALUES','IDUAVALUE');
+  end;
   // end;
 
 end;
@@ -544,6 +554,30 @@ begin
         raise;
       end;
       // finally
+    end;
+  end;
+end;
+
+procedure TMainDm.InitConstsList(var AVarList: TVkVariableCollection; const ATableName, AIdName: String);
+var query: TFbApiQuery;
+begin
+  if Assigned(AVarList) then
+    AVarList.Clear
+  else
+    AVarList := TVkVariableCollection.Create(self);
+  query := GetNewQuery;
+  with query do
+  begin
+    SQL.Add('SELECT * FROM '+ATableName);
+    ExecQuery;
+    try
+      while not Eof  do
+      begin
+        AVarList.CreateVkVariable(FieldByName('CONSTNAME').AsString,FieldByName(AIdName).Value);
+        Next;
+      end;
+    finally
+      Close;
     end;
   end;
 end;

@@ -9,7 +9,7 @@ type
   private
     FDocFrameTabs: TATTabs;
     bInit: Boolean;
-    function CreateFrameDoc(AFrameDocClass: TDocFrameClass): TDocFrame;
+    function CreateFrameDoc(AFrameDocClass: TDocFrameClass;const AParams: TVkVariableCollection = nil): TDocFrame;
     procedure MyOnTabMove(Sender: TObject; NFrom, NTo: Integer);
     procedure MyOnTabClose(Sender: TObject; ATabIndex: Integer; var ACanClose, ACanContinue: Boolean);
     procedure MyOnTabClick(Sender: TObject);
@@ -41,6 +41,7 @@ begin
   FDocFrameTabs.OnTabMove := MyOnTabMove;
   FDocFrameTabs.OnTabClose := MyOnTabClose;
   FDocFrameTabs.OnTabClick := MyOnTabClick;
+  TDocFrame.SetOnShowDocument(ShowDocument);
 end;
 
 procedure TDocManagerPanel.MyOnTabClick(Sender: TObject);
@@ -78,7 +79,7 @@ begin
       end;
    end;
 
-   docFrame := CreateFrameDoc(_FrameDocClass);
+   docFrame := CreateFrameDoc(_FrameDocClass, AParams);
    docFrame.CheckParams(AParams);
    control := docFrame.getActiveControl;
    FDocFrameTabs.AddTab(FDocFrameTabs.TabCount,docFrame.GetCaption, docFrame);
@@ -114,10 +115,12 @@ begin
   end;
 end;}
 
-  function TDocManagerPanel.CreateFrameDoc(AFrameDocClass: TDocFrameClass): TDocFrame;
+  function TDocManagerPanel.CreateFrameDoc(AFrameDocClass: TDocFrameClass;const AParams: TVkVariableCollection = nil): TDocFrame;
   var _dmDoc: TDocDm;
   begin
     _dmDoc :=  AFrameDocClass.GetDmDoc; //.Create(FDmMain);
+    if Assigned(AParams) then
+      _dmDoc.SetParams(AParams);
     Result := AFrameDocClass.Create(self,_dmDoc);
     Result.Name := Result.Name+'_'+IntToStr(GetTickCount);
     Result.Parent := self;

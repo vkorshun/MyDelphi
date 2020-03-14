@@ -8,6 +8,8 @@ object DocDm: TDocDm
     Params = <>
     AfterOpen = MemTableEhDocAfterOpen
     BeforeClose = MemTableEhDocBeforeClose
+    BeforePost = MemTableEhDocBeforePost
+    BeforeDelete = MemTableEhDocBeforeDelete
     Left = 224
     Top = 56
   end

@@ -99,6 +99,8 @@ var
 begin
   with DataSet do
   begin
+    if True then
+
     for i := 0 to FieldCount - 1 do
     begin
       ind := AVarList.IndexOf(Fields[i].FieldName);
@@ -356,9 +358,17 @@ begin
 end;}
 
 function TClientDocSQLManager.GetKeyFields: String;
+var sb: TStringBuilder;
+    i: Integer;
 begin
-  FKeyFieldsList.Delimiter := ';';
-  Result := FKeyFieldsList.Text;
+  sb := TStringBuilder.Create;
+  for i:=0 to  FKeyFieldsList.Count-1 do
+  begin
+     sb.Append(FKeyFieldsList[i]);
+     if (i< FKeyFieldsList.Count-1) then
+       sb.Append(';');
+  end;
+  Result := sb.ToString()
 end;
 
 function TClientDocSQLManager.GetKeyFieldsList: TStringList;

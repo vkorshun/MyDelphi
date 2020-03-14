@@ -129,7 +129,8 @@ begin
   FDmAttributes :=  TAttributesDm(DocDm);
   if not Prepared then
   begin
-    FDmAttributes.Open(FId);
+    FDmAttributes.CurrentGroupId := Value;
+    FDmAttributes.Open;
     ConfigureEdit;
   end;
   DataSource1.DataSet := FDmAttributes.MemTableEhDoc;

@@ -49,6 +49,7 @@ type
   TFuncEditInGrid = function(Sender: TObject; const fieldName: String): boolean of object;
   TFuncGetMessage = function: String of object;
   TProcOnActionEvent = procedure (Sender: TObject; AAction: TAction);
+  TOnShowDocument = procedure(const AFrameDocClassName: String; AParams:TVkVariableCollection) of object;
 
   TDocFrame = class(TFrame)
     StatusBar1: TStatusBar;
@@ -199,11 +200,12 @@ type
     procedure SetSumMarked;
     function ValidAccess(aIdAccess:LargeInt): boolean;
     function onSaveDialog(Sender: TObject):Boolean;
+    class var onShowDocument: TOnShowDocument;
+
   public
     { Public declarations }
     VarMDoc: TVkVariableCollection;
     DocFrame: TFrame;
-
     procedure DocEdit(AStatus: TDocEditStatus; const AFieldName: String = '');
 
     property DocDm:TDocDm read FDocDm;
@@ -227,6 +229,8 @@ type
     function GetCaption:String;virtual;
     procedure Load;
     class function GetSelectedCaption(AVar: TVkVariableCollection):String;virtual;
+    class procedure SetOnShowDocument(const AOnShowDocument: TOnShowDocument);
+
     procedure OnCloseQueryFmEdit(Sender: TObject;  var CanClose: Boolean);
     function  ValidDataFmEdit(Sender:TObject):Boolean;virtual;
     procedure OnBeforeEditDataSetDoc(DataSet: TDataSet);
@@ -237,7 +241,8 @@ type
 //    procedure OnAfterOpenDataSetSod(Sender:TObject);
     procedure RecalcInternalSize;
     procedure DocMarkDrawDataCell(Sender:TDbGridEhVk; State: TGridDrawState);
-    class procedure ViewFrame;
+//    class procedure ViewFrame;
+    class procedure ViewFrame(const className:String;AParams:TVkVariableCollection);
 //    class function Select(Aparam: TVkvaraibleCollection):Boolean;
     procedure WmCalendarChanged(var aMes:TMessage);
     //message WM_CALENDARCHANGED;
@@ -838,7 +843,7 @@ begin
 
 
 
-  if not DbGridEhVkDoc.SelectedField.ReadOnly then
+  if Assigned(DbGridEhVkDoc.SelectedField) and  not DbGridEhVkDoc.SelectedField.ReadOnly then
   case Key of
 
     VK_RETURN:
@@ -1168,6 +1173,11 @@ begin
   FOnGetDeleteMessage := Value;
 end;
 
+class procedure TDocFrame.SetOnShowDocument(const AOnShowDocument: TOnShowDocument);
+begin
+  onShowDocument := AOnShowDocument;
+end;
+
 procedure TDocFrame.PopupMenuPopup(Sender: TObject);
 begin
   //nNormal.Enabled := not DocDm.bSod;
@@ -1187,6 +1197,7 @@ begin
     DbGridEhVkDoc.PopupMenu := nil;
 //    if DocDm.MemTableEhDoc.State = dsEdit then
     FInEdit := True;
+    docDm.InitVariables(false);
   end
   else
     if not Assigned(DbGridEhVkDoc.PopupMenu) then
@@ -1353,6 +1364,7 @@ begin
     else
     begin
       // Edit In Grid;
+      DocDm.InitVariables(_bDocInsert);
       p := DocDm.DocStruDescriptionList.GetDocStruDescriptionItem(AFieldName);
       if Assigned(p) then
       begin
@@ -1565,23 +1577,10 @@ begin
     Result := True;
 end;
 
-class procedure TDocFrame.ViewFrame;
-var   _Form: TCustomDocFm;
+class procedure TDocFrame.ViewFrame(const className:String; AParams:TVkVariableCollection);
 begin
-//  _FrameClass := self.ClassType;
-//  if Assigned(_FrameClass) then
-//  begin
-  _Form := TCustomDocFm.FindFormOnFrameClass(Self);
-  if Assigned(_Form) then
-    _Form.Show
-  else
-  begin
-   _Form := TCustomDocFm.Create(Application,self);
-    _Form.FormStyle := fsMDIChild;
-    //TApplicationManager.SetMDIPosition(_Form);
-  end;
-//  end;
-
+  if Assigned(onShowDocument) then
+    onShowDocument(className, AParams)
 end;
 
 procedure TDocFrame.WmCalendarChanged(var aMes: TMessage);

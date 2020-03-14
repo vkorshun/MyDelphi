@@ -192,6 +192,21 @@
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
+        <DCCReference Include="..\COMMON\DOCS\OBJECTS\dmObjects.pas">
+            <Form>ObjectsDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\COMMON\DOCS\OBJECTS\frameobjectsgr.pas">
+            <Form>ObjectsGrFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\COMMON\DOCS\OBJECTS\frameObjectsItems.pas">
+            <Form>ObjectsItemsFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

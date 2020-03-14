@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Classes, rtc.dmDoc, MemTableDataEh, Data.DB, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.Client, FireDAC.Comp.DataSet,
-  DataDriverEh, MemTableEh,VkVariableBinding, VkVariableBindingDialog, frameAttributes;
+  DataDriverEh, MemTableEh,VkVariableBinding, VkVariableBindingDialog, frameAttributes, VkVariable;
 
 type
   TAttributesOfGroupDm = class(TDocDm)
@@ -16,12 +16,14 @@ type
     FIdGroup: Integer;
     procedure SetIdGroup(const Value: Integer);
     procedure DoOnInitVariables(ASender: TObject; AInsert: Boolean);
+  protected
+    procedure DoOnSetParams(Sender:TObject; AParams:TVkVariableCollection);
   public
     { Public declarations }
     property IdGroup: Integer read FIdGroup write SetIdGroup;
     class function GetDm:TDocDm; override;
     procedure OnDocStruInitialize(Sender: TObject);
-    procedure Open;
+    procedure Open;Override;
     procedure InitBeforeSelect(Sender: TObject);
   end;
 
@@ -70,7 +72,7 @@ begin
 //   TBindingDescription.GetBindingDescription(TCheckBoxVkVariableBinding));
   DocStruDescriptionList.OnInitialize := OnDocStruInitialize;
   OnInitVariables := DoOnInitvariables;
-
+  OnSetParams := DoOnSetParams;
 
 //  DocStruDescriptionList.Add('ISUNIQUE','ISUNIQUE','”никальный','”никальный',10,'',10,False,False,
 //   TCheckBoxVkVariableBinding);
@@ -88,6 +90,11 @@ begin
     DocVariableList.VarByName('idgroup').AsLargeInt := FIdGroup;
     DocVariableList.VarByName('idset').AsLargeInt := 0;
   end;
+end;
+
+procedure TAttributesOfGroupDm.DoOnSetParams(Sender: TObject; AParams: TVkVariableCollection);
+begin
+  FIdGroup:= AParams.VarByName('idobject').AsLargeInt;
 end;
 
 class function TAttributesOfGroupDm.getDm: TDocDm;
@@ -126,6 +133,7 @@ end;
 
 procedure TAttributesOfGroupDm.Open;
 begin
+  FRtcQueryDataSet.DsMemTableEh := MemTableEhDoc;
   FRtcQueryDataSet.Close;
   FRtcQueryDataSet.SQL.Clear;
   FRtcQueryDataSet.SQL.Text := SqlManager.SelectSQL.Text;

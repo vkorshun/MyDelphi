@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, rtcInfo, rtcConn, rtcDataCli, rtcHttpCli,
   RtcSqlQuery, rtcCliModule, commoninterface, Dialogs, Forms, Variants,
-  DCPsha256, Rtti, rtcFunction, RtcFuncResult, RtcQueryDataSet, u_xmlinit;
+  DCPsha256, Rtti, rtcFunction, RtcFuncResult, RtcQueryDataSet, u_xmlinit, vkvariable;
 
 type
 
@@ -23,6 +23,8 @@ type
     FUserInfo: PUserInfo;
     query: TRtcQuery;
     FXmlIni: TXmlIni;
+    FUserAccessTypes: TVkVariableCollection;
+    FUserAccessValues: TVkVariableCollection;
     procedure test;
     function rtcLogin(): Boolean;
   public
@@ -34,12 +36,16 @@ type
     function Gen_ID(const key:String):Int64;
     function GetTypeGroup( AId: LargeInt): LargeInt;
 
+    function RtcQueryValue(const SQL:String; params: array of Variant):IRtcFuncResult;
     function QueryValue(const SQL:String; params: array of Variant):Variant;
+    function QueryValues(const AVarList:TVkVariableCollection; const SQL:String; params: array of Variant):Variant;
     procedure DoRequest(const ASql:String;const AParams: TVariants; AOnRequest: TOnRequest = nil);
     procedure SetUser(Param: TRtcFunctionInfo);
 //    class function rtcExecute(clientModule:TRtcClientModule;func: TRtcFunctionInfo): variant; overload;
     class procedure CloneComponent(const aSource, aDestination: TComponent);
     class function rtcExecute(clientModule:TRtcClientModule;func: TRtcFunctionInfo): IRtcFuncResult; overload;
+    property UserAccessTypes: TVkVariableCollection read FUserAccessTypes;
+    property UserAccessValues: TVkVariableCollection read FUserAccessValues;
     property XmlInit: TXmlIni read FXmlIni;
     property UserInfo:PUserInfo read FUserInfo;
   end;
@@ -58,6 +64,8 @@ begin
   DCP_sha2561 := TDCP_sha256.Create(self);
   RtcHttpClient1.Connect();
   FXmlIni := TXmlIni.Create(self,ChangeFileExt(Application.ExeName,'.xml'));
+  FUserAccessTypes := TVkVariableCollection.Create(self);
+  FUserAccessValues := TVkVariableCollection.Create(self);
 end;
 
 procedure TMainRtcDm.DataModuleDestroy(Sender: TObject);
@@ -136,26 +144,39 @@ end;
 
 function TMainRtcDm.QueryValue(const SQL: String; params: array of Variant): Variant;
 var i: Integer;
+    retval: IRtcFuncResult;
 begin
-//  Result := null;
-  with RtcClientModule1 do
+  retval := RtcQueryValue(SQL, params);
+  if Assigned(retval) then
   begin
-    with Prepare('RtcQueryValue') do
+    if (retval.RtcValue.isType = rtc_Array) then
     begin
-      Param.asWideString['username'] := FUserInfo.user_name;
-      Param.asWideString['password'] := FUserInfo.user_password;
-      Param.asWideString['SQL'] := SQL;
-      Param.NewArray('SQL_PARAMS'); //:= TRtcArray.Create();
-//      Param.asInteger['Param_count'] := High(AParams);
-      for I := 0 to High(params) do
-        Param.asArray['SQL_PARAMS'][i] := params[i];
-//      Result := TRtcFuncResult.Create(retval);
+      Result := VarArrayCreate([0,retval.RtcValue.asArray.Count], varVariant);
+      for I := 0 to retval.RtcValue.asArray.Count-1 do
+        Result[i] := retval.RtcValue.asArray.asValue[i];
+    end
+    else
+      Result := retval.RtcValue.asValue;
+  end
+  else
+    Result := null;
+end;
 
-      Result := rtcExecute(RtcClientModule1, RtcClientModule1.Data.asFunction).RtcValue.asValue;
-
+function TMainRtcDm.QueryValues(const AVarList: TVkVariableCollection; const SQL: String; params: array of Variant): Variant;
+var i: Integer;
+    retval: IRtcFuncResult;
+    _v: TVkVariable;
+begin
+  retval := RtcQueryValue(SQL, params);
+  if Assigned(retval) and (retval.RtcValue.isType = rtc_Record) then
+  begin
+    for i := 0 to retval.RtcValue.asRecord.Count - 1 do
+    begin
+      _v := TVkVariable.Create(AVarList);
+      _v.Name := retval.RtcValue.asRecord.FieldName[i];
+      _v.Value := retval.RtcValue.asRecord.asValue[_v.Name];
     end;
   end;
-
 end;
 
 procedure TMainRtcDm.RtcClientModule1ConnectLost(Sender: TRtcConnection);
@@ -215,7 +236,7 @@ end;
 
 function TMainRtcDm.rtcLogin: Boolean;
 var
-//  Retval: TRtcValue;
+  Retval: TRtcValue;
   func: TRtcFunctionInfo;
 begin
   with RtcClientModule1 do
@@ -225,12 +246,40 @@ begin
     begin
       Param.asWideString['username'] := FUserInfo.user_name;
       Param.asWideString['password'] := FUserInfo.user_password;
-      Result := rtcExecute(RtcClientModule1, RtcClientModule1.Data.asFunction).getRtcValue.asInteger = 0;
+      Retval := rtcExecute(RtcClientModule1, RtcClientModule1.Data.asFunction).getRtcValue;
+      Result := Retval.asRecord.asInteger['RESULT'] = 0;
+      TUtils.RtcToVkVariableColections(Retval.asRecord.asRecord['USERACCESSTYPES'], FUserAccessTypes);
+      TUtils.RtcToVkVariableColections(Retval.asRecord.asRecord['USERACCESSVALUES'], FUserAccessValues);
+      TUtils.RtcValueToRecord(Retval.asRecord.asRecord['USERINFO'],FUserInfo, TypeInfo(RUserInfo));
     end;
     finally
 //      FreeAndNil(Retval);
     end;
   end;
+end;
+
+function TMainRtcDm.RtcQueryValue(const SQL: String; params: array of Variant): IRtcFuncResult;
+var i: Integer;
+begin
+//  Result := null;
+  with RtcClientModule1 do
+  begin
+    with Prepare('RtcQueryValue') do
+    begin
+      Param.asWideString['username'] := FUserInfo.user_name;
+      Param.asWideString['password'] := FUserInfo.user_password;
+      Param.asWideString['SQL'] := SQL;
+      Param.NewArray('SQL_PARAMS'); //:= TRtcArray.Create();
+//      Param.asInteger['Param_count'] := High(AParams);
+      for I := 0 to High(params) do
+        Param.asArray['SQL_PARAMS'][i] := params[i];
+//      Result := TRtcFuncResult.Create(retval);
+
+      Result := rtcExecute(RtcClientModule1, RtcClientModule1.Data.asFunction);
+
+    end;
+  end;
+
 end;
 
 procedure TMainRtcDm.SetUser(Param: TRtcFunctionInfo);
@@ -287,6 +336,8 @@ var id : LargeInt;
 begin
   id := -1;
   Result := -1;
+  if AId=0 then
+    Exit;
   retval := QueryValue('SELECT idgroup, idobject FROM objects WHERE idobject=:idobject',[AId]);
 {  FDQuerySelect.Active := False;
   FDQuerySelect.SQL.Clear;
@@ -294,22 +345,45 @@ begin
   FDQuerySelect.ParamByName('idobject').AsLargeInt := AId;}
   while id<>0 do
   begin
-    if (not VarIsEmpty(retval)) and (VarIsArray(retval)) and (VarArrayHighBound(retval,0)>=1) then
+    if (not VarIsEmpty(retval)) and (VarIsArray(retval)) and (VarArrayHighBound(retval,1)>=1) then
     begin
       id := retval[0];
-      if id = 0 then
-      begin
-        Result := retval[1];
-        Break;
-      end
-      else
-      begin
+      Result := retval[1];
+      if (id <> 0) then
         retval := QueryValue('SELECT idgroup, idobject FROM objects WHERE idobject=:idobject',[id]);
-      end;
     end
     else
-      raise Exception.Create('Error group');
+    begin
+       Result := 0;
+       Exit;
+    end;
+       //      raise Exception.Create('Error group');
   end;
 end;
+
+{procedure TMainDm.InitConstsList(var AVarList: TVkVariableCollection; const ATableName, AIdName: String);
+begin
+  if Assigned(AVarList) then
+    AVarList.Clear
+  else
+    AVarList := TVkVariableCollection.Create(self);
+  with VkUIBQuerySelect do
+  begin
+    Active := False;
+    SQL.Clear;
+    SQL.Add('SELECT * FROM '+ATableName);
+    Open;
+    try
+      while not Eof  do
+      begin
+        AVarList.CreateVkVariable(FieldByName('CONSTNAME').AsString,FieldByName(AIdName).Value);
+        Next;
+      end;
+    finally
+      Close;
+    end;
+  end;
+end;}
+
 
 end.

@@ -84,7 +84,7 @@ end;
 
 procedure TMainFm.aViewOAUExecute(Sender: TObject);
 begin
-  //docManager.ShowDocument('TFrameGOAU');
+  docManager.ShowDocument('TFrameGOAU');
 end;
 
 procedure TMainFm.FormCreate(Sender: TObject);
@@ -109,8 +109,9 @@ begin
   FMenuStru.Root.Items[0].Add('Attributes OAU',12,aViewAttributesOAU);
   FMenuStru.Root.Items[0].Add('Attributes gr',13,actAttributeSet);
 
-{  FMenuStru.Add('Справочники',2);
-  FMenuStru.Add('Настройки',3);
+ FMenuStru.Add('Справочники',2);
+  FMenuStru.Root.Items[1].Add('',7,aViewOAU);
+{  FMenuStru.Add('Настройки',3);
   FMenuStru.Root.Items[0].Add('',4,aCertStore);
   FMenuStru.Root.Items[0].Add('-',5);
   FMenuStru.Root.Items[0].Add('',6,aExit);

@@ -20,9 +20,9 @@ type
   LargeInt = Int64;
   PUserInfo = ^RUserInfo;
   RUserInfo = Record
-    id_group      :Integer;
-    id_user       :Integer;
-    id_menu       :Integer;
+    id_group      :LargeInt;
+    id_user       :LargeInt;
+    id_menu       :LargeInt;
     user_name     :string;
     user_password :string;
     g_user_name   :string;
@@ -42,6 +42,8 @@ type
     class function getDocCommand(AOperation: TDocOperation):String;
     class function getDocOperation(ACommand: String):TDocOperation;
     class function RtcArrayToVarArray(const ARtcArray: TRtcArray): TVariants;
+    class procedure RecordToRtcValue(AObject: Pointer; ATypeInfo: Pointer; ARecord: TRtcRecord);
+    class procedure RtcValueToRecord( ARecord: TRtcRecord;AObject: Pointer; ATypeInfo: Pointer);
   end;
 
   TTableAction = class(TObject)
@@ -264,6 +266,63 @@ begin
 end;
 
 
+class procedure TUtils.RtcValueToRecord(ARecord: TRtcRecord; AObject, ATypeInfo: Pointer);
+var
+  ctx: TRttiContext;
+  RttiType, DestType: TRttiType;
+  RttiField: TRttiField;
+  _obj: TObject;
+begin
+   if Assigned(AObject) then
+   begin
+     ctx := TRttiContext.Create;
+     try
+       RttiType := ctx.GetType(ATypeInfo);
+       for RttiField in RttiType.GetFields do
+       begin
+          if not ARecord.isNull[RttiField.Name] then
+          case RttiField.FieldType.TypeKind of
+            tkInteger: RttiField.SetValue(AObject, ARecord.asInteger[RttiField.Name]);
+            tkChar: RttiField.SetValue(AObject, ARecord.asString[RttiField.Name]) ;
+            tkFloat: RttiField.SetValue(AObject,ARecord.asFloat[RttiField.Name]);
+            tkString,
+            tkUString,
+            tkLString: RttiField.SetValue(AObject,ARecord.asString[RttiField.Name]);
+            tkInt64: RttiField.SetValue(AObject,ARecord.asLargeInt[RttiField.Name]);
+            tkVariant: RttiField.SetValue(AObject,TValue.FromVariant(ARecord.asValue[RttiField.Name]));
+            tkEnumeration:
+            if (RttiField.FieldType.IsOrdinal and SameText('Boolean',RttiField.FieldType.Name)) then
+              RttiField.SetValue(AObject,ARecord.asBoolean[RttiField.Name]);
+            tkClass,
+            tkRecord,
+            tkClassRef:
+              begin
+                if (RttiField.GetValue(AObject).IsObject) then
+                begin
+                  _obj := RttiField.GetValue(AObject).AsObject;
+                  if _obj is TStrings then
+                  begin
+//                    if (TStrings(_obj).Count > 0) then
+                    TStrings(_obj).Text :=  ARecord.asString[RttiField.Name];
+//                    else
+//                      ARecord.asString[RttiProperty.Name] := '';
+                  end
+                  else
+                  begin
+                    TUtils.RtcValueToObject(ARecord.asRecord[RttiField.Name], _obj);
+                  end;
+                end;
+              end;
+
+          end;
+       end;
+     finally
+       ctx.Free;
+     end;
+
+   end
+end;
+
 class procedure TUtils.VkVariableColectionsToRtc(AVariables: TVkVariableCollection; Arecord: TRtcRecord);
 var vk: TVkvariable;
     i: Integer;
@@ -292,6 +351,64 @@ end;
   begin
 
   end;
+
+class procedure TUtils.RecordToRtcValue(AObject: Pointer; ATypeInfo: Pointer; ARecord: TRtcRecord);
+var
+  ctx: TRttiContext;
+  DestType: TRttiType;
+  RttiType: TRttiRecordType;
+  RttiField: TRttiField;
+  _obj: TObject;
+begin
+   if Assigned(AObject) then
+   begin
+     ctx := TRttiContext.Create;
+     try
+       RttiType := ctx.GetType(ATypeInfo).AsRecord;
+       for RttiField in RttiType.GetFields do
+       begin
+          case RttiField.FieldType.TypeKind of
+            tkInteger: ARecord.asInteger[RttiField.Name] := RttiField.GetValue(AObject).AsInteger;
+            tkChar: ARecord.asString[RttiField.Name] := RttiField.GetValue(AObject).AsString;
+            tkFloat: ARecord.asFloat[RttiField.Name] := RttiField.GetValue(AObject).AsExtended;
+            tkString,
+            tkUString,
+            tkLString: ARecord.asString[RttiField.Name] := RttiField.GetValue(AObject).AsString;
+            tkInt64: ARecord.asLargeInt[RttiField.Name] := RttiField.GetValue(AObject).AsInt64;
+            tkVariant: ARecord.asValue[RttiField.Name] := RttiField.GetValue(AObject).AsVariant;
+            tkEnumeration:
+            if (RttiField.FieldType.IsOrdinal and SameText('Boolean',RttiField.FieldType.Name)) then
+              ARecord.asBoolean[RttiField.Name] := RttiField.GetValue(AObject).AsBoolean;
+            tkClass,
+            tkRecord,
+            tkClassRef:
+              begin
+                if (RttiField.GetValue(AObject).IsObject) then
+                begin
+                  _obj := RttiField.GetValue(AObject).AsObject;
+                  if _obj is TStrings then
+                  begin
+                    if (TStrings(_obj).Count > 0) then
+                      ARecord.asString[RttiField.Name] := TStrings(_obj).Text
+                    else
+                      ARecord.asString[RttiField.Name] := '';
+                  end
+                  else
+                  begin
+                    ARecord.NewRecord(RttiField.Name);
+                    TUtils.ObjectToRtcValue(_obj, ARecord.asRecord[RttiField.Name])
+                  end;
+                end;
+              end;
+
+          end;
+       end;
+     finally
+       ctx.Free;
+     end;
+
+   end
+end;
 
 
 end.

@@ -37,7 +37,10 @@ uses
   dmAttributesSet in '..\COMMON\DOCS\ATTRIBUTES\dmAttributesSet.pas' {AttributesSetDm: TDataModule},
   frameAttributes in '..\COMMON\DOCS\ATTRIBUTES\frameAttributes.pas' {AttributesFrame: TFrame},
   frameAttributesOfGroup in '..\COMMON\DOCS\ATTRIBUTES\frameAttributesOfGroup.pas' {AttributesOfGroupFrame: TFrame},
-  frameAttributesSet in '..\COMMON\DOCS\ATTRIBUTES\frameAttributesSet.pas' {AttributesSetFrame: TFrame};
+  frameAttributesSet in '..\COMMON\DOCS\ATTRIBUTES\frameAttributesSet.pas' {AttributesSetFrame: TFrame},
+  dmObjects in '..\COMMON\DOCS\OBJECTS\dmObjects.pas' {ObjectsDm: TDataModule},
+  frameobjectsgr in '..\COMMON\DOCS\OBJECTS\frameobjectsgr.pas' {ObjectsGrFrame: TFrame},
+  frameObjectsItems in '..\COMMON\DOCS\OBJECTS\frameObjectsItems.pas' {ObjectsItemsFrame: TFrame};
 
 {$R *.res}
 

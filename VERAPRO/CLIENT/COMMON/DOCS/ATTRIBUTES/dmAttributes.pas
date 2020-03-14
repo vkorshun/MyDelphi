@@ -14,17 +14,21 @@ type
     procedure MemTableEhDocBeforePost(DataSet: TDataSet);
   private
     { Private declarations }
+    FCurrentGroupId: LargeInt;
     procedure LocalOnChangeVariable(Sender: TObject);
+    procedure SetCurrentGroupId(const Value: LargeInt);
   protected
     procedure DoOnInitVariables(ASender: TObject; AInsert: Boolean);
     procedure DoStoreVariables(Sender: TObject; AStatus: TUpdateStatus);
+    procedure DoSetParams(Sender:TObject; AParams: TVkVariableCollection);
   public
     { Public declarations }
     class function GetDm: TDocDm;override;
-    procedure Open(AId: LargeInt);
+    procedure Open;override;
     procedure OnDocStruInitialize(Sender: TObject);
     procedure DoOnFillKeyFields(Sender: TObject);
     function ValidFmEditItems(Sender:TObject):Boolean;override;
+    property CurrentGroupId:LargeInt read FCurrentGroupId write SetCurrentGroupId;
   end;
 
 var
@@ -32,7 +36,7 @@ var
 
 implementation
 
-uses dmmainRtc, uLog, systemconsts, rtc.docBinding;
+uses dmmainRtc, uLog, systemconsts, rtc.docBinding, FrameObjectsGr;
 
 {$R *.dfm}
 
@@ -42,7 +46,6 @@ procedure TAttributesDm.DataModuleCreate(Sender: TObject);
 begin
   inherited;
   InitClientSqlManager('ATTRIBUTELIST');
-
 //  SqlManager.InitCommonParams('ATTRIBUTELIST','GEN_ATTRIBUTELIST_ID');
   SqlManager.SelectSQL.Add('SELECT al.*,  attl.name as typename, obj.name as groupname ');
   SqlManager.SelectSQL.Add('FROM attributelist al');
@@ -62,8 +65,8 @@ begin
     TBindingDescription.GetBindingDescription(TEditVkVariableBinding));
   DocStruDescriptionList.Add('ndec','','Точность','Точность',10,'',10,True,False,
     TBindingDescription.GetBindingDescription(TEditVkVariableBinding));
-//  DocStruDescriptionList.Add('groupname','idgroup','Группа','Группа',60,'',60,True,False,
-  //  TDocMEditBoxBindingDescription.GetDocMEditBoxBindingDescription('TObjectsGrFrame',nil));
+  DocStruDescriptionList.Add('groupname','idgroup','Группа','Группа',60,'',60,True,False,
+    TDocMEditBoxBindingDescription.GetDocMEditBoxBindingDescription('TObjectsGrFrame',nil));
   DocStruDescriptionList.Add('isunique','','Уник.','Признак уникальности',10,'',10,True,False,
     TBindingDescription.GetBindingDescription(TCheckBoxVkVariableBinding));
   DocStruDescriptionList.Add('notempty','','Зап.','Обязательно к заполнению',10,'',10,True,False,
@@ -77,6 +80,7 @@ begin
   OnInitVariables := DoOnInitvariables;
 //  OnFillKeyFields := DoOnFillKeyFields;
   OnStoreVariables := DoStorevariables;
+  OnSetParams := DoSetParams;
 //  DocVariableList.VarByName('ctype').OnChangeVariable := LocalOnChangeVariable;
 end;
 
@@ -96,6 +100,11 @@ begin
     DocVariableList.VarByName('idgroup').AsLargeInt := 0;
     DocVariableList.VarByName('attributetype').AsLargeInt := 0;
   end
+end;
+
+procedure TAttributesDm.DoSetParams(Sender: TObject; AParams: TVkVariableCollection);
+begin
+  SetCurrentGroupId(AParams.VarByName('IDGROUP').AsLargeInt);
 end;
 
 procedure TAttributesDm.DoStoreVariables(Sender: TObject; AStatus: TUpdateStatus);
@@ -178,20 +187,22 @@ begin
     DmMain.DoRequest(' SELECT * FROM attributetypelist ORDER BY idtypeattribute',nil,_proc);
   end;
 
-{*  if SameText(_Item.Name, 'idgroup') then
+  if SameText(_Item.Name, 'idgroup') then
   begin
-    TObjectsGrFrame(TCustomDocFmVkVariableBinding(_Item).DocMEditBox.DocFm.FrameDoc).RootIdGroup :=
-      FDQueryDoc.ParamByName('ID').AsLargeInt;
-  end; *}
+    TObjectsGrFrame(TCustomDocFmVkVariableBinding(_Item).DocMEditBox.DocFm.FrameDoc).RootIdGroup := FCurrentGroupId;
+//      FDQueryDoc.ParamByName('ID').AsLargeInt;
+  end;
 end;
 
-procedure TAttributesDm.Open(AId: largeInt);
+procedure TAttributesDm.Open;
 begin
+//  Inherited;
   FRtcQueryDataSet.Close;
   FRtcQueryDataSet.SelectSQL.Clear;
   FRtcQueryDataSet.SelectSQL.Text := SqlManager.SelectSQL.Text;
+  FRtcQueryDataSet.DsMemTableEh := MemTableEhDoc;
   try
-    FRtcQueryDataSet.ParamByName('id').AsLargeInt := AId;
+    FRtcQueryDataSet.ParamByName('id').AsLargeInt := FCurrentGroupId;
     FRtcQueryDataSet.Open;
   except
     on E: Exception do
@@ -199,6 +210,11 @@ begin
       LogMessage(' DmAttributes:'+#13#10+E.Message+#13#10+FRtcQueryDataSet.SelectSQL.Text);
     end;
   end;
+end;
+
+procedure TAttributesDm.SetCurrentGroupId(const Value: LargeInt);
+begin
+  FCurrentGroupId := Value;
 end;
 
 function TAttributesDm.ValidFmEditItems(Sender: TObject): Boolean;

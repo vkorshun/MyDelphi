@@ -19,6 +19,7 @@ type
     procedure InitBeforeSelect;virtual;
     procedure InternalOnClick(Sender: TObject);
     function Select: Boolean;
+    function GetFmDoc: TCustomDocFm;
   public
     function GetValue: Variant;
     procedure SetValue(AValue: variant);
@@ -26,7 +27,7 @@ type
     function IsPrepared: Boolean;
     procedure Prepare(const AFrameDocClassName: String);virtual;
     property OnInitBeforeSelect:TNotifyEvent read FOnInitBeforeSelect write SetOnInitBeforeSelect;
-    property DocFm:TCustomDocFm read FFmDoc;
+    property DocFm:TCustomDocFm read GetFmDoc;
   end;
 
   TCustomDocFmVkVariableBinding = class(TMEditBoxVkVariableBinding)
@@ -97,6 +98,11 @@ begin
   inherited;
   FValues := TVkVariableCollection.Create(self);
   OnButtonClick := InternalOnClick;
+end;
+
+function TDocMEditBox.GetFmDoc: TCustomDocFm;
+begin
+  Result := FFmDoc;
 end;
 
 function TDocMEditBox.GetValue: Variant;

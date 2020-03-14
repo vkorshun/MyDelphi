@@ -32,13 +32,14 @@ type
     FOnStoreVariables: TNotifyEvent;
     FOnUpdateOrInsert: TUpdateOrInsertEvent;
     FOnDelete: TNotifyEvent;
-
+    FInternalMemtableEh: TMemTableEh;
     FMemTableEhAfterEdit: TDataSetNotifyEvent;
     FMemTableEhAfterInsert: TDataSetNotifyEvent;
     FMemTableEhAfterOpen: TDataSetNotifyEvent;
     FMemTableEhBeforePost: TDataSetNotifyEvent;
     FMemTableEhBeforeDelete: TDataSetNotifyEvent;
 
+    procedure CheckMemtableEh;
     procedure InternalBeforePost(DataSet:TDataSet);
     procedure InternalAfterInsert(DataSet:TDataSet);
     procedure InternalAfterEdit(DataSet:TDataSet);
@@ -80,6 +81,7 @@ type
     procedure Next;
     procedure Open;
     procedure Prior;
+    procedure MoveBy(destination: Integer);
     function Locate(const KeyFields: string; const KeyValues: Variant;  Options: TLocateOptions): Boolean ;
 
     procedure Append;
@@ -168,35 +170,44 @@ end;
 
 procedure TRtcQueryDataSet.InternalMemtableEhEventsDisable;
 begin
-  FMemTableEh.AfterInsert := nil;
-  FMemTableEh.AfterEdit := nil;
-  FMemTableEh.BeforeDelete := nil;
-  FMemTableEh.BeforePost := nil;
-  FMemTableEh.BeforeInsert := nil;
-  FMemTableEh.BeforeEdit := nil;
-
+  if Assigned(FMemTableEh) then
+  begin
+    FMemTableEh.AfterInsert := nil;
+    FMemTableEh.AfterEdit := nil;
+    FMemTableEh.BeforeDelete := nil;
+    FMemTableEh.BeforePost := nil;
+    FMemTableEh.BeforeInsert := nil;
+    FMemTableEh.BeforeEdit := nil;
+  end;
 end;
 
 procedure TRtcQueryDataSet.InternalMemtableEhEventsEnable;
 begin
-  FMemTableEh.AfterInsert := InternalAfterInsert;
-  FMemTableEh.AfterEdit := InternalAfterEdit;
-  FMemTableEh.BeforeDelete := InternalBeforeDelete;
-  FMemTableEh.BeforePost := InternalBeforePost;
-  FMemTableEh.BeforeInsert := InternalBeforeInsert;
-  FMemTableEh.BeforeEdit := InternalBeforeEdit;
-
+  if Assigned(FMemTableEh) then
+  begin
+    FMemTableEh.AfterInsert := InternalAfterInsert;
+    FMemTableEh.AfterEdit := InternalAfterEdit;
+    FMemTableEh.BeforeDelete := InternalBeforeDelete;
+    FMemTableEh.BeforePost := InternalBeforePost;
+    FMemTableEh.BeforeInsert := InternalBeforeInsert;
+    FMemTableEh.BeforeEdit := InternalBeforeEdit;
+  end;
 end;
 
 function TRtcQueryDataSet.IsEmpty: Boolean;
 begin
-  Result := FMemTableEh.IsEmpty;
+  Result := Assigned(FMemTableEh) and FMemTableEh.IsEmpty;
 end;
 
 function TRtcQueryDataSet.Locate(const KeyFields: string; const KeyValues: Variant;
   Options: TLocateOptions): Boolean;
 begin
   Result := FMemTableEh.Locate(KeyFields,KeyValues,Options);
+end;
+
+procedure TRtcQueryDataSet.MoveBy(destination: Integer);
+begin
+  FMemTableEh.MoveBy(destination);
 end;
 
 procedure TRtcQueryDataSet.Append;
@@ -212,12 +223,28 @@ end;
 procedure TRtcQueryDataSet.CalcVariablesOnDs(DataSet: TDataSet; aVarList: TDocVariableList);
 var i: Integer;
     ind: Integer;
+    fld: TField;
 begin
   with DataSet do
   begin
     for I := 0 to FieldCount - 1 do
     begin
       ind := aVarList.IndexOf(Fields[i].FieldName) ;
+      if ind=-1  then
+      begin
+        fld := Fields[i];
+        if (fld.DataType=ftString) or
+          (fld.DataType=ftMemo) then
+          AVarList.Add(fld.FieldName,'',ftString,True)
+        else
+        if (fld.DataType=ftDateTime) or
+          (fld.DataType=ftDate) then
+          AVarList.Add(fld.FieldName,0,ftDateTime,True)
+        else
+          AVarList.Add(fld.FieldName,0,fld.DataType,True);
+
+        ind := aVarList.IndexOf(Fields[i].FieldName) ;
+      end;
       if ind >-1 then
       begin
         case Fields[i].DataType of
@@ -241,6 +268,12 @@ begin
   FMemTableEh.Cancel;
 end;
 
+procedure TRtcQueryDataSet.CheckMemtableEh;
+begin
+  if not Assigned(FMemTableEh) then
+    SetMemTableEh(FInternalMemtableEh);
+end;
+
 procedure TRtcQueryDataSet.Close;
 begin
   if Assigned(FMemTableEh) then
@@ -261,6 +294,7 @@ begin
   FFieldList := TStringList.Create;
   FTableVariableList := TDocVariableList.Create(nil);
 //  FDatasetDriverEh:= TDataSetDriverEh.Create(nil);
+  FInternalMemtableEh := TMemTableEh.Create(nil);
 end;
 
 procedure TRtcQueryDataSet.DataSetDriverEhUpdateRecord(DataDriver: TDataDriverEh;
@@ -333,6 +367,7 @@ begin
 //  FreeAndNil(FDatasetDriverEh);
   FreeAndNil(FFieldList);
   FreeAndNil(FTableVariableList);
+  FreeAndNil(FInternalMemtableEh);
   inherited;
 end;
 
@@ -553,7 +588,7 @@ var i: Integer;
     fld: TField;
 begin
   if FTablename='' then Exit;
-
+  //AVarList.Clear;
 {  AVarList.Clear;
   FFieldList.Clear;
   with FRtcMapQuery do
@@ -603,6 +638,7 @@ end;
 
 procedure TRtcQueryDataSet.Open;
 begin
+  CheckMemTableEh;
   InternalMemtableEhEventsDisable;
   try
     FRtcQuery.Select(FMemTableEh);
@@ -689,8 +725,8 @@ begin
     FRtcExecute.Params[i].Value := FTableVariableList.VarByName(FRtcExecute.Params[i].Name).Value;
   FRtcExecute.ExecQuery(ttStability);
   }
-  if Assigned(FOnUpdateOrInsert) then
-    FOnUpdateOrInsert(self, ANew)
+//  if Assigned(FOnUpdateOrInsert) then
+//    FOnUpdateOrInsert(self, ANew)
 end;
 
 class procedure TRtcQueryDataSet.UpdateVariablesOnDeltaDs(DataSet: TDataSet; aVarList: TDocVariableList);

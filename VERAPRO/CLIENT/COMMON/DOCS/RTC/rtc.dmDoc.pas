@@ -25,6 +25,7 @@ type
     of object;
   TDmDocClass = class of TDocDm;
   TDocEditActionEvent = procedure(Sender: TObject; AInsert: Boolean) of object;
+  TSetParamsEvent = procedure(Sender: TObject; AParams: TVkVariableCollection) of object;
 
   { TDocProperti = class
     private
@@ -70,6 +71,8 @@ type
     procedure MemTableEhDocAfterOpen(DataSet: TDataSet);
     procedure MemTableEhDocBeforeClose(DataSet: TDataSet);
     procedure VkUIBDataSetDocAfterOpen(DataSet: TDataSet);
+    procedure MemTableEhDocBeforePost(DataSet: TDataSet);
+    procedure MemTableEhDocBeforeDelete(DataSet: TDataSet);
   private
     { Private declarations }
     FDmMain: TMainRtcDm;
@@ -94,12 +97,16 @@ type
     FPrepared: Boolean;
     FOnFillKeyFields: TNotifyEvent;
     FOnWriteVariables: TOnWriteVariablesEvent;
+    FParamsPrepared: Boolean;
+    FOnSetParams: TSetParamsEvent;
 
     function GetDocVariableList: TVkVariableCollection;
     procedure SetPrepared(const Value: Boolean);
     procedure SetOnFillKeyFields(const Value: TNotifyEvent);
     procedure SetOnWriteVariables(const Value: TOnWriteVariablesEvent);
     procedure SetLastRetval(const Value: IRtcFuncResult);
+    procedure SetParamsPrepared(const Value: Boolean);
+    procedure SetOnSetParams(const Value: TSetParamsEvent);
   protected
     FIsInternalTransaction: Boolean;
     FGridOrderList: TStringList;
@@ -132,9 +139,10 @@ type
     // procedure UnLockDoc(bCommit: Boolean = True); virtual;
     // function IsLocked: Boolean;
     procedure FullRefreshDoc(ARecalcVariables: Boolean = false);
-    procedure Open;
+    procedure Open;virtual;
     procedure ReInitVariables;
     procedure SetFilter(nIndex: Integer; Sender: TObject); virtual;
+    procedure SetParams(const AParams:TVkVariableCollection );
     procedure WriteVariables(AInsert: Boolean);
     function ValidFmEditItems(Sender: TObject): Boolean; virtual;
     procedure VarLog(AVarList: TVkVariableCollection);
@@ -174,12 +182,14 @@ type
     property OnFillKeyFields: TNotifyEvent read FOnFillKeyFields
       write SetOnFillKeyFields;
     property Prepared: Boolean read FPrepared write SetPrepared;
+    property ParamsPrepared: Boolean read FParamsPrepared write SetParamsPrepared;
     property OnWriteVariables: TOnWriteVariablesEvent read FOnWriteVariables
       write SetOnWriteVariables;
     property OnUpdateAdditionalFields: TNotifyEvent
       read FOnUpdateAdditionalFields write FOnUpdateAdditionalFields;
     property OnInsertAdditionalFields: TNotifyEvent
       read FOnInsertAdditionalFields write FOnInsertAdditionalFields;
+    property OnSetParams: TSetParamsEvent read FOnSetParams write SetOnSetParams;
   end;
 
 var
@@ -794,6 +804,42 @@ begin
   inherited;
 end;
 
+procedure TDocDm.MemTableEhDocBeforeDelete(DataSet: TDataSet);
+begin
+  if FDocSqlManager.DocVariableList.Count=0 then
+    Exit;
+
+  DirectDeleteDoc;
+
+end;
+
+procedure TDocDm.MemTableEhDocBeforePost(DataSet: TDataSet);
+var st: TUpdateStatus;
+begin
+  if FDocSqlManager.DocVariableList.Count=0 then
+    Exit;
+
+  if (DataSet.State = dsEdit) then
+    st := usModified
+  else
+    st := usInserted;
+
+  if Assigned(FOnStoreVariables) then
+    FOnStorevariables(Self, st);
+
+  if (DataSet.State = dsInsert) then
+    DirectInsertDoc
+  else
+  if (DataSet.State = dsEdit) then
+  begin
+    if not FDocSqlManager.DocVariableList.IsChanged then
+      FDocSqlManager.UpdateVariablesOnDeltaDs(MemTableEhDoc, FDocSqlManager.DocVariableList);
+    DirectEditDoc;
+  end;
+//  else if (DataSet.State = dsInsert) then
+
+end;
+
 { procedure TDocDm.OnFillFiledList(Sender: TObject);
   const  QRYTableFields =
   'select ' +
@@ -890,9 +936,25 @@ begin
   FOnFillKeyFields := Value;
 end;
 
+procedure TDocDm.SetOnSetParams(const Value: TSetParamsEvent);
+begin
+  FOnSetParams := Value;
+end;
+
 procedure TDocDm.SetOnWriteVariables(const Value: TOnWriteVariablesEvent);
 begin
   FOnWriteVariables := Value;
+end;
+
+procedure TDocDm.SetParams(const AParams: TVkVariableCollection);
+begin
+  if Assigned(FOnsetParams) then
+    FOnSetParams(self, AParams);
+end;
+
+procedure TDocDm.SetParamsPrepared(const Value: Boolean);
+begin
+  FParamsPrepared := Value;
 end;
 
 class procedure TDocDm.SetParamValues(AQuery: TpFIBQueryVk;

@@ -114,13 +114,24 @@ var
   mUserName, mPassword: string;
   mDmMain: TMainDm;
 begin
-  Result.asInteger := -1;
+  Result.NewRecord;
+  Result.asRecord.asInteger['RESULT'] := -1;
   mUserName := FnParams.AsWideString['username'];
   mPassword := FnParams.AsWideString['password'];
   mDmMain := GetDmMainUib(Sender, mUserName, mPassword);
   if Assigned(mDmMain) then
+  begin
     if mDmMain.Connected then
-      Result.asInteger := 0;
+    begin
+      Result.asRecord.asInteger['RESULT'] := 0;
+      Result.asRecord.newRecord('USERACCESSTYPES');
+      Result.asRecord.newRecord('USERACCESSVALUES');
+      Result.asRecord.newRecord('USERINFO');
+      TUtils.VkVariableColectionsToRtc(mDmMain.UserAccessTypes,Result.asRecord.asRecord['USERACCESSTYPES'] );
+      TUtils.VkVariableColectionsToRtc(mDmMain.UsersAccessValues,Result.asRecord.asRecord['USERACCESSVALUES'] );
+      TUtils.RecordToRtcValue(@mDmmain.CurrentUser,TypeInfo(RUserInfo),Result.asRecord.asRecord['USERINFO'] );
+    end;
+  end;
 end;
 
 procedure TRtcCommonFunctionsDm.RtcGen_ID(Sender: TRtcConnection;
@@ -218,13 +229,24 @@ var
   _params: TRtcArray;
   query: TFbApiQuery;
   v: TVariants;
+  ret: Variant;
 begin
   mUserName := FnParams.AsString['username'];
   mPassword := FnParams.AsString['password'];
   mDmMainUib := GetDmMainUib(Sender, mUserName, mPassword);
   _params := FnParams.asArray['SQL_PARAMS'];
   v := TUtils.RtcArrayToVarArray(_params);
-  Result.asValue := mDmMainUIB.FbDatabase.QueryValue(FnParams.AsString['SQL'], v);
+
+  ret := mDmMainUIB.FbDatabase.QueryValue(FnParams.AsString['SQL'], v);
+  if VarIsArray(ret) then
+  begin
+      Result.newArray;
+      for i := VarArrayLowBound(ret,1) to VarArrayHighBound(ret,1) do
+          Result.asArray.asValue[i] := ret[i];
+  end
+  else
+    Result.asValue := ret;
+
 end;
 
 procedure TRtcCommonFunctionsDm.RtcSelectSql(Sender: TRtcConnection;
