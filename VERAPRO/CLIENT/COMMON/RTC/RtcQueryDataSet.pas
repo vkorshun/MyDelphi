@@ -50,7 +50,6 @@ type
     procedure InternalMemtableEhEventsEnable;
     procedure SetMemTableEh(const Value: TMemTableEh);
 
-    procedure InitVariableListOnTable(AVarList: TDocVariableList);
     function GetKeyValues:Variant;
     function GetSQLSelect: TStringList;
 //    procedure SetDataSetDriverEh(const Value: TDataSetDriverEh);
@@ -68,7 +67,6 @@ type
     constructor Create(AClientModule:TRtcClientModule;ACurrentUser:PUserInfo);
     destructor Destroy;override;
     procedure Close;
-    procedure CalcVariablesOnDs(DataSet: TDataSet; aVarList: TDocVariableList);
     procedure DataSetDriverEhUpdateRecord(DataDriver: TDataDriverEh;
       MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh); Virtual;
     procedure InitAllSQL(const ATableName:String ='';const AKeyFields:String =''; const AGenId : String = '');
@@ -139,15 +137,15 @@ end;
 
 procedure TRtcQueryDataSet.InternalBeforeDelete(DataSet: TDataSet);
 begin
-  CalcVariablesOnDs(FMemtableEh,FTableVariableList);
+  //CalcVariablesOnDs(FMemtableEh,FTableVariableList);
   if Assigned(FMemTableEhBeforeDelete) then
     FMemTableEhBeforeDelete(DataSet);
-  DeleteData;
+  //DeleteData;
 end;
 
 procedure TRtcQueryDataSet.InternalBeforeEdit(DataSet: TDataSet);
 begin
-  CalcVariablesOnDs(FMemtableEh,FTableVariableList);
+ // CalcVariablesOnDs(FMemtableEh,FTableVariableList);
 end;
 
 procedure TRtcQueryDataSet.InternalBeforeInsert(DataSet: TDataSet);
@@ -160,12 +158,12 @@ begin
   if Assigned(FMemTableEhBeforePost) then
     FMemTableEhBeforePost(DataSet);
 
-  UpdateVariablesOnDeltaDs(FMemTableEh, FTableVariableList);
+{  UpdateVariablesOnDeltaDs(FMemTableEh, FTableVariableList);
 
   if Assigned(FOnStoreVariables) then
     FOnStoreVariables(self);
 
-  UpdateOrInsertData(FbNew);
+  UpdateOrInsertData(FbNew);}
 end;
 
 procedure TRtcQueryDataSet.InternalMemtableEhEventsDisable;
@@ -220,48 +218,6 @@ begin
   Result := FMemTableEh.Bof;
 end;
 
-procedure TRtcQueryDataSet.CalcVariablesOnDs(DataSet: TDataSet; aVarList: TDocVariableList);
-var i: Integer;
-    ind: Integer;
-    fld: TField;
-begin
-  with DataSet do
-  begin
-    for I := 0 to FieldCount - 1 do
-    begin
-      ind := aVarList.IndexOf(Fields[i].FieldName) ;
-      if ind=-1  then
-      begin
-        fld := Fields[i];
-        if (fld.DataType=ftString) or
-          (fld.DataType=ftMemo) then
-          AVarList.Add(fld.FieldName,'',ftString,True)
-        else
-        if (fld.DataType=ftDateTime) or
-          (fld.DataType=ftDate) then
-          AVarList.Add(fld.FieldName,0,ftDateTime,True)
-        else
-          AVarList.Add(fld.FieldName,0,fld.DataType,True);
-
-        ind := aVarList.IndexOf(Fields[i].FieldName) ;
-      end;
-      if ind >-1 then
-      begin
-        case Fields[i].DataType of
-          ftFMTBcd:    aVarList.Items[ind].InitValue := Fields[i].AsFloat;
-          ftBcd:       aVarList.Items[ind].InitValue := Fields[i].AsInteger;
-        else
-          try
-            aVarList.Items[ind].InitValue := Fields[i].Value;
-          except
-            ShowMessage((' error in InitVariable i = '+IntToStr(i)));
-            Raise;
-          end;
-        end;
-      end;
-    end;
-  end;
-end;
 
 procedure TRtcQueryDataSet.Cancel;
 begin
@@ -352,8 +308,8 @@ begin
       Params[i].Value := FTableVariableList.VarByName(Params[i].Name).Value;
     ExecQuery(ttStability);
   end; }
-  if Assigned(FOnDelete) then
-    FOnDelete(self);
+  //if Assigned(FOnDelete) then
+  //  FOnDelete(self);
 end;
 
 destructor TRtcQueryDataSet.Destroy;
@@ -583,53 +539,6 @@ begin
 
 end;
 
-procedure TRtcQueryDataSet.InitVariableListOnTable(AVarList: TDocVariableList);
-var i: Integer;
-    fld: TField;
-begin
-  if FTablename='' then Exit;
-  //AVarList.Clear;
-{  AVarList.Clear;
-  FFieldList.Clear;
-  with FRtcMapQuery do
-  begin
-    Active := False;
-    SQL.Clear;
-    SQL.Add( ' SELECT R.RDB$RELATION_NAME, R.RDB$FIELD_POSITION, R.RDB$FIELD_NAME, ');
-    SQL.Add( ' F.RDB$FIELD_LENGTH, F.RDB$FIELD_TYPE, F.RDB$FIELD_SCALE, F.RDB$FIELD_SUB_TYPE');
-    SQL.Add( ' FROM RDB$FIELDS F, RDB$RELATION_FIELDS R');
-    SQL.Add( ' WHERE');
-    SQL.Add( ' R.RDB$RELATION_NAME= :tablename  AND');
-    SQL.Add( ' F.RDB$FIELD_NAME = R.RDB$FIELD_SOURCE and R.RDB$SYSTEM_FLAG = 0');
-    SQL.Add( ' ORDER BY R.RDB$RELATION_NAME, R.RDB$FIELD_POSITION');
-    ParamByName('tablename').AsString := FTableName;
-    AVarList.Clear;
-    Select(nil);
-    while not QrResult.asDataSet.EOF do
-    begin
-      FFieldList.Add(Trim(QrResult.asDataSet.FieldByName('RDB$FIELD_NAME').asString));
-      QrResult.asDataSet.Next;
-    end;}
-  with FRtcMapQuery do
-  begin
-    for I := 0 to FFieldList.Count - 1 do
-    begin
-      fld := FMemTableEh.FindField(FFieldList[i]);
-      if Assigned(fld) then
-      begin
-        if (fld.DataType=ftString) or
-          (fld.DataType=ftMemo) then
-          AVarList.Add(FFieldList[i],'',ftString,True)
-        else
-        if (fld.DataType=ftDateTime) or
-          (fld.DataType=ftDate) then
-          AVarList.Add(FFieldList[i],0,ftDateTime,True)
-        else
-          AVarList.Add(FFieldList[i],0,fld.DataType,True);
-      end;
-    end;
-  end;
-end;
 
 procedure TRtcQueryDataSet.Next;
 begin
@@ -643,8 +552,6 @@ begin
   try
     FRtcQuery.Select(FMemTableEh);
 //  FDatasetDriverEh.ProviderDataSet := TDataSet(FRtcQuery.QrResult.asDataSet);
-    if FFieldList.Count=0 then
-      InitVariableListOnTable(FTableVariableList);
     if Assigned(FMemTableEhAfterOpen) then
       FMemTableEhAfterOpen(FMemTableEh);
   finally

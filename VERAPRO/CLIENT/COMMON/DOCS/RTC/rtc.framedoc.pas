@@ -1197,7 +1197,6 @@ begin
     DbGridEhVkDoc.PopupMenu := nil;
 //    if DocDm.MemTableEhDoc.State = dsEdit then
     FInEdit := True;
-    docDm.InitVariables(false);
   end
   else
     if not Assigned(DbGridEhVkDoc.PopupMenu) then
@@ -1364,7 +1363,6 @@ begin
     else
     begin
       // Edit In Grid;
-      DocDm.InitVariables(_bDocInsert);
       p := DocDm.DocStruDescriptionList.GetDocStruDescriptionItem(AFieldName);
       if Assigned(p) then
       begin
