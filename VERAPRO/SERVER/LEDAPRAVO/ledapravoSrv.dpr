@@ -27,11 +27,11 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TRtcCustomDm, RtcCustomDm);
   Application.CreateForm(TRtcCommonFunctionsDm, RtcCommonFunctionsDm);
+  Application.CreateForm(TRtcObjectsDm, RtcObjectsDm);
 //  Application.CreateForm(TMainDm, MainDm);
   Application.CreateForm(TLedaPravoSrvFm, LedaPravoSrvFm);
 //  Application.CreateForm(TRtcTableDm, RtcTableDm);
  // Application.CreateForm(TSrvDocDm, SrvDocDm);
-  //  Application.CreateForm(TRtcObjectsDm, RtcObjectsDm);
 //  Application.CreateForm(TRtcUseMonthDm, RtcUseMonthDm);
   RtcCommonFunctionsDm.SetRtcServer(LedaPravoSrvFm.RtcHttpServer1);
   LedaPravoSrvFm.RtcHttpServer1.Listen();

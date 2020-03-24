@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, CommonInterface, fbapidatabase,
   SettingsStorage, FB30Statement, fbapiquery, SQLTableProperties, FBSQLData, Variants, RtcInfo,
-  System.Generics.Collections, VkVariable, IB, RtcLog, ServerDocSQLManager, Dialogs, QueryUtils;
+  System.Generics.Collections, VkVariable, IB, RtcLog, ServerDocSQLManager, Dialogs, QueryUtils,rtcHttpSrv;
 
 type
   TMainDm = class(TDataModule)
@@ -63,6 +63,7 @@ type
        new, old, key: TRtcRecord);
     procedure WriteErrorLog(const ErrorText:String);
     procedure InitConstsList(var AVarList: TVkVariableCollection; const ATableName, AIdName: String);
+    procedure SetRtcHttpServer(const AServer:TRtcHttpServer);
 
     property UserAccessTypes: TVkVariableCollection read FUserAccessTypes;
     property UsersAccessValues: TVkVariableCollection read FUserAccessValues;
@@ -400,6 +401,12 @@ end;
 procedure TMainDm.SetReadOnlyTransactionOptions(const Value: TStringList);
 begin
   FReadOnlyTransactionOptions := Value;
+end;
+
+procedure TMainDm.SetRtcHttpServer(const AServer: TRtcHttpServer);
+begin
+  AServer.ServerAddr:=FStorage.GetVariable('RtcHttpServer','host','192.168.1.69').AsString;
+  AServer.ServerPort:=FStorage.GetVariable('RtcHttpServer','port','6476').AsString;
 end;
 
 {procedure TMainDm.SetServerDocSqlManager(const Value: TServerDocSqlManager);

@@ -10,6 +10,7 @@ type
   TQueryUtils = class
     class procedure SetQueryParams(AQuery:TFBApiQuery; AParams: TVkVariableCollection);
     class function getTableKeyAsJSON(sqlManager: TServerDocSqlManager; new: TVkVariableCollection):String;
+    class function containsParam(AQuery: TFBApiQuery; AParams: TVkVariableCollection): Boolean;
   end;
 
 implementation
@@ -49,5 +50,26 @@ begin
   end;
 
 end;
+
+class function TQueryUtils.containsParam(AQuery: TFBApiQuery; AParams: TVkVariableCollection): Boolean;
+var i: Integer;
+    pname: String;
+begin
+  Result := false;
+  with AQuery do
+  begin
+    for I := 0 to (Params.Count-1) do
+    begin
+      pname := String(Params[i].Name);
+      if Assigned(AParams.VarByName(pname)) then
+      begin
+        Result := true;
+        break;
+      end;
+    end;
+  end;
+
+end;
+
 
 end.

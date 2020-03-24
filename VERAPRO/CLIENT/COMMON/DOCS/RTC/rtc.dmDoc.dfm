@@ -13,4 +13,12 @@ object DocDm: TDocDm
     Left = 224
     Top = 56
   end
+  object RtcClientModule1: TRtcClientModule
+    Client = MainRtcDm.RtcHttpClient1
+    AutoSessions = True
+    AutoSessionsPing = 10
+    ModuleFileName = '/common'
+    Left = 181
+    Top = 152
+  end
 end

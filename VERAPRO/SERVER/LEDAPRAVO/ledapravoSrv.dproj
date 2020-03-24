@@ -71,6 +71,7 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <DCC_Define>FORCE_WIDE_STRING;$(DCC_Define)</DCC_Define>
         <DCC_DcuOutput>..\RUN\LEDAPARVO\DCU\$(Platform)\$(Config)</DCC_DcuOutput>
         <DCC_ExeOutput>..\RUN\LEDAPARVO\$(Platform)\$(Config)</DCC_ExeOutput>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>

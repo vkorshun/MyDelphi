@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, DmRtcCustom, rtcFunction, rtcSrvModule, rtcInfo, rtcConn, rtcDataSrv,
   rtcDb, DmMain, uRtcDmList, DmRtcUseMonth, rtclog, SQLTableProperties,
-  DmRtcObjects, CommonInterface, FbApiQuery, IB, rtcHttpSrv, FbApiDatabase;
+  CommonInterface, FbApiQuery, IB, rtcHttpSrv, FbApiDatabase, SettingsStorage;
 
 type
 
@@ -15,10 +15,13 @@ type
     RtcFunctionGroupCommon: TRtcFunctionGroup;
     RtcDataServerLinkCommon: TRtcDataServerLink;
     procedure DataModuleCreate(Sender: TObject);
+    procedure DataModuleDestroy(Sender: TObject);
   private
     { Private declarations }
     FDmRtcUseMonth: TRtcUseMonthDm;
-    FDmRtcObjects: TRtcObjectsDm;
+//    FDmRtcObjects: TRtcObjectsDm;
+    FStorage: TSettingsStorage;
+
   protected
     function GetDefaultGroup: TRtcFunctionGroup; override;
   public
@@ -52,6 +55,9 @@ type
     procedure ConnectUser(Sender: TRtcConnection);
     procedure DisconnectUser(Sender: TRtcConnection);
     procedure SetRtcServer(const Value: TRtcDataServer);override;
+
+    procedure RtcObjectEdit(Sender: TRtcConnection; FnParams: TRtcFunctionInfo; Result: TRtcValue);
+
   end;
 
 var
@@ -61,7 +67,7 @@ implementation
 
 {$R *.dfm}
 
-uses DmSrvDoc;
+uses DmSrvDoc, DmRtcObjects;
 { TDmRtcCustom1 }
 
 procedure TRtcCommonFunctionsDm.ConnectUser(Sender: TRtcConnection);
@@ -71,8 +77,11 @@ end;
 procedure TRtcCommonFunctionsDm.DataModuleCreate(Sender: TObject);
 begin
   inherited;
+  FStorage := TSettingsStorage.Create(TSettingsStorage.GetDefaultStorageName());
+  FStorage.Read;
+
   FDmRtcUseMonth := TRtcUseMonthDm.Create(Self);
-  FDmRtcObjects := TRtcObjectsDm.Create(Self);
+  //FDmRtcObjects := TRtcObjectsDm.Create(Self);
 
   RegisterRtcFunction('RtcConnect', RtcConnect);
   RegisterRtcFunction('RtcSelectSql', RtcSelectSql);
@@ -84,7 +93,14 @@ begin
   RegisterRtcFunction('RtcTransactionRollback', RtcTransactionRollback);
   RegisterRtcFunction('RtcGetSqlTableProperties', RtcGetSqlTableProperties);
   RegisterRtcFunction('RtcDocEdit', RtcDocEdit);
+  RegisterRtcFunction('RtcObjectEdit', RtcObjectEdit);
   RegisterRtcFunction('RtcGen_ID', RtcGen_ID);
+end;
+
+procedure TRtcCommonFunctionsDm.DataModuleDestroy(Sender: TObject);
+begin
+  inherited;
+  FStorage.Free;
 end;
 
 procedure TRtcCommonFunctionsDm.DisconnectUser(Sender: TRtcConnection);
@@ -161,6 +177,20 @@ begin
 //  tableName := FnParams.AsString['TABLENAME'];
   mMainDm := GetDmMainUib(Sender, mUserName, mPassword);
   SrvDocDm.rtcDocEdit(mMainDm,FnParams,Result);
+end;
+
+procedure TRtcCommonFunctionsDm.RtcObjectEdit(Sender: TRtcConnection; FnParams: TRtcFunctionInfo; Result: TRtcValue);
+var
+  mUserName, mPassword: string;
+  mMainDm: TMainDm;
+//  query: TFbApiQuery;
+//  tableName: String;
+begin
+{  mUserName := FnParams.AsString['username'];
+  mPassword := FnParams.AsString['password'];
+//  tableName := FnParams.AsString['TABLENAME'];
+  mMainDm := GetDmMainUib(Sender, mUserName, mPassword);}
+  RtcObjectsDm.RtcObjectEdit(Sender, FnParams, Result);
 end;
 
 procedure TRtcCommonFunctionsDm.RtcGetCurrentUserInfo(Sender: TRtcConnection;
@@ -458,6 +488,10 @@ var dm: TComponent;
     i: Integer;
 begin
   Inherited;
+  Value.ServerAddr:=FStorage.GetVariable('RtcHttpServer','host','192.168.1.69').AsString;
+  Value.ServerPort:=FStorage.GetVariable('RtcHttpServer','port','6476').AsString;
+
+
   for i := 0 to Application.ComponentCount-1 do
   begin
     //dm := Application.Components[i];

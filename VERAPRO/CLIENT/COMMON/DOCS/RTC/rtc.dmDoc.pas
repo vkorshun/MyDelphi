@@ -26,6 +26,7 @@ type
   TDmDocClass = class of TDocDm;
   TDocEditActionEvent = procedure(Sender: TObject; AInsert: Boolean) of object;
   TSetParamsEvent = procedure(Sender: TObject; AParams: TVkVariableCollection) of object;
+  TOnPrepareRtcFunction = procedure(const operation:TDocOperation; clientModule: TRtcClientModule; sqlManaget: TClientDocSqlManager) of object;
 
   { TDocProperti = class
     private
@@ -64,6 +65,7 @@ type
 
   TDocDm = class(TDataModule)
     MemTableEhDoc: TMemTableEh;
+    RtcClientModule1: TRtcClientModule;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataSetDriverEhDocUpdateRecord(DataDriver: TDataDriverEh;
       MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh);
@@ -99,6 +101,7 @@ type
     FOnWriteVariables: TOnWriteVariablesEvent;
     FParamsPrepared: Boolean;
     FOnSetParams: TSetParamsEvent;
+    FOnPrepareRtcFunction: TOnPrepareRtcFunction;
 
     function GetDocVariableList: TVkVariableCollection;
     procedure SetPrepared(const Value: Boolean);
@@ -113,6 +116,7 @@ type
     FEditOrderList: TStringList;
     FDefineDebug: Boolean;
     FRtcQueryDataSet: TRtcQueryDataSet;
+    FDocEditFunctionName: String;
     //procedure DoInsertAdditionalFields;
     //procedure DoUpdateAdditionalFields;
     // procedure OnFillFiledList(Sender: TObject);
@@ -190,6 +194,7 @@ type
     property OnInsertAdditionalFields: TNotifyEvent
       read FOnInsertAdditionalFields write FOnInsertAdditionalFields;
     property OnSetParams: TSetParamsEvent read FOnSetParams write SetOnSetParams;
+    property OnPrepareRtcFunction: TOnPrepareRtcFunction read FOnPrepareRtcFunction;
   end;
 
 var
@@ -209,6 +214,7 @@ begin
   FDmMain := ADmMain;
   FDocValidator := TDocValidator.Create(Self);
   FDocInstance := TDocInstance.Create;
+  FDocEditFunctionName := 'rtcDocedit';
   inherited Create(ADmMain);
 end;
 
@@ -585,13 +591,13 @@ var
   i: Integer;
   ret: TRtcRecord;
   changedList: TStringList;
-
+  vt: Integer;
 begin
   FillKeyFields;
   ret := nil;
-  with MainRtcDm.RtcClientModule1 do
+  with RtcClientModule1 do
   begin
-    Prepare('rtcDocedit');
+    Prepare(FDocEditFunctionName); //'rtcDocedit'
     Param.asWideString['username'] := MainRtcDm.UserInfo.user_name;
     Param.asWideString['password'] := MainRtcDm.UserInfo.user_password;
     Param.AsString['TABLENAME'] := FDocSqlManager.TableName;
@@ -604,31 +610,12 @@ begin
           for i := 0 to SqlManager.KeyFieldsList.Count - 1 do
             Param.asRecord['PARAMS'].asRecord['KEY'].asValue[SqlManager.KeyFieldsList[i]] :=
               DocVariableList[SqlManager.KeyFieldsList[i]].Value;
-          {for i := 0 to changedList.Count - 1 do
-          begin
-            Param.asRecord['PARAMS'].asRecord['OLD'].asValue[changedList[i]] :=
-              DocVariableList[changedList[i]].InitValue;
-          end;}
-
-{      for i := 0 to SqlManager.KeyFieldsList.Count - 1 do
-      begin
-        Param.asRecord['PARAMS'].asValue[SqlManager.KeyFieldsList[i]] :=
-          DocVariableList[SqlManager.KeyFieldsList[i]].Value;
-      end}
     end
     else if (operation = docInsert) then
     begin
       Param.asRecord['PARAMS'].NewRecord('NEW');
       TUtils.VkVariableColectionsToRtc(DocVariableList,
         Param.asRecord['PARAMS'].asRecord['NEW']);
-      {for i := 0 to DocVariableList.Count - 1 do
-      begin
-        Param.asArray['PARAMS'].NewRecord(i);
-        Param.asArray['PARAMS'].asRecord[i].AsString['name'] :=
-          DocVariableList.Items[i].Name;
-        Param.asArray['PARAMS'].asRecord[i].AsString['value'] :=
-          DocVariableList.Items[i].Value;
-      end;}
     end
     else
     if (operation = docUpdate) then
@@ -667,8 +654,10 @@ begin
           DocVariableList[SqlManager.KeyFieldsList[i]].Value;
     end;
 
-      SetLastRetval(MainRtcDm.rtcExecute(MainRtcDm.RtcClientModule1,
-        MainRtcDm.RtcClientModule1.Data.asFunction));
+    if Assigned(FOnPrepareRtcFunction) then
+      FOnPrepareRtcFunction(operation, RtcClientModule1, SqlManager);
+    SetLastRetval(MainRtcDm.rtcExecute(RtcClientModule1,
+        RtcClientModule1.Data.asFunction));
     if (operation <> docDelete) then
     begin
       if (FLastRetval.RtcValue.isType=rtc_Record) then

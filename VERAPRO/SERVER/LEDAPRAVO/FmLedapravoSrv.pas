@@ -36,9 +36,9 @@ begin
     MainDm.FbDatabase.Connect;}
 
 //  MainDm.ValidUser('ADMIN','ADMIN');
-  mainDm1 := TMainDm.Create(Application);
-  mainDm1.TestQuery;
-  ShowMessage('Ok1');
+//  mainDm1 := TMainDm.Create(Application);
+//  mainDm1.TestQuery;
+//  ShowMessage('Ok1');
 
 end;
 

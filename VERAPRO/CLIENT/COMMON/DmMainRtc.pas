@@ -4,7 +4,7 @@ interface
 
 uses
   System.SysUtils, System.Classes, rtcInfo, rtcConn, rtcDataCli, rtcHttpCli,
-  RtcSqlQuery, rtcCliModule, commoninterface, Dialogs, Forms, Variants,
+  RtcSqlQuery, rtcCliModule, commoninterface, Dialogs, Forms, Variants, SettingsStorage,
   DCPsha256, Rtti, rtcFunction, RtcFuncResult, RtcQueryDataSet, u_xmlinit, vkvariable;
 
 type
@@ -25,6 +25,8 @@ type
     FXmlIni: TXmlIni;
     FUserAccessTypes: TVkVariableCollection;
     FUserAccessValues: TVkVariableCollection;
+    FStorage: TSettingsStorage;
+
     procedure test;
     function rtcLogin(): Boolean;
   public
@@ -62,6 +64,10 @@ implementation
 procedure TMainRtcDm.DataModuleCreate(Sender: TObject);
 begin
   DCP_sha2561 := TDCP_sha256.Create(self);
+  FStorage := TSettingsStorage.Create(TSettingsStorage.GetDefaultStorageName);
+  FStorage.Read;
+  RtcHttpClient1.ServerAddr := fStorage.GetVariable('SEREVR','host','localhost').AsString;
+  RtcHttpClient1.ServerPort := fStorage.GetVariable('SEREVR','port','6476').AsString;
   RtcHttpClient1.Connect();
   FXmlIni := TXmlIni.Create(self,ChangeFileExt(Application.ExeName,'.xml'));
   FUserAccessTypes := TVkVariableCollection.Create(self);
@@ -71,6 +77,7 @@ end;
 procedure TMainRtcDm.DataModuleDestroy(Sender: TObject);
 begin
   FreeAndNil(FXmlIni);
+  FreeAndNil(FStorage);
 end;
 
 procedure TMainRtcDm.DoRequest(const ASql: String; const AParams: TVariants; AOnRequest: TOnRequest);

@@ -1,11 +1,13 @@
 inherited RtcObjectsDm: TRtcObjectsDm
-  OldCreateOrder = True
   object RtcDataServerLinkObjects: TRtcDataServerLink
     Left = 80
     Top = 184
   end
   object RtcServerModuleObjects: TRtcServerModule
     Link = RtcDataServerLinkObjects
+    DataFormats = [fmt_RTC, fmt_JSONrpc2]
+    AutoSessions = True
+    AutoSessionCheck = True
     ModuleFileName = '/objects'
     FunctionGroup = RtcFunctionGroupObjects
     Left = 240

@@ -10,14 +10,14 @@ type
   private
     FSQLTableProperties: TSQLTableProperties;
   public
-    constructor Create;
+    constructor Create;virtual;
     destructor Destroy;override;
     function GenerateDeleteSQL:String;
     function GenerateLockSQL:String;
-    function GenerateInsertSQL(AParams: TVkVariableCollection):String;
-    function GenerateUpdateSQL(AParams: TVkVariableCollection):String;
+    function GenerateInsertSQL(AParams: TVkVariableCollection; AIsEmpty:PBoolean):String;
+    function GenerateUpdateSQL(AParams: TVkVariableCollection; AIsEmpty:PBoolean):String;
 
-    function GenerateSQL(operation:TDocOperation; AParams: TVkVariableCollection):String;
+    function GenerateSQL(operation:TDocOperation; AParams: TVkVariableCollection; AIsEmpty:PBoolean  = nil):String;
     function GetWhereOnKeyFields: String;
     function GetReturningOnKeyFields: String;
     function IndexOfInAdditionalFields(const AFieldName:String):Integer;
@@ -55,7 +55,7 @@ begin
 
 end;
 
-function TServerDocSqlManager.GenerateInsertSQL(AParams: TVkVariableCollection): String;
+function TServerDocSqlManager.GenerateInsertSQL(AParams: TVkVariableCollection; AIsEmpty:PBoolean): String;
 var bFirst: Boolean;
     i: Integer;
     sb: TStringBuilder;
@@ -65,18 +65,19 @@ begin
     sb.Append(' INSERT INTO ' + FSQLTableProperties.TableName);
     sb.AppendLine;
     sb.Append(' (');
-    bFirst := true;
+    AIsEmpty^ := true;
     for i := 0 to AParams.Count - 1 do
     begin
       if (FSQLTableProperties.FieldNameList.IndexOf(AParams.Items[i].Name) > -1) and
         (FSQLTableProperties.InsertExclude.IndexOf(AParams.Items[i].Name) = -1) and
         (IndexOfInAdditionalFields(AParams.Items[i].Name) = -1) then
       begin
-        if not bFirst then
-          sb.Append(',');
+        if not AIsEmpty^ then
+          sb.Append(',')
+        else
+          AIsEmpty^ := False;
         sb.AppendLine;
         sb.Append(AParams.Items[i].Name);
-        bFirst := False;
       end;
     end;
     sb.Append(')');
@@ -122,25 +123,28 @@ begin
   end;
 end;
 
-function TServerDocSqlManager.GenerateSQL(operation: TDocOperation; AParams: TVkVariableCollection): String;
+function TServerDocSqlManager.GenerateSQL(operation: TDocOperation; AParams: TVkVariableCollection; AIsEmpty: PBoolean): String;
+var isEmpty: Boolean;
 begin
+  isEmpty := true;
   case operation of
-    docInsert: Result := GenerateInsertSQL(AParams);
-    docUpdate: Result := GenerateUpdateSQL(AParams);
+    docInsert: Result := GenerateInsertSQL(AParams, @IsEmpty);
+    docUpdate: Result := GenerateUpdateSQL(AParams, @IsEmpty);
     docDelete: Result := GenerateDeleteSQL;
   end;
+  if Assigned(AIsEmpty) then
+    AIsEmpty^ := IsEmpty;
 end;
 
-function TServerDocSqlManager.GenerateUpdateSQL(AParams: TVkVariableCollection): String;
+function TServerDocSqlManager.GenerateUpdateSQL(AParams: TVkVariableCollection; AIsEmpty: PBoolean): String;
 var
   i: Integer;
   _UpdateList: TStringList;
-  bFirst: Boolean;
   sb: TStringBuilder;
 begin
   _UpdateList := TStringList.Create;
   sb := TStringBuilder.Create;
-  bFirst := true;
+  AIsEmpty^ := true;
   try
     AParams.GetChangedList(_UpdateList);
 //    bChanged := False; // _UpdateList.Count > 0;
@@ -155,14 +159,14 @@ begin
         if (FSQLTableProperties.FieldNameList.IndexOf(_UpdateList[i]) > -1) and
           (IndexOfInAdditionalFields(_UpdateList[i]) = -1) then
         begin
-          if not bFirst then
+          if not AIsEmpty^ then
           begin
             Append(',');
             AppendLine;
           end
           else
           begin
-            bFirst := False;
+            AIsEmpty^ := False;
             //bChanged := true;
           end;
           if AParams.VarByName(_UpdateList[i]).IsDelta then

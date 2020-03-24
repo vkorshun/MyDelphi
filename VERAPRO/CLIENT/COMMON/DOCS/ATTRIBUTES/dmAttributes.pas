@@ -76,7 +76,7 @@ begin
   DocStruDescriptionList.GetDocStruDescriptionItem('attributetype').bNotEmpty := True;
   DocStruDescriptionList.GetDocStruDescriptionItem('nlen').bNotEmpty := True;
   DocValidator.NotNullList.Add('name');
-  DocValidator.NotNullList.Add('attributetype');
+//  DocValidator.NotNullList.Add('attributetype');
   OnInitVariables := DoOnInitvariables;
 //  OnFillKeyFields := DoOnFillKeyFields;
   OnStoreVariables := DoStorevariables;

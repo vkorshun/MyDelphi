@@ -236,7 +236,7 @@ begin
       case fbtype of
 
         SQL_VARYING, SQL_TEXT:
-          rtcDS.asWideString[fldname]:= AQuery.Fields[flds].AsString;
+          rtcDS.asWideString[fldname]:= AQuery.Fields[flds].AsVariant;
         SQL_DOUBLE, SQL_FLOAT:
           rtcDS.asFloat[fldname] := AQuery.Fields[flds].AsFloat;
         SQL_LONG:

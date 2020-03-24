@@ -192,7 +192,7 @@ end;
 
 destructor TSettingsStorage.Destroy;
 begin
-  if (IsNeedToSave) then
+  if (IsNeedToSave or not FileExists(FIni.FileName)) then
     Save;
   FIni.Free;
   Clear;
