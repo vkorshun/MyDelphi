@@ -18,7 +18,8 @@ uses
   DmSrvDoc in '..\COMMON\DmSrvDoc.pas' {SrvDocDm: TDataModule},
   SQLTableProperties in '..\COMMON\INTERFACE\SQLTableProperties.pas',
   ServerDocSqlManager in '..\COMMON\INTERFACE\ServerDocSqlManager.pas',
-  QueryUtils in '..\COMMON\INTERFACE\QueryUtils.pas';
+  QueryUtils in '..\COMMON\INTERFACE\QueryUtils.pas',
+  DmSrvObjects in '..\COMMON\DmSrvObjects.pas' {SrvObjectsDm: TDataModule};
 
 {$R *.res}
 
@@ -27,8 +28,7 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TRtcCustomDm, RtcCustomDm);
   Application.CreateForm(TRtcCommonFunctionsDm, RtcCommonFunctionsDm);
-  Application.CreateForm(TRtcObjectsDm, RtcObjectsDm);
-//  Application.CreateForm(TMainDm, MainDm);
+  //  Application.CreateForm(TMainDm, MainDm);
   Application.CreateForm(TLedaPravoSrvFm, LedaPravoSrvFm);
 //  Application.CreateForm(TRtcTableDm, RtcTableDm);
  // Application.CreateForm(TSrvDocDm, SrvDocDm);

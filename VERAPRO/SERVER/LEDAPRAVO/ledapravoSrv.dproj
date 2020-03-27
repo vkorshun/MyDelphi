@@ -134,6 +134,11 @@
         <DCCReference Include="..\COMMON\INTERFACE\SQLTableProperties.pas"/>
         <DCCReference Include="..\COMMON\INTERFACE\ServerDocSqlManager.pas"/>
         <DCCReference Include="..\COMMON\INTERFACE\QueryUtils.pas"/>
+        <DCCReference Include="..\COMMON\DmSrvObjects.pas">
+            <Form>SrvObjectsDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

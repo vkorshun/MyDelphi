@@ -67,7 +67,7 @@ implementation
 
 {$R *.dfm}
 
-uses DmSrvDoc, DmRtcObjects;
+uses DmSrvDoc, DmSrvObjects;
 { TDmRtcCustom1 }
 
 procedure TRtcCommonFunctionsDm.ConnectUser(Sender: TRtcConnection);
@@ -186,11 +186,11 @@ var
 //  query: TFbApiQuery;
 //  tableName: String;
 begin
-{  mUserName := FnParams.AsString['username'];
+  mUserName := FnParams.AsString['username'];
   mPassword := FnParams.AsString['password'];
 //  tableName := FnParams.AsString['TABLENAME'];
-  mMainDm := GetDmMainUib(Sender, mUserName, mPassword);}
-  RtcObjectsDm.RtcObjectEdit(Sender, FnParams, Result);
+  mMainDm := GetDmMainUib(Sender, mUserName, mPassword);
+  SrvObjectsDm.RtcObjectEdit(mMainDm, FnParams, Result);
 end;
 
 procedure TRtcCommonFunctionsDm.RtcGetCurrentUserInfo(Sender: TRtcConnection;
