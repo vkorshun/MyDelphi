@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{A07853AD-DD7C-4F42-AFD9-B3C6CED7C1C3}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="ledapravo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Test\ledapravoTests.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\..\VERADT\LEDAPRAVODT\ledapravo_dt.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="ledapravo">
+        <MSBuild Projects="ledapravo.dproj"/>
+    </Target>
+    <Target Name="ledapravo:Clean">
+        <MSBuild Projects="ledapravo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ledapravo:Make">
+        <MSBuild Projects="ledapravo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ledapravoTests">
+        <MSBuild Projects="Test\ledapravoTests.dproj"/>
+    </Target>
+    <Target Name="ledapravoTests:Clean">
+        <MSBuild Projects="Test\ledapravoTests.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ledapravoTests:Make">
+        <MSBuild Projects="Test\ledapravoTests.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ledapravo_dt">
+        <MSBuild Projects="..\..\..\VERADT\LEDAPRAVODT\ledapravo_dt.dproj"/>
+    </Target>
+    <Target Name="ledapravo_dt:Clean">
+        <MSBuild Projects="..\..\..\VERADT\LEDAPRAVODT\ledapravo_dt.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ledapravo_dt:Make">
+        <MSBuild Projects="..\..\..\VERADT\LEDAPRAVODT\ledapravo_dt.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="ledapravo;ledapravoTests;ledapravo_dt"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="ledapravo:Clean;ledapravoTests:Clean;ledapravo_dt:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="ledapravo:Make;ledapravoTests:Make;ledapravo_dt:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

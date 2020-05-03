@@ -25,13 +25,14 @@ type
     procedure SetValue(AValue: variant);
     constructor Create(AOwner: TComponent);override;
     function IsPrepared: Boolean;
-    procedure Prepare(const AFrameDocClassName: String);virtual;
+    procedure Prepare(const AFrameDocClassName: String; ALazy: Boolean = false);virtual;
     property OnInitBeforeSelect:TNotifyEvent read FOnInitBeforeSelect write SetOnInitBeforeSelect;
     property DocFm:TCustomDocFm read GetFmDoc;
   end;
 
   TCustomDocFmVkVariableBinding = class(TMEditBoxVkVariableBinding)
   private
+    FParams: TVkVariableCollection;
     function MyGetValue(Sender: TObject): Variant;
     procedure MySetValue(Sender: TObject;const Value:Variant);
   public
@@ -39,6 +40,7 @@ type
     function GetMEditBox: TDocMEditBox;
     property DocMEditBox: TDocMEditBox read GetMEditBox;
     class function GetDefaultTypeOfControl: TWinControlClass; override;
+    property params: TVkVariableCollection read FParams;
   end;
   TDocFmVkVariableBinding = TCustomDocFmVkVariableBinding;
 
@@ -64,6 +66,7 @@ begin
   inherited;
   OnGetValue := MyGetValue;
   OnSetValue := MySetValue;
+  FParams := TVkVariableCollection.Create(self);
 end;
 
 class function TCustomDocFmVkVariableBinding.GetDefaultTypeOfControl: TWinControlClass;
@@ -130,7 +133,7 @@ begin
   Result := Assigned(FFmDoc);
 end;
 
-procedure TDocMEditBox.Prepare(const AFrameDocClassName: String);
+procedure TDocMEditBox.Prepare(const AFrameDocClassName: String; ALazy: Boolean);
 var _FrameClass: TDocFrameClass;
 begin
   if IsPrepared and (AFrameDocClassName<>FFrameClassName) then
@@ -141,9 +144,14 @@ begin
   if not IsPrepared then
   begin
     FFrameClassName := AFrameDocClassName;
-    _FrameClass := TDocFrameClass(FindClass(AFrameDocClassName));
-    FFmDoc := TCustomDocFm.Create(Application,_FrameClass);
-    Text :=  FFmDoc.FrameDoc.GetSelectedCaption(FValues);
+    if not Alazy and not AFrameDocClassName.IsEmpty then
+    begin
+      _FrameClass := TDocFrameClass(FindClass(AFrameDocClassName));
+      FFmDoc := TCustomDocFm.Create(Application,_FrameClass);
+      Text :=  FFmDoc.FrameDoc.GetSelectedCaption(FValues);
+    end
+    else
+      Text :=  '';
   end;
 end;
 
@@ -179,6 +187,9 @@ var v: TVkvariable;
 begin
   FValues.Clear;
   v := FValues.CreateVkVariable('_internal', AValue);
+  if not IsPrepared then
+    Prepare(FFrameClassName);
+
   if IsPrepared and Assigned(FFmDoc.FrameDoc) then
     Text :=  FFmDoc.FrameDoc.GetSelectedCaption(FValues);
 end;

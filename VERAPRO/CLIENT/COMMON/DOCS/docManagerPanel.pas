@@ -156,6 +156,7 @@ begin
       frm.Visible := frm = ADocFrame;
       if frm.Visible then
       begin
+        frm.enabled := true;
         //StatusBar1.Panels[0].Text := frm.GetFileName;
   //---      frm.SynEdit1.CaretX :=1;
   //      frm.SynEdit1.CaretY :=1;
@@ -163,7 +164,9 @@ begin
         if FDocFrameTabs.TabIndex <> i then
           FDocFrameTabs.TabIndex := i;
         PostMessage(WM_SETFOCUS,frm.GetActiveControl.Handle,0,0);
-      end;
+      end
+      else
+        frm.enabled := false;
     end;
 
   end;

@@ -76,7 +76,6 @@ object DocFrame: TDocFrame
       STFilter.Location = stflInTitleFilterEh
       TabOrder = 1
       TitleParams.MultiTitle = True
-      OnApplyFilter = DbGridEhVkDocAfterApplayUserFilter
       OnDblClick = DBGridEhVkDocDblClick
       OnDrawColumnCell = DBGridEhVkDocDrawColumnCell
       OnEnter = DBGridEhVkDocEnter

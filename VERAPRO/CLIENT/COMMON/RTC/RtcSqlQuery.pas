@@ -50,7 +50,7 @@ type
     procedure Prior;
 
     function ParamByName(const Aname: String):TParam;
-    procedure Select(ADataSet:TDataSet);
+    procedure Select(ADataSet:TDataSet; isRefresh: Boolean = false);
     procedure DoRequest(_proc:TOnRequest);
     function QueryValue(const ASql:String; AParams: array of variant ):Variant;
 
@@ -261,7 +261,7 @@ begin
   end;
 end;
 
-procedure TRtcQuery.Select(ADataSet:TDataSet);
+procedure TRtcQuery.Select(ADataSet:TDataSet; isRefresh: Boolean = false);
 var i: Integer;
     ds: TRtcDataSet;
 begin
@@ -299,9 +299,15 @@ begin
                 ds.FromJSON(FQrResult.asRecord.toJSON);
               end;
 
-              RtcDataSetFieldsToDelphi( ds, ADataSet);
-              if ADataSet is TMemTableEh then
-                TMemTableEh(ADataSet).CreateDataSet;
+              if ((ADataSet.FieldDefs.Count=0) or not isRefresh) then
+              begin
+                RtcDataSetFieldsToDelphi( ds, ADataSet);
+                if ADataSet is TMemTableEh then
+                  TMemTableEh(ADataSet).CreateDataSet;
+              end
+              else
+                 for I := 0 to ADataSet.FieldCount-1 do
+                   ADataSet.Fields[i].ReadOnly := false;
               RtcDataSetRowsToDelphi(ds, ADataSet);
               ADataSet.First;
             finally

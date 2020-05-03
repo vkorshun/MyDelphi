@@ -3,7 +3,7 @@ unit fbapidatabase;
 interface
 
 uses System.SysUtils, System.Variants, System.Classes, IB,
-  FBClientApi, Dialogs, FBMessages, DB;
+  FBClientApi, Dialogs, FBMessages, DB, System.Generics.Collections;
 
 const
   DPBPrefix = 'isc_dpb_';
@@ -140,6 +140,18 @@ type
   TIBBase = class;
   TFBApiDatabase = class;
 
+  TQrResponseField = class(TObject)
+  private
+    Fname: String;
+    Fvalue: Variant;
+    procedure Setname(const Value: String);
+    procedure Setvalue(const Value: Variant);
+  public
+    property name:String read Fname write Setname;
+    property value:Variant read Fvalue write Setvalue;
+    constructor Create(const name:String; const Value: Variant);
+  end;
+
   TFBApiDatabaseParams = class(TComponent)
   private
     FDbName: String;
@@ -209,6 +221,9 @@ type
 
     function QueryValue(const SQL: String;
       const AParams: array of variant): Variant;
+
+    procedure QueryValues(const SQL: String;
+      const AParams: array of variant;const AList: TList<TQrResponseField> );
 
     function AddTransaction(TR: TIBTransaction): Integer;
     function FindDefaultTransaction(): TIBTransaction;
@@ -629,6 +644,48 @@ begin
     tr := nil;
   end;
 
+end;
+
+procedure TFBApiDatabase.QueryValues(const SQL: String;
+  const AParams: array of variant; const AList: TList<TQrResponseField>);
+var
+  statement: IStatement;
+  tr: ITransaction;
+  i: Integer;
+  rs: IResultSet;
+  retval: TQrResponseField;
+begin
+  tr := startReadTransaction;
+  statement := FAttachment.PrepareWithNamedParameters(tr, SQL, FParams.SqlDialect, true, false);
+  try
+    if Assigned(statement.GetSQLParams) then
+    for i := 0 to statement.GetSQLParams.Count - 1 do
+    begin
+      try
+        statement.GetSQLParams.params[i].Value := AParams[i];
+      except
+        raise Exception.CreateFmt('Error set param qr2 [%d]', [i]);
+      end;
+    end;
+      rs := statement.OpenCursor();
+      if rs.FetchNext then
+      begin
+        if (rs.Count>0) then
+        begin
+          //Result := VarArrayCreate([0,rs.Count-1],varVariant);
+          for i:=0 to rs.Count-1 do
+          begin
+            retval := TQrResponseField.Create(rs.Data[i].getSQLName, rs.Data[i].AsVariant);
+            AList.add(retval);
+          end;
+        end;
+
+      end;
+  finally
+    tr.commit;
+    statement := nil;
+    tr := nil;
+  end;
 end;
 
 procedure TFBApiDatabase.RemoveSQLObject(Idx: Integer);
@@ -1445,6 +1502,24 @@ begin
     if (FDatabase = nil) then
       Database := FTransaction.FindDefaultDatabase;
   end;
+end;
+
+{ TQrResponseField }
+
+constructor TQrResponseField.Create(const name: String; const Value: Variant);
+begin
+  FName := name;
+  FValue := Value;
+end;
+
+procedure TQrResponseField.Setname(const Value: String);
+begin
+  Fname := Value;
+end;
+
+procedure TQrResponseField.Setvalue(const Value: Variant);
+begin
+  Fvalue := Value;
 end;
 
 end.

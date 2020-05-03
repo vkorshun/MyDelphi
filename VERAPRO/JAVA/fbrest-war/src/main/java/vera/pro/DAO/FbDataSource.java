@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 @Component
 @Data
@@ -27,15 +28,20 @@ public class FbDataSource {
         jdbcConfig.setPassword(System.getProperty("tender.password","masterkey"));
       */
        // dataSource = ;
-        url = "jdbc:firebirdsql://testtender.globino.ua:3050/C:/tender/data/120-globino.fdb";
-        username = System.getProperty("tender.username","SYSDBA");
-        password = System.getProperty("tender.password","masterkey");
+        url = "jdbc:firebird://localhost:3050/D:/FBDATA/VERA_PRO/ledapravo.fdb";
+        username = "SYSDBA";
+        password = "masterkey";
 
     }
 
     public Connection getConnection() {
         try {
-            return DriverManager.getConnection(url, username, password);
+            Properties props = new Properties();
+
+            props.setProperty("user", "SYSDBA");
+            props.setProperty("password", "masterkey");
+            props.setProperty("encoding", "UTF8");
+            return DriverManager.getConnection(url, props);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

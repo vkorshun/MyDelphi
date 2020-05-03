@@ -193,6 +193,7 @@ type
 
     function  GetParentForm:TForm;
     function GetSelected: TVkVariableCollection;virtual;
+    function GetSetUpKeyName:String;virtual;
     procedure FmEditOnActionUpdate(Sender: TObject);virtual;
     procedure SetIsSelect(const Value: Boolean);virtual;
     procedure SetFilter(aId_doc:Integer);
@@ -364,6 +365,11 @@ begin
   Result := Format('Selected %d',[Avar.Count]);
 end;
 
+function TDocFrame.GetSetUpKeyName: String;
+begin
+  Result := ClassName;
+end;
+
 {function TFrameDoc.GetListFuncEdit: TStringList;
 begin
 
@@ -516,7 +522,7 @@ begin
       begin
         with TCustomDocFmVkVariableBinding(FmEdit.BindingList.Items[FmEdit.BindingList.Count-1]) do
         begin
-          DocMEditBox.Prepare(TDocMEditBoxBindingDescription(_Item.BindingDescription).DocMEditBoxClass);
+          DocMEditBox.Prepare(TDocMEditBoxBindingDescription(_Item.BindingDescription).DocMEditBoxClass, true);
           DocMEditBox.OnInitBeforeSelect :=
             TDocMEditBoxBindingDescription(_Item.BindingDescription).OnInitBeforeSelect;
         end;
@@ -810,13 +816,13 @@ procedure TDocFrame.DBGridEhVkDocFillSTFilterListValues(Sender: TCustomDBGridEh;
   Column: TColumnEh; Items: TStrings; var Processed: Boolean);
 var i: Integer;
 begin
-  if Assigned(DataSource1.DataSet) then
+  {*if Assigned(DataSource1.DataSet) then
   for i :=0 to DataSource1.DataSet.Fields.Count -1 do
   begin
     if (DataSource1.DataSet.Fields[i].Index = Column.Index) then
       if (not DataSource1.DataSet.Fields[i].FieldName.Equals(Column.FieldName)) then
         Column.FieldName := DataSource1.DataSet.Fields[i].FieldName;
-  end;
+  end;*}
 end;
 
 procedure TDocFrame.nMarkClick(Sender: TObject);
@@ -1079,6 +1085,7 @@ end;
 
 procedure TDocFrame.DbGridEhVkDocAfterApplayUserFilter(Sender: TObject);
 begin
+//  Inherited;
   DoUnmarkAll;
 end;
 
@@ -1533,7 +1540,7 @@ begin
       for i := 0 to Columns.Count - 1 do
         Columns[i].OnGetCellParams := FrameDocColumnsGetCellParams;
     end;
-    if not DocDm.Prepared then
+//    if not DocDm.Prepared then
     begin
       //--------- Exclude from visible -----------
       for i:=0 to DocDm.DocStruDescriptionList.Count-1 do
@@ -1544,17 +1551,17 @@ begin
         else
           DBGridEhVkDoc.DataSource.DataSet.FieldByName(PField.name).Visible := True;
       end;
-      FFmSetUp.Prepare(DBGridEhVkDoc.DataSource.DataSet,DocDm.DmMain.XmlInit.GetXmlIni(ClassName,true) ,DbGridEhVkDoc.Name);
+      FFmSetUp.Prepare(DBGridEhVkDoc.DataSource.DataSet,DocDm.DmMain.XmlInit.GetXmlIni(getSetUpKeyName(),true) ,DbGridEhVkDoc.Name);
 
-      DocDm.Prepared := true;
-    end
-    else
+//      DocDm.Prepared := true;
+    end;
+    //else
     // To DO
-      for i := 0 to DBGridEhVkDoc.DataSource.DataSet.FieldCount - 1 do
-        DBGridEhVkDoc.DataSource.DataSet.Fields[i].Visible := False;
+      //for i := 0 to DBGridEhVkDoc.DataSource.DataSet.FieldCount - 1 do
+        //DBGridEhVkDoc.DataSource.DataSet.Fields[i].Visible := False;
 
-    FFmSetUp.SetUpDataSet(DBGridEhVkDoc.DataSource.DataSet);
-
+   FFmSetUp.SetUpDataSet(DBGridEhVkDoc.DataSource.DataSet);
+   DBGridEhVkDoc.STFilter.Visible := true;
 end;
 
 procedure TDocFrame.DoDocEvent(aId: Integer);
@@ -1605,7 +1612,7 @@ begin
       s := DBGridEhVkDoc.SelectedField.FieldName;
       DocDm.DoAfterEditMemTableEhDoc(DocDm.MemTableEhDoc,s);
       DocDm.MemTableEhDoc.Post;
-      DocDm.FullRefreshDoc;
+      DocDm.FullRefreshDoc(True);
     end;
   finally
     if FinEdit  then

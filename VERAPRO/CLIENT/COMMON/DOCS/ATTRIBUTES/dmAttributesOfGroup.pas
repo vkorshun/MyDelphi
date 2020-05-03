@@ -3,10 +3,9 @@ unit dmAttributesOfGroup;
 interface
 
 uses
-  System.SysUtils, System.Classes, rtc.dmDoc, MemTableDataEh, Data.DB, FireDAC.Stan.Intf,
-  FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.Phys.Intf,
-  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.Client, FireDAC.Comp.DataSet,
-  DataDriverEh, MemTableEh,VkVariableBinding, VkVariableBindingDialog, frameAttributes, VkVariable;
+  System.SysUtils, System.Classes, rtc.dmDoc, MemTableDataEh, Data.DB,
+  DataDriverEh, MemTableEh,VkVariableBinding, VkVariableBindingDialog, frameAttributes, VkVariable,
+  rtcInfo, rtcConn, rtcDataCli, rtcCliModule;
 
 type
   TAttributesOfGroupDm = class(TDocDm)

@@ -32,7 +32,7 @@
     </appender>
 
     <appender name="FILE-CATALINA" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${catalina.base}/logs/catalina_tender.log</file>
+        <file>${catalina.base}/logs/catalina_fbrest.log</file>
         <append>true</append>
         <encoder>
             <charset>utf-8</charset>
@@ -106,8 +106,8 @@
         <appender-ref ref="FILE-HOST-MANAGER" />
     </logger>
 
-    <root level="INFO">
-        <appender-ref ref="FILE-CATALINA" />
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE" />
     </root>
 
 </configuration>

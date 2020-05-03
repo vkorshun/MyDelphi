@@ -194,7 +194,7 @@ type
     property OnInsertAdditionalFields: TNotifyEvent
       read FOnInsertAdditionalFields write FOnInsertAdditionalFields;
     property OnSetParams: TSetParamsEvent read FOnSetParams write SetOnSetParams;
-    property OnPrepareRtcFunction: TOnPrepareRtcFunction read FOnPrepareRtcFunction;
+    property OnPrepareRtcFunction: TOnPrepareRtcFunction read FOnPrepareRtcFunction write FOnPrepareRtcFunction;
   end;
 
 var
@@ -434,8 +434,8 @@ begin
     // FDQueryDoc.Open();
     // MemTableEhDoc.Close;
     // MemTableEhDoc.Open;
-    FRtcQueryDataSet.Close;
-    FRtcQueryDataSet.Open;
+    //FRtcQueryDataSet.Close;
+    FRtcQueryDataSet.FullRefresh;
 
     if not VariantIsNull(_CurKey) then
     begin
@@ -709,15 +709,12 @@ begin
 
   with DataSet do
   begin
-    if FDocSqlManager.DocVariableList.Count = 0 then
+    for i := 0 to FieldCount - 1 do
     begin
-      for i := 0 to FieldCount - 1 do
-      begin
-        Fields[i].Visible := false;
-        // Fields[i].ReadOnly := True;
+      Fields[i].Visible := false;
+      if not Assigned(FDocSqlManager.DocVariableList.FindVkVariable(Fields[i].FieldName)) then
         FDocSqlManager.DocVariableList.CreateVkVariable
           (Fields[i].FieldName, null);
-      end
     end;
     // else
     for i := 0 to FGridOrderList.Count - 1 do

@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.spi.LocationAwareLogger;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
@@ -20,6 +21,8 @@ import java.util.concurrent.Executors;
 @EnableScheduling
 @EnableTransactionManagement
 @Slf4j
+@ComponentScan(basePackages = {"vera.pro"})
+
 public class AppConfig implements SchedulingConfigurer {
 
     @Override

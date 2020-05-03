@@ -383,6 +383,17 @@ function TClientDocSQLManager.GetKeyValues
   (AVarList: TVkVariableCollection): Variant;
 var
   i: Integer;
+
+  function getVarValue(const name: String):Variant;
+  var v: TVkVariable;
+  begin
+      v := AVarList.VarByName(name);
+      if Assigned(v) then
+        Result := v.Value
+      else
+        raise Exception.Create(Format(' %s is not defined', [name]));
+
+  end;
 begin
   if AVarList.Count = 0 then
   begin
@@ -393,12 +404,14 @@ begin
   if KeyFieldsList.Count = 0 then
     Result := null
   else if KeyFieldsList.Count = 1 then
-    Result := AVarList.VarByName(KeyFieldsList[0]).Value
+    Result := getVarValue(KeyFieldsList[0])
   else
   begin
     Result := VarArrayCreate([0, KeyFieldsList.Count - 1], varvariant);
     for i := 0 to KeyFieldsList.Count - 1 do
-      Result[i] := AVarList.VarByName(KeyFieldsList[i]).Value;
+    begin
+      Result[i] := getVarValue(KeyFieldsList[i]);
+    end;
   end;
 
 end;

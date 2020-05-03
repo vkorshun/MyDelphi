@@ -11,7 +11,7 @@ import java.util.Enumeration;
 
 @Slf4j
 
-public class TanderServletContextListener implements ServletContextListener {
+public class FbRestServletContextListener implements ServletContextListener {
 
     static {
         try {
@@ -26,7 +26,7 @@ public class TanderServletContextListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         //super.contextInitialized(servletContextEvent);
         //universalSessionList = MyApplicationContext.getApplicationContext().getBean(UniversalSessionListInterface.class);
-        log.info("Starting up Tender!");
+        log.info("Starting up FbRest!");
     }
 
     @Override

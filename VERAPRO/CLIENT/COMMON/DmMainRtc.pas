@@ -39,8 +39,9 @@ type
     function GetTypeGroup( AId: LargeInt): LargeInt;
 
     function RtcQueryValue(const SQL:String; params: array of Variant):IRtcFuncResult;
+    function RtcQueryValues(const SQL:String; params: array of Variant):IRtcFuncResult;
     function QueryValue(const SQL:String; params: array of Variant):Variant;
-    function QueryValues(const AVarList:TVkVariableCollection; const SQL:String; params: array of Variant):Variant;
+    procedure QueryValues(const AVarList:TVkVariableCollection; const SQL:String; params: array of Variant);
     procedure DoRequest(const ASql:String;const AParams: TVariants; AOnRequest: TOnRequest = nil);
     procedure SetUser(Param: TRtcFunctionInfo);
 //    class function rtcExecute(clientModule:TRtcClientModule;func: TRtcFunctionInfo): variant; overload;
@@ -169,19 +170,31 @@ begin
     Result := null;
 end;
 
-function TMainRtcDm.QueryValues(const AVarList: TVkVariableCollection; const SQL: String; params: array of Variant): Variant;
+procedure TMainRtcDm.QueryValues(const AVarList: TVkVariableCollection; const SQL: String; params: array of Variant);
 var i: Integer;
     retval: IRtcFuncResult;
     _v: TVkVariable;
 begin
   retval := RtcQueryValue(SQL, params);
-  if Assigned(retval) and (retval.RtcValue.isType = rtc_Record) then
+  if Assigned(retval)  then
   begin
-    for i := 0 to retval.RtcValue.asRecord.Count - 1 do
+    if (retval.RtcValue.isType = rtc_Record) then
     begin
-      _v := TVkVariable.Create(AVarList);
-      _v.Name := retval.RtcValue.asRecord.FieldName[i];
-      _v.Value := retval.RtcValue.asRecord.asValue[_v.Name];
+      for i := 0 to retval.RtcValue.asRecord.Count - 1 do
+      begin
+        _v := TVkVariable.Create(AVarList);
+        _v.Name := retval.RtcValue.asRecord.FieldName[i];
+        _v.Value := retval.RtcValue.asRecord.asValue[_v.Name];
+      end;
+    end
+    else if (retval.RtcValue.isType = rtc_Array) then
+    begin
+      for i := 0 to retval.RtcValue.asArray.Count - 1 do
+      begin
+        _v := TVkVariable.Create(AVarList);
+        _v.Name := retval.RtcValue.asArray.asRecord[i].asString['name'];
+        _v.Value := retval.RtcValue.asArray.asRecord[i].asValue['value'];
+      end;
     end;
   end;
 end;
@@ -288,6 +301,32 @@ begin
   end;
 
 end;
+
+
+function TMainRtcDm.RtcQueryValues(const SQL: String; params: array of Variant): IRtcFuncResult;
+var i: Integer;
+begin
+//  Result := null;
+  with RtcClientModule1 do
+  begin
+    with Prepare('RtcQueryValues') do
+    begin
+      Param.asWideString['username'] := FUserInfo.user_name;
+      Param.asWideString['password'] := FUserInfo.user_password;
+      Param.asWideString['SQL'] := SQL;
+      Param.NewArray('SQL_PARAMS'); //:= TRtcArray.Create();
+//      Param.asInteger['Param_count'] := High(AParams);
+      for I := 0 to High(params) do
+        Param.asArray['SQL_PARAMS'][i] := params[i];
+//      Result := TRtcFuncResult.Create(retval);
+
+      Result := rtcExecute(RtcClientModule1, RtcClientModule1.Data.asFunction);
+
+    end;
+  end;
+
+end;
+
 
 procedure TMainRtcDm.SetUser(Param: TRtcFunctionInfo);
 begin

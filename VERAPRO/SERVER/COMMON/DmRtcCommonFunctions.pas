@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, DmRtcCustom, rtcFunction, rtcSrvModule, rtcInfo, rtcConn, rtcDataSrv,
   rtcDb, DmMain, uRtcDmList, DmRtcUseMonth, rtclog, SQLTableProperties,
-  CommonInterface, FbApiQuery, IB, rtcHttpSrv, FbApiDatabase, SettingsStorage;
+  CommonInterface, FbApiQuery, IB, rtcHttpSrv, FbApiDatabase, SettingsStorage, System.Generics.Collections;
 
 type
 

@@ -10,7 +10,7 @@ import javax.servlet.ServletException;
 /**
  * Created by vkorshun on 18.02.2017.
  */
-public class TenderWebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+public class FbRestWebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
     protected Class<?>[] getRootConfigClasses() {
         return new Class[]{};
@@ -39,7 +39,7 @@ public class TenderWebInitializer extends AbstractAnnotationConfigDispatcherServ
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         super.onStartup(servletContext);
-        servletContext.addListener(new TanderServletContextListener());
+        servletContext.addListener(new FbRestServletContextListener());
         servletContext.addListener(new RequestContextListener());
     }
 

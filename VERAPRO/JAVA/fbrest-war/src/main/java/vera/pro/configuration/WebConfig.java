@@ -16,7 +16,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @Configuration
 @EnableWebMvc
 @EnableAspectJAutoProxy(proxyTargetClass = false)
-@ComponentScan(basePackages = {"com.wgsoftpro"})
+@ComponentScan(basePackages = {"vera.pro"})
 // , WebMvcConfigurerAdapter WebMvcConfigurationSupport
 public class WebConfig implements WebMvcConfigurer {
     @Override

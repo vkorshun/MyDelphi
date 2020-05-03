@@ -67,6 +67,7 @@ type
     constructor Create(AClientModule:TRtcClientModule;ACurrentUser:PUserInfo);
     destructor Destroy;override;
     procedure Close;
+    procedure Clear;
     procedure DataSetDriverEhUpdateRecord(DataDriver: TDataDriverEh;
       MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh); Virtual;
     procedure InitAllSQL(const ATableName:String ='';const AKeyFields:String =''; const AGenId : String = '');
@@ -77,7 +78,7 @@ type
     procedure First;
     procedure FullRefresh;
     procedure Next;
-    procedure Open;
+    procedure Open(isRefresh: boolean = false);
     procedure Prior;
     procedure MoveBy(destination: Integer);
     function Locate(const KeyFields: string; const KeyValues: Variant;  Options: TLocateOptions): Boolean ;
@@ -228,6 +229,16 @@ procedure TRtcQueryDataSet.CheckMemtableEh;
 begin
   if not Assigned(FMemTableEh) then
     SetMemTableEh(FInternalMemtableEh);
+  if (FMemTableEh.Filter.Length > 0) then
+  begin
+    FMemTableEh.Filter := '';
+  end;
+
+end;
+
+procedure TRtcQueryDataSet.Clear;
+begin
+  FMemTableEh.EmptyTable;
 end;
 
 procedure TRtcQueryDataSet.Close;
@@ -436,8 +447,8 @@ begin
     if FMemTableEh.Active then
     begin
       FKeyValues := GetKeyValues;
-      Close;
-      Open;
+      Clear;
+      Open(True);
 //    FRtcQuery.Select(FMemTableEh);
       FMemTableEh.Locate(FKeyFields,FkeyValues,[loCaseInsensitive]);
     end
@@ -550,7 +561,7 @@ begin
   CheckMemTableEh;
   InternalMemtableEhEventsDisable;
   try
-    FRtcQuery.Select(FMemTableEh);
+    FRtcQuery.Select(FMemTableEh, isRefresh);
 //  FDatasetDriverEh.ProviderDataSet := TDataSet(FRtcQuery.QrResult.asDataSet);
     if Assigned(FMemTableEhAfterOpen) then
       FMemTableEhAfterOpen(FMemTableEh);

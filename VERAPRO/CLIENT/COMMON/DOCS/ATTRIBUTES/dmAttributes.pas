@@ -5,7 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, rtc.dmdoc, MemTableDataEh, Db, DataDriverEh, MemTableEh, RtcInfo,
-  VkVariable, VkVariableBinding, VkVariableBindingDialog, uDocDescription, RtcSqlQuery;
+  VkVariable, VkVariableBinding, VkVariableBindingDialog, uDocDescription, RtcSqlQuery,
+  rtcConn, rtcDataCli, rtcCliModule;
 
 type
   TAttributesDm = class(TDocDm)
@@ -189,7 +190,9 @@ begin
 
   if SameText(_Item.Name, 'idgroup') then
   begin
-    TObjectsGrFrame(TCustomDocFmVkVariableBinding(_Item).DocMEditBox.DocFm.FrameDoc).RootIdGroup := FCurrentGroupId;
+    TCustomDocFmVkVariableBinding(_Item).params.Clear;
+    TCustomDocFmVkVariableBinding(_Item).params.CreateVkVariable('IDGROUP', FCurrentGroupId);
+//    TObjectsGrFrame(TCustomDocFmVkVariableBinding(_Item).DocMEditBox.DocFm.FrameDoc).RootIdGroup := FCurrentGroupId;
 //      FDQueryDoc.ParamByName('ID').AsLargeInt;
   end;
 end;
