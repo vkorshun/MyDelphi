@@ -27,11 +27,7 @@ uses
   fmSetupForm in '..\COMMON\DOCS\fmSetupForm.pas' {SetUpFormFm},
   RtcFuncResult in '..\COMMON\RTC\RtcFuncResult.pas',
   docManagerPanel in '..\COMMON\DOCS\docManagerPanel.pas',
-  DmTestDoc in 'DOCS\DmTestDoc.pas' {TestDocDm: TDataModule},
-  FrameTestDoc in 'DOCS\FrameTestDoc.pas' {TestDocFrame: TFrame},
   ClientDocSqlManager in '..\..\SERVER\COMMON\INTERFACE\ClientDocSqlManager.pas',
-  frameMenuStru in 'DOCS\MENUSTRU\frameMenuStru.pas' {MenuStruFrame: TFrame},
-  DmMenuStru in 'DOCS\MENUSTRU\DmMenuStru.pas' {MenuStruDm: TDataModule},
   dmAttributes in '..\COMMON\DOCS\ATTRIBUTES\dmAttributes.pas' {AttributesDm: TDataModule},
   dmAttributesOfGroup in '..\COMMON\DOCS\ATTRIBUTES\dmAttributesOfGroup.pas' {AttributesOfGroupDm: TDataModule},
   dmAttributesSet in '..\COMMON\DOCS\ATTRIBUTES\dmAttributesSet.pas' {AttributesSetDm: TDataModule},
@@ -40,7 +36,13 @@ uses
   frameAttributesSet in '..\COMMON\DOCS\ATTRIBUTES\frameAttributesSet.pas' {AttributesSetFrame: TFrame},
   dmObjects in '..\COMMON\DOCS\OBJECTS\dmObjects.pas' {ObjectsDm: TDataModule},
   frameobjectsgr in '..\COMMON\DOCS\OBJECTS\frameobjectsgr.pas' {ObjectsGrFrame: TFrame},
-  frameObjectsItems in '..\COMMON\DOCS\OBJECTS\frameObjectsItems.pas' {ObjectsItemsFrame: TFrame};
+  frameObjectsItems in '..\COMMON\DOCS\OBJECTS\frameObjectsItems.pas' {ObjectsItemsFrame: TFrame},
+  DmTestDoc in 'DOCS\TESTDOC\DmTestDoc.pas' {TestDocDm: TDataModule},
+  FrameTestDoc in 'DOCS\TESTDOC\FrameTestDoc.pas' {TestDocFrame: TFrame},
+  DmMenuStru in '..\COMMON\DOCS\MENUSTRU\DmMenuStru.pas' {MenuStruDm: TDataModule},
+  frameMenuStru in '..\COMMON\DOCS\MENUSTRU\frameMenuStru.pas' {MenuStruFrame: TFrame},
+  DmUserList in '..\COMMON\DOCS\ACCESS\DmUserList.pas' {UserListDm: TDataModule},
+  FrameUserList in '..\COMMON\DOCS\ACCESS\FrameUserList.pas' {DocFrame2: TFrame};
 
 {$R *.res}
 
@@ -49,6 +51,7 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TMainRtcDm, MainRtcDm);
   Application.CreateForm(TMainFm, MainFm);
+  Application.CreateForm(TUserListDm, UserListDm);
   //  Application.CreateForm(TTestDocDm, TestDocDm);
   if TLoginFm.Login then
   begin

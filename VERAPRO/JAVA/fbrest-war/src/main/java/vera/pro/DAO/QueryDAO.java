@@ -14,7 +14,7 @@ import java.util.*;
 @Service
 public class QueryDAO {
 
-    @Autowired
+    //@Autowired
     private FbDataSource fbDataSource;
     protected SimpleDateFormat simpleDateFormat;
     protected SimpleDateFormat simpleDateTimeFormat;
@@ -25,6 +25,7 @@ public class QueryDAO {
     public QueryDAO() {
         simpleDateTimeFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
         simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        fbDataSource = null;
     }
 
     public Map<String, Object> execute(QueryRequest request) {

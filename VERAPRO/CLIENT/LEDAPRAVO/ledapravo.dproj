@@ -142,27 +142,7 @@
         </DCCReference>
         <DCCReference Include="..\COMMON\RTC\RtcFuncResult.pas"/>
         <DCCReference Include="..\COMMON\DOCS\docManagerPanel.pas"/>
-        <DCCReference Include="DOCS\DmTestDoc.pas">
-            <Form>TestDocDm</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="DOCS\FrameTestDoc.pas">
-            <Form>TestDocFrame</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
         <DCCReference Include="..\..\SERVER\COMMON\INTERFACE\ClientDocSqlManager.pas"/>
-        <DCCReference Include="DOCS\MENUSTRU\frameMenuStru.pas">
-            <Form>MenuStruFrame</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
-        <DCCReference Include="DOCS\MENUSTRU\DmMenuStru.pas">
-            <Form>MenuStruDm</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
         <DCCReference Include="..\COMMON\DOCS\ATTRIBUTES\dmAttributes.pas">
             <Form>AttributesDm</Form>
             <FormType>dfm</FormType>
@@ -208,6 +188,36 @@
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
+        <DCCReference Include="DOCS\TESTDOC\DmTestDoc.pas">
+            <Form>TestDocDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="DOCS\TESTDOC\FrameTestDoc.pas">
+            <Form>TestDocFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\COMMON\DOCS\MENUSTRU\DmMenuStru.pas">
+            <Form>MenuStruDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\COMMON\DOCS\MENUSTRU\frameMenuStru.pas">
+            <Form>MenuStruFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\COMMON\DOCS\ACCESS\DmUserList.pas">
+            <Form>UserListDm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\COMMON\DOCS\ACCESS\FrameUserList.pas">
+            <Form>DocFrame2</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -229,7 +239,7 @@
                     <Source Name="MainSource">ledapravo.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\EhLib200.bpl">EhLib 9.4</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\DataExplorerDBXPlugin200.bpl">DBExpress Data Explorer Integration</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k200.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp200.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
