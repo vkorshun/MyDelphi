@@ -5,6 +5,7 @@ import vera.pro.DAO.core.NamedParameterStatement;
 import vera.pro.beans.QueryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vera.pro.model.TFieldType;
 
 import java.sql.*;
 import java.sql.Date;
@@ -47,21 +48,27 @@ public class QueryDAO {
 
     }
 
+    //private Map<String, TFieldType>
+
     private Map<String, Object> fillContent(NamedParameterStatement stm, Map<String, Object> result) throws SQLException {
         ResultSet rs = stm.getResultSet();
         List<Map<String, Object>> list = new ArrayList();
         ResultSetMetaData rsm = rs.getMetaData();
         while (rs.next()) {
             Map<String,Object> map = new LinkedHashMap<>();
+            List<TFieldType> fieldTypes = new LinkedList<>();
             for (int i = 1; i <= rsm.getColumnCount(); i++) {
                 String name = rsm.getColumnName(i);
+                TFieldType fieldType = new TFieldType();
                 if (Strings.isNullOrEmpty(name)) {
                     name = rsm.getColumnLabel(i);
                 }
+                fieldType.setName(name);
                 switch (rsm.getColumnType(i)) {
                     case Types.DATE: {
                         Date val = rs.getDate(i);
                         map.put(name, rs.wasNull() ? null : simpleDateFormat.format(val));
+                        fieldType.setType("D");
                         break;
                     }
                     case Types.TIMESTAMP:
