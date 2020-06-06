@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.389,=D:\DELPHI_XE6\MyDelphi\LIB\COMPONENTS\VKRTC\RtcQueryDataSet.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.398,=D:\DELPHI_XE6\MyDelphi\LIB\COMPONENTS\VKRTC\RtcResult.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.406,=D:\DELPHI_XE6\MyDelphi\LIB\COMPONENTS\VKRTC\RtcService.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.415,=D:\DELPHI_XE6\MyDelphi\LIB\COMPONENTS\VKRTC\RtcSqlQuery.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.034,=D:\DELPHI_XE6\MyDelphi\LIB\COMPONENTS\VKRTC\RtcDataSetUtils.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.459,C:\Users\Vkors\Documents\Embarcadero\Studio\Projects\Package1.dproj=D:\DELPHI_XE6\MyDelphi\LIB\COMPONENTS\VKRTC\vkRtc.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.523,=rtl.dcp</Transaction>
+  </Transactions>
+</BorlandProject>

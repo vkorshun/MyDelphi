@@ -56,6 +56,8 @@ begin
       Result := MainRtcDm.Login(ParamStr(1),ParamStr(2));
       if Result then
         Exit;
+      edUserName.Text := ParamStr(1);
+      edPassword.Text := ParamStr(2);
     end;
     Result := ShowModal = mrOk;
   finally
