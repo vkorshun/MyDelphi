@@ -12,14 +12,14 @@ import java.sql.SQLException;
 public class FbTest {
     @Test
     public void SimpleQuery() {
-        final String query = " SELECT * FROM OBJECTS";
+        final String query = " SELECT * FROM TESTDOC";
         FbDataSource fbDataSource = new FbDataSource();
         try (Connection connection = fbDataSource.getConnection();
              NamedParameterStatement stm = new NamedParameterStatement(connection, query)) {
             if (stm.execute()) {
                 ResultSet rs = stm.getResultSet();
                 while (rs.next()) {
-                    System.out.println(rs.getString("name"));
+                    System.out.println(rs.getString("commentary"));
                 }
             }
 

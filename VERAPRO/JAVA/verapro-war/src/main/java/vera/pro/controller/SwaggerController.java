@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 /**
  * Created by vkorshun on 15.07.2016.
  */
-@Controller
+//@Controller
 //@RequestMapping({"/"})
 //@Profile("VK_SWAGGER")
 public class SwaggerController {
 
-    @RequestMapping(value = "/documentation", method = RequestMethod.GET)
-    public String documentation() {
-        return "documentation";
-    }
+//    @RequestMapping(value = "/documentation", method = RequestMethod.GET)
+//    public String documentation() {
+//        return "documentation";
+//    }
 
 
 }

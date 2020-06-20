@@ -5,18 +5,21 @@ interface
 uses
   System.SysUtils, System.Classes, rtcInfo, rtcConn, rtcDataCli, rtcHttpCli,
   RtcSqlQuery, rtcCliModule, commoninterface, Dialogs, Forms, Variants, SettingsStorage,
-  DCPsha256, Rtti, rtcFunction, RtcFuncResult, RtcQueryDataSet, u_xmlinit, vkvariable;
+  DCPsha256, Rtti, rtcFunction, RtcResult, RtcQueryDataSet, u_xmlinit, vkvariable, Rtcservice,
+  rtcDataSrv;
 
 type
 
   TMainRtcDm = class(TDataModule)
     RtcHttpClient1: TRtcHttpClient;
     RtcClientModule1: TRtcClientModule;
-    RtcResult1: TRtcResult;
+    RtcDataRequest1: TRtcDataRequest;
     procedure DataModuleCreate(Sender: TObject);
     procedure RtcHttpClient1ConnectLost(Sender: TRtcConnection);
     procedure RtcClientModule1ConnectLost(Sender: TRtcConnection);
     procedure DataModuleDestroy(Sender: TObject);
+    procedure RtcDataRequest1BeginRequest(Sender: TRtcConnection);
+    procedure RtcDataRequest1ResponseDone(Sender: TRtcConnection);
   private
     { Private declarations }
     DCP_sha2561: TDCP_sha256;
@@ -26,7 +29,8 @@ type
     FUserAccessTypes: TVkVariableCollection;
     FUserAccessValues: TVkVariableCollection;
     FStorage: TSettingsStorage;
-
+    FRtcService: TRtcService;
+    FRtcUser: PRtcServiceUser;
     procedure test;
     function rtcLogin(): Boolean;
   public
@@ -37,16 +41,17 @@ type
     function NewRtcQueryDataSet: TRtcQueryDataSet;
     function Gen_ID(const key:String):Int64;
     function GetTypeGroup( AId: LargeInt): LargeInt;
+    function GetRtcUser(): PRtcServiceUser;
 
-    function RtcQueryValue(const SQL:String; params: array of Variant):IRtcFuncResult;
-    function RtcQueryValues(const SQL:String; params: array of Variant):IRtcFuncResult;
+    function RtcQueryValue(const SQL:String; params: array of Variant):IRtcResult;
+    function RtcQueryValues(const SQL:String; params: array of Variant):IRtcResult;
     function QueryValue(const SQL:String; params: array of Variant):Variant;
     procedure QueryValues(const AVarList:TVkVariableCollection; const SQL:String; params: array of Variant);
     procedure DoRequest(const ASql:String;const AParams: TVariants; AOnRequest: TOnRequest = nil);
     procedure SetUser(Param: TRtcFunctionInfo);
 //    class function rtcExecute(clientModule:TRtcClientModule;func: TRtcFunctionInfo): variant; overload;
     class procedure CloneComponent(const aSource, aDestination: TComponent);
-    class function rtcExecute(clientModule:TRtcClientModule;func: TRtcFunctionInfo): IRtcFuncResult; overload;
+    class function rtcExecute(clientModule:TRtcClientModule;func: TRtcFunctionInfo): IRtcResult; overload;
     property UserAccessTypes: TVkVariableCollection read FUserAccessTypes;
     property UserAccessValues: TVkVariableCollection read FUserAccessValues;
     property XmlInit: TXmlIni read FXmlIni;
@@ -67,25 +72,30 @@ begin
   DCP_sha2561 := TDCP_sha256.Create(self);
   FStorage := TSettingsStorage.Create(TSettingsStorage.GetDefaultStorageName);
   FStorage.Read;
-  RtcHttpClient1.ServerAddr := fStorage.GetVariable('SEREVR','host','localhost').AsString;
-  RtcHttpClient1.ServerPort := fStorage.GetVariable('SEREVR','port','6476').AsString;
+//  RtcHttpClient1.ServerAddr := fStorage.GetVariable('SEREVR','host','localhost').AsString;
+//  RtcHttpClient1.ServerPort := fStorage.GetVariable('SEREVR','port','6476').AsString;
   RtcHttpClient1.Connect();
   FXmlIni := TXmlIni.Create(self,ChangeFileExt(Application.ExeName,'.xml'));
   FUserAccessTypes := TVkVariableCollection.Create(self);
   FUserAccessValues := TVkVariableCollection.Create(self);
+  FRtcService := TRtcService.Create(self);
+  FRtcService.httpClient := RtcHttpClient1;
+  FRtcUser := new( PRtcServiceUser);
+//  FRtcService.DataRequest.OnBeginRequest := RtcDataRequest1.OnBeginRequest;
 end;
 
 procedure TMainRtcDm.DataModuleDestroy(Sender: TObject);
 begin
   FreeAndNil(FXmlIni);
   FreeAndNil(FStorage);
+  Dispose(FRtcUser);
 end;
 
 procedure TMainRtcDm.DoRequest(const ASql: String; const AParams: TVariants; AOnRequest: TOnRequest);
 var qr: TRtcQuery;
     i: Integer;
 begin
-  qr := TRtcQuery.Create(RtcClientModule1, FUserInfo);
+  qr := TRtcQuery.Create(self, GetRtcUser());
   try
     qr.SQL.Text := ASql;
     if Assigned(AParams) then
@@ -107,7 +117,7 @@ begin
       Param.asWideString['username'] := FUserInfo.user_name;
       Param.asWideString['password'] := FUserInfo.user_password;
       Param.asWideString['ID_NAME']  := key;
-      Result := rtcExecute(RtcClientModule1, RtcClientModule1.Data.asFunction).getRtcValue.asLargeInt;
+      Result := rtcExecute(RtcClientModule1, RtcClientModule1.Data.asFunction).Result.asLargeInt;
     end;
     finally
 //      FreeAndNil(Retval);
@@ -147,24 +157,26 @@ end;
 
 function TMainRtcDm.NewRtcQueryDataSet: TRtcQueryDataSet;
 begin
-   Result := TRtcQueryDataSet.Create(RtcClientModule1,FUserInfo);
+   Result := TRtcQueryDataSet.Create(self,GetRtcUser);
+   Result.RtcQuery.httpClient := RtcHttpClient1;
+   Result.RtcQuery.path := '/verapro/query';
 end;
 
 function TMainRtcDm.QueryValue(const SQL: String; params: array of Variant): Variant;
 var i: Integer;
-    retval: IRtcFuncResult;
+    retval: IRtcResult;
 begin
   retval := RtcQueryValue(SQL, params);
   if Assigned(retval) then
   begin
-    if (retval.RtcValue.isType = rtc_Array) then
+    if (retval.Result.isType = rtc_Array) then
     begin
-      Result := VarArrayCreate([0,retval.RtcValue.asArray.Count], varVariant);
-      for I := 0 to retval.RtcValue.asArray.Count-1 do
-        Result[i] := retval.RtcValue.asArray.asValue[i];
+      Result := VarArrayCreate([0,retval.Result.asArray.Count], varVariant);
+      for I := 0 to retval.Result.asArray.Count-1 do
+        Result[i] := retval.Result.asArray.asValue[i];
     end
     else
-      Result := retval.RtcValue.asValue;
+      Result := retval.Result.asValue;
   end
   else
     Result := null;
@@ -172,28 +184,28 @@ end;
 
 procedure TMainRtcDm.QueryValues(const AVarList: TVkVariableCollection; const SQL: String; params: array of Variant);
 var i: Integer;
-    retval: IRtcFuncResult;
+    retval: IRtcResult;
     _v: TVkVariable;
 begin
   retval := RtcQueryValue(SQL, params);
   if Assigned(retval)  then
   begin
-    if (retval.RtcValue.isType = rtc_Record) then
+    if (retval.Result.isType = rtc_Record) then
     begin
-      for i := 0 to retval.RtcValue.asRecord.Count - 1 do
+      for i := 0 to retval.Result.asRecord.Count - 1 do
       begin
         _v := TVkVariable.Create(AVarList);
-        _v.Name := retval.RtcValue.asRecord.FieldName[i];
-        _v.Value := retval.RtcValue.asRecord.asValue[_v.Name];
+        _v.Name := retval.Result.asRecord.FieldName[i];
+        _v.Value := retval.Result.asRecord.asValue[_v.Name];
       end;
     end
-    else if (retval.RtcValue.isType = rtc_Array) then
+    else if (retval.Result.isType = rtc_Array) then
     begin
-      for i := 0 to retval.RtcValue.asArray.Count - 1 do
+      for i := 0 to retval.Result.asArray.Count - 1 do
       begin
         _v := TVkVariable.Create(AVarList);
-        _v.Name := retval.RtcValue.asArray.asRecord[i].asString['name'];
-        _v.Value := retval.RtcValue.asArray.asRecord[i].asValue['value'];
+        _v.Name := retval.Result.asArray.asRecord[i].asString['name'];
+        _v.Value := retval.Result.asArray.asRecord[i].asValue['value'];
       end;
     end;
   end;
@@ -206,7 +218,73 @@ begin
   RtcClientModule1.Release;
 end;
 
-class function TMainRtcDm.rtcExecute(clientModule:TRtcClientModule;func: TRtcFunctionInfo): IRtcFuncResult;
+procedure TMainRtcDm.RtcDataRequest1BeginRequest(Sender: TRtcConnection);
+begin
+  with TRtcDataClient(Sender) do
+  begin
+    Request.AutoLength := true;
+    Request.HeaderText := Request.HeaderText +
+      'Accept: application/json; charset=UTF-8' + #13#10;
+    Request.HeaderText := Request.HeaderText +
+      'Content-Type: application/json' + #13#10;
+
+    {*req := FRequestQueue.Extract;
+    if req.isNeedAuth then
+    begin
+      sAuth := StringReplace
+        (Mime_Encode(Utf8Encode(FUsername + ':' + getPasswordHash(FPassword))),
+        #13#10, '', []);
+      Request.HeaderText := Request.HeaderText + 'Authorization: Basic ' +
+        sAuth + #13#10;
+    end;
+    // Request.Cookie.Value['request_id'] := IntToStr(req.id);
+     }
+    try
+      Request.AutoLength := true;
+
+      // Request.FileName:='/adsweb/'+FLocation+req.url;
+      {if req.isRoot then
+        Request.FileName := '/universal/' + req.url
+      else
+        Request.FileName := '/universal/' + FLocation + req.url;}
+      Request.FileName := '/verapro/users/auth';
+      if (Request.Method = 'GET') then
+      begin
+        {if Assigned(req.params) then
+        begin
+          for item in req.params.AsObject do
+          begin
+            Request.Query.Value[item.Name] := item.Value.AsString
+          end;
+        end;
+        Write();}
+      end
+      else
+      begin
+        Request.AutoLength := true;
+        {if Assigned(req.params) then
+          Write(Utf8Encode(req.params.AsJSon))
+        else
+          if length(req.JSON)>0 then
+          Write(Utf8Encode(req.JSon));}
+        Write(Utf8Encode(FRtcservice.params.toJSon));
+
+
+      end;
+    finally
+      //FreeAndNil(req);
+    end;
+  end;
+
+end;
+
+procedure TMainRtcDm.RtcDataRequest1ResponseDone(Sender: TRtcConnection);
+var s: String;
+begin
+
+end;
+
+class function TMainRtcDm.rtcExecute(clientModule:TRtcClientModule;func: TRtcFunctionInfo): IRtcResult;
 var
   retval: TRtcValue;
 begin
@@ -219,7 +297,7 @@ begin
       begin
         Raise Exception.Create(retval.asException);
       end;
-      Result := TRtcFuncResult.Create(retval);
+      Result := nil ;//TRtcFuncResult.Create(retval);
 
     end;
   finally
@@ -251,34 +329,38 @@ end;}
 procedure TMainRtcDm.RtcHttpClient1ConnectLost(Sender: TRtcConnection);
 begin
   // RtcHTTPClient1.Disconnect;
-  ShowMessage('LOST');
+  //ShowMessage('LOST');
 end;
 
 function TMainRtcDm.rtcLogin: Boolean;
 var
-  Retval: TRtcValue;
+  Retval: IRtcResult;
   func: TRtcFunctionInfo;
 begin
-  with RtcClientModule1 do
+//  with RtcClientModule1 do
   begin
     try
-    with Prepare('RtcConnect') do
-    begin
-      Param.asWideString['username'] := FUserInfo.user_name;
-      Param.asWideString['password'] := FUserInfo.user_password;
-      Retval := rtcExecute(RtcClientModule1, RtcClientModule1.Data.asFunction).getRtcValue;
-      Result := Retval.asRecord.asInteger['RESULT'] = 0;
-      TUtils.RtcToVkVariableColections(Retval.asRecord.asRecord['USERACCESSTYPES'], FUserAccessTypes);
-      TUtils.RtcToVkVariableColections(Retval.asRecord.asRecord['USERACCESSVALUES'], FUserAccessValues);
-      TUtils.RtcValueToRecord(Retval.asRecord.asRecord['USERINFO'],FUserInfo, TypeInfo(RUserInfo));
-    end;
+//    with Prepare('RtcConnect') do
+//    begin
+      FRtcservice.Params.asWideString['username'] := FUserInfo.user_name;
+      FRtcservice.Params.asWideString['password'] := FUserInfo.user_password;
+      RtcDataRequest1.Request.Method := 'POST';
+//      RtcDataRequest1.Post();
+      Retval := FRtcservice.execute('/verapro/users/auth','POST');
+      Result := (Retval.Result.asRecord.asString['Result'] = 'OK') and Retval.Result.asRecord.asRecord['content'].asBoolean['result']=true;
+      if not Result  then
+        ShowMessage('Incorrect password');
+//      TUtils.RtcToVkVariableColections(Retval.asRecord.asRecord['USERACCESSTYPES'], FUserAccessTypes);
+//      TUtils.RtcToVkVariableColections(Retval.asRecord.asRecord['USERACCESSVALUES'], FUserAccessValues);
+//      TUtils.RtcValueToRecord(Retval.asRecord.asRecord['USERINFO'],FUserInfo, TypeInfo(RUserInfo));
+//    end;
     finally
 //      FreeAndNil(Retval);
     end;
   end;
 end;
 
-function TMainRtcDm.RtcQueryValue(const SQL: String; params: array of Variant): IRtcFuncResult;
+function TMainRtcDm.RtcQueryValue(const SQL: String; params: array of Variant): IRtcResult;
 var i: Integer;
 begin
 //  Result := null;
@@ -303,7 +385,7 @@ begin
 end;
 
 
-function TMainRtcDm.RtcQueryValues(const SQL: String; params: array of Variant): IRtcFuncResult;
+function TMainRtcDm.RtcQueryValues(const SQL: String; params: array of Variant): IRtcResult;
 var i: Integer;
 begin
 //  Result := null;
@@ -374,6 +456,13 @@ begin
   finally
     Buffer.Free;
   end;
+end;
+
+function TMainRtcDm.GetRtcUser: PRtcServiceUser;
+begin
+  FRtcUser.userName := FUserInfo.user_name;
+  FRtcUser.password := FUserInfo.user_password;
+  Result := FRtcUser;
 end;
 
 function TMainRtcDm.GetTypeGroup( AId: LargeInt): LargeInt;

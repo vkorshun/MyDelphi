@@ -7,9 +7,11 @@ object MainRtcDm: TMainRtcDm
   object RtcHttpClient1: TRtcHttpClient
     MultiThreaded = True
     ServerAddr = 'localhost'
-    ServerPort = '6476'
+    ServerPort = '6273'
     OnConnectLost = RtcHttpClient1ConnectLost
     AutoConnect = True
+    UseWinHTTP = True
+    TimeoutsOfAPI.ConnectTimeout = 10000
     Left = 112
     Top = 136
   end
@@ -22,8 +24,11 @@ object MainRtcDm: TMainRtcDm
     Left = 280
     Top = 128
   end
-  object RtcResult1: TRtcResult
-    Left = 256
-    Top = 216
+  object RtcDataRequest1: TRtcDataRequest
+    Client = RtcHttpClient1
+    OnBeginRequest = RtcDataRequest1BeginRequest
+    OnResponseDone = RtcDataRequest1ResponseDone
+    Left = 376
+    Top = 200
   end
 end

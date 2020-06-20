@@ -7,10 +7,9 @@ uses
   ClientDocSqlManager, VkVariable,
   Generics.Collections, vkdocinstance, Controls, vkvariablebinding,
   fmVkDocDialog, uDocDescription,
-  Forms, Variants, VariantUtils, Dialogs, pFIBQueryVk, FIBDatabase,
-  pFIBDatabase,
-  FIBDataSet, pFIBDataSet, pFIBDataSetVk, FIBQuery, pFIBQuery, DmMainRtc,
-  rtcInfo, rtcConn, rtcDataCli, rtcCliModule, commoninterface, RtcFuncResult,
+  Forms, Variants, VariantUtils, Dialogs,
+  DmMainRtc,
+  rtcInfo, rtcConn, rtcDataCli, rtcCliModule, commoninterface, RtcResult,
   RtcQueryDataSet;
 
 type
@@ -25,8 +24,10 @@ type
     of object;
   TDmDocClass = class of TDocDm;
   TDocEditActionEvent = procedure(Sender: TObject; AInsert: Boolean) of object;
-  TSetParamsEvent = procedure(Sender: TObject; AParams: TVkVariableCollection) of object;
-  TOnPrepareRtcFunction = procedure(const operation:TDocOperation; clientModule: TRtcClientModule; sqlManaget: TClientDocSqlManager) of object;
+  TSetParamsEvent = procedure(Sender: TObject; AParams: TVkVariableCollection)
+    of object;
+  TOnPrepareRtcFunction = procedure(const operation: TDocOperation;
+    clientModule: TRtcClientModule; sqlManaget: TClientDocSqlManager) of object;
 
   { TDocProperti = class
     private
@@ -82,7 +83,7 @@ type
     FDocSqlManager: TClientDocSqlManager;
     FDocStruDescriptionList: TDocStruDescriptionList;
     FDocValidator: TDocValidator;
-    FLastRetval: IRtcFuncResult;
+    FLastRetval: IRtcResult;
     FMarkList: TList<Variant>;
     FOnStoreVariables: TOnStoreVariablesEvent;
     FOnSetFilter: TSetFilterNotifyEvent;
@@ -107,7 +108,7 @@ type
     procedure SetPrepared(const Value: Boolean);
     procedure SetOnFillKeyFields(const Value: TNotifyEvent);
     procedure SetOnWriteVariables(const Value: TOnWriteVariablesEvent);
-    procedure SetLastRetval(const Value: IRtcFuncResult);
+    procedure SetLastRetval(const Value: IRtcResult);
     procedure SetParamsPrepared(const Value: Boolean);
     procedure SetOnSetParams(const Value: TSetParamsEvent);
   protected
@@ -117,8 +118,8 @@ type
     FDefineDebug: Boolean;
     FRtcQueryDataSet: TRtcQueryDataSet;
     FDocEditFunctionName: String;
-    //procedure DoInsertAdditionalFields;
-    //procedure DoUpdateAdditionalFields;
+    // procedure DoInsertAdditionalFields;
+    // procedure DoUpdateAdditionalFields;
     // procedure OnFillFiledList(Sender: TObject);
     procedure FillKeyFields;
     procedure rtcEditDoc(operation: TDocOperation);
@@ -143,21 +144,21 @@ type
     // procedure UnLockDoc(bCommit: Boolean = True); virtual;
     // function IsLocked: Boolean;
     procedure FullRefreshDoc(ARecalcVariables: Boolean = false);
-    procedure Open;virtual;
+    procedure Open; virtual;
     procedure ReInitVariables;
     procedure SetFilter(nIndex: Integer; Sender: TObject); virtual;
-    procedure SetParams(const AParams:TVkVariableCollection );
+    procedure SetParams(const AParams: TVkVariableCollection);
     procedure WriteVariables(AInsert: Boolean);
     function ValidFmEditItems(Sender: TObject): Boolean; virtual;
     procedure VarLog(AVarList: TVkVariableCollection);
     procedure DeleteDoc(ender: TObject);
-    procedure UpdateOrInsert(Sender:TObject; bNew: Boolean);
+    procedure UpdateOrInsert(Sender: TObject; bNew: Boolean);
 
-    class procedure SetParamValues(AQuery: TpFIBQueryVk;
-      AVarList: TVkVariableCollection);
+    // class procedure SetParamValues(AQuery: TpFIBQueryVk;
+    // AVarList: TVkVariableCollection);
     class function GetDm: TDocDm; virtual;
     property IsInternalTransaction: Boolean read FIsInternalTransaction;
-    property LastRetval: IRtcFuncResult read FLastRetval write SetLastRetval;
+    property LastRetval: IRtcResult read FLastRetval write SetLastRetval;
     property SqlManager: TClientDocSqlManager read FDocSqlManager
       write FDocSqlManager;
     property DmMain: TMainRtcDm read FDmMain;
@@ -186,15 +187,18 @@ type
     property OnFillKeyFields: TNotifyEvent read FOnFillKeyFields
       write SetOnFillKeyFields;
     property Prepared: Boolean read FPrepared write SetPrepared;
-    property ParamsPrepared: Boolean read FParamsPrepared write SetParamsPrepared;
+    property ParamsPrepared: Boolean read FParamsPrepared
+      write SetParamsPrepared;
     property OnWriteVariables: TOnWriteVariablesEvent read FOnWriteVariables
       write SetOnWriteVariables;
     property OnUpdateAdditionalFields: TNotifyEvent
       read FOnUpdateAdditionalFields write FOnUpdateAdditionalFields;
     property OnInsertAdditionalFields: TNotifyEvent
       read FOnInsertAdditionalFields write FOnInsertAdditionalFields;
-    property OnSetParams: TSetParamsEvent read FOnSetParams write SetOnSetParams;
-    property OnPrepareRtcFunction: TOnPrepareRtcFunction read FOnPrepareRtcFunction write FOnPrepareRtcFunction;
+    property OnSetParams: TSetParamsEvent read FOnSetParams
+      write SetOnSetParams;
+    property OnPrepareRtcFunction: TOnPrepareRtcFunction
+      read FOnPrepareRtcFunction write FOnPrepareRtcFunction;
   end;
 
 var
@@ -352,25 +356,25 @@ begin
     Result := FOnBeforeDocInsert(Self);
 end;
 
-{procedure TDocDm.DoInsertAdditionalFields;
-var
+{ procedure TDocDm.DoInsertAdditionalFields;
+  var
   i: Integer;
-begin
+  begin
   if Assigned(FOnUpdateAdditionalFields) then
-    for i := 0 to FDocSqlManager.AdditionalList.Count - 1 do
-      if FDocSqlManager.AdditionalList[i].FieldList.Count > 0 then
-        FOnInsertAdditionalFields(FDocSqlManager.AdditionalList[i]);
-end;
+  for i := 0 to FDocSqlManager.AdditionalList.Count - 1 do
+  if FDocSqlManager.AdditionalList[i].FieldList.Count > 0 then
+  FOnInsertAdditionalFields(FDocSqlManager.AdditionalList[i]);
+  end;
 
-procedure TDocDm.DoUpdateAdditionalFields;
-var
+  procedure TDocDm.DoUpdateAdditionalFields;
+  var
   i: Integer;
-begin
+  begin
   if Assigned(FOnUpdateAdditionalFields) then
-    for i := 0 to FDocSqlManager.AdditionalList.Count - 1 do
-      if FDocSqlManager.AdditionalList[i].FieldList.Count > 0 then
-        FOnUpdateAdditionalFields(FDocSqlManager.AdditionalList[i]);
-end;
+  for i := 0 to FDocSqlManager.AdditionalList.Count - 1 do
+  if FDocSqlManager.AdditionalList[i].FieldList.Count > 0 then
+  FOnUpdateAdditionalFields(FDocSqlManager.AdditionalList[i]);
+  end;
 }
 procedure TDocDm.DirectEditDoc;
 var
@@ -434,7 +438,7 @@ begin
     // FDQueryDoc.Open();
     // MemTableEhDoc.Close;
     // MemTableEhDoc.Open;
-    //FRtcQueryDataSet.Close;
+    // FRtcQueryDataSet.Close;
     FRtcQueryDataSet.FullRefresh;
 
     if not VariantIsNull(_CurKey) then
@@ -446,7 +450,7 @@ begin
           raise Exception.Create('Error locate!'+ _CurKey); }
     end;
   finally
-  //  RestoreState(MemTableEhDoc);
+    // RestoreState(MemTableEhDoc);
 
     MemTableEhDoc.EnableControls;
 
@@ -489,18 +493,60 @@ begin
 end;
 
 procedure TDocDm.InitClientSqlManager(const ATableName: String);
+const
+  QR_TABLEFIELDS = 'select ' + '  FLD.RDB$FIELD_TYPE' + ', FLD.RDB$FIELD_SCALE'
+    + ', FLD.RDB$FIELD_LENGTH' + ', FLD.RDB$FIELD_PRECISION' +
+    ', FLD.RDB$CHARACTER_SET_ID' + // CHARACTER SET
+    ', RFR.RDB$COLLATION_ID' + ', COL.RDB$COLLATION_NAME' + // COLLATE
+    ', FLD.RDB$FIELD_SUB_TYPE' + ', RFR.RDB$DEFAULT_SOURCE' + // DEFAULT
+    ', RFR.RDB$FIELD_NAME' + ', FLD.RDB$SEGMENT_LENGTH' +
+    ', FLD.RDB$SYSTEM_FLAG' + ', RFR.RDB$FIELD_SOURCE' + // DOMAIN
+    ', RFR.RDB$NULL_FLAG' + // NULLABLE
+    ', FLD.RDB$VALIDATION_SOURCE' + // CHECK
+    ', FLD.RDB$DIMENSIONS' + ', FLD.RDB$COMPUTED_SOURCE' + // COMPUTED BY
+    ' from ' + '  RDB$RELATIONS REL ' +
+    'join RDB$RELATION_FIELDS RFR on (RFR.RDB$RELATION_NAME = REL.RDB$RELATION_NAME) '
+    + 'join RDB$FIELDS FLD on (RFR.RDB$FIELD_SOURCE = FLD.RDB$FIELD_NAME) ' +
+    'left outer join RDB$COLLATIONS COL on (COL.RDB$COLLATION_ID = RFR.RDB$COLLATION_ID and COL.RDB$CHARACTER_SET_ID = FLD.RDB$CHARACTER_SET_ID) '
+    + 'where ' + '  (REL.RDB$RELATION_NAME = :tablename) ' + 'order by ' +
+    '  RFR.RDB$FIELD_POSITION, RFR.RDB$FIELD_NAME';
+
+  QR_PKFIELDS = 'select ' + ' ix.rdb$index_name as index_name, ' +
+    ' sg.rdb$field_name as field_name, ' +
+    ' rc.rdb$relation_name as table_name ' + ' from ' + ' rdb$indices ix ' +
+    ' left join rdb$index_segments sg on ix.rdb$index_name = sg.rdb$index_name '
+    + ' left join rdb$relation_constraints rc on rc.rdb$index_name = ix.rdb$index_name '
+    + ' where ' +
+    ' rc.rdb$constraint_type = :cons and rc.rdb$relation_name= :tablename ';
+var
+  qr: TRtcQueryDataSet;
 begin
-  with MainRtcDm.RtcClientModule1 do
-  begin
-    Prepare('RtcGetSqlTableProperties');
-    Param.AsString['TABLENAME'] := ATableName;
-    MainRtcDm.setUser(Param);
-    SetLastRetval(MainRtcDm.rtcExecute(MainRtcDm.RtcClientModule1,
-      MainRtcDm.RtcClientModule1.Data.asFunction));
-    //ShowMessage(FLastRetval.getRtcValue.asRecord.toJSON);
-    TUtils.RtcValueToObject(FLastRetval.getRtcValue.asRecord, FDocSqlManager);
-    FRtcQueryDataSet.TableName := ATableName;
+  qr := MainRtcDm.NewRtcQueryDataSet;
+  try
+    qr.SQL.Text := QR_TABLEFIELDS;
+    qr.ParamByName('tablename').AsString := ATableName;
+    qr.Open();
+    while not qr.eof do
+    begin
+      FDocSqlManager.FieldNameList.Add(qr.FieldByName('RDB$FIELD_NAME')
+        .AsString);
+      qr.Next;
+    end;
+    qr.Close;
+    qr.SQL.Clear;
+    qr.SQL.Text := QR_PKFIELDS;
+    qr.ParamByName('tablename').AsString := ATableName;
+    qr.Open();
+    while not qr.eof do
+    begin
+      FDocSqlManager.KeyFieldsList.Add
+        (String(qr.FieldByName('FIELD_NAME').AsString));
+    end;
+  finally
+    qr.Close;
+    qr.Free;
   end;
+  FRtcQueryDataSet.TableName := ATableName;
 end;
 
 procedure TDocDm.InitVariables(AInsert: Boolean);
@@ -597,7 +643,7 @@ begin
   ret := nil;
   with RtcClientModule1 do
   begin
-    Prepare(FDocEditFunctionName); //'rtcDocedit'
+    Prepare(FDocEditFunctionName); // 'rtcDocedit'
     Param.asWideString['username'] := MainRtcDm.UserInfo.user_name;
     Param.asWideString['password'] := MainRtcDm.UserInfo.user_password;
     Param.AsString['TABLENAME'] := FDocSqlManager.TableName;
@@ -606,10 +652,11 @@ begin
     if (operation = docDelete) then
     begin
       Param.asRecord['PARAMS'].NewRecord('OLD');
-          Param.asRecord['PARAMS'].NewRecord('KEY');
-          for i := 0 to SqlManager.KeyFieldsList.Count - 1 do
-            Param.asRecord['PARAMS'].asRecord['KEY'].asValue[SqlManager.KeyFieldsList[i]] :=
-              DocVariableList[SqlManager.KeyFieldsList[i]].Value;
+      Param.asRecord['PARAMS'].NewRecord('KEY');
+      for i := 0 to SqlManager.KeyFieldsList.Count - 1 do
+        Param.asRecord['PARAMS'].asRecord['KEY'].asValue
+          [SqlManager.KeyFieldsList[i]] := DocVariableList
+          [SqlManager.KeyFieldsList[i]].Value;
     end
     else if (operation = docInsert) then
     begin
@@ -617,13 +664,12 @@ begin
       TUtils.VkVariableColectionsToRtc(DocVariableList,
         Param.asRecord['PARAMS'].asRecord['NEW']);
     end
-    else
-    if (operation = docUpdate) then
+    else if (operation = docUpdate) then
     begin
       changedList := TStringList.Create;
       try
         DocVariableList.GetChangedList(changedList);
-        if changedList.Count>0 then
+        if changedList.Count > 0 then
         begin
           Param.asRecord['PARAMS'].NewRecord('NEW');
           Param.asRecord['PARAMS'].NewRecord('OLD');
@@ -636,8 +682,9 @@ begin
           end;
           Param.asRecord['PARAMS'].NewRecord('KEY');
           for i := 0 to SqlManager.KeyFieldsList.Count - 1 do
-            Param.asRecord['PARAMS'].asRecord['KEY'].asValue[SqlManager.KeyFieldsList[i]] :=
-              DocVariableList[SqlManager.KeyFieldsList[i]].Value;
+            Param.asRecord['PARAMS'].asRecord['KEY'].asValue
+              [SqlManager.KeyFieldsList[i]] := DocVariableList
+              [SqlManager.KeyFieldsList[i]].Value;
         end
         else
           exit;
@@ -645,28 +692,29 @@ begin
         FreeAndNil(changedList);
       end;
     end
-    else
-    if (operation = docDelete) then
+    else if (operation = docDelete) then
     begin
       Param.asRecord['PARAMS'].NewRecord('KEY');
       for i := 0 to SqlManager.KeyFieldsList.Count - 1 do
-        Param.asRecord['PARAMS'].asRecord['KEY'].asValue[SqlManager.KeyFieldsList[i]] :=
-          DocVariableList[SqlManager.KeyFieldsList[i]].Value;
+        Param.asRecord['PARAMS'].asRecord['KEY'].asValue
+          [SqlManager.KeyFieldsList[i]] := DocVariableList
+          [SqlManager.KeyFieldsList[i]].Value;
     end;
 
     if Assigned(FOnPrepareRtcFunction) then
       FOnPrepareRtcFunction(operation, RtcClientModule1, SqlManager);
     SetLastRetval(MainRtcDm.rtcExecute(RtcClientModule1,
-        RtcClientModule1.Data.asFunction));
+      RtcClientModule1.Data.asFunction));
     if (operation <> docDelete) then
     begin
-      if (FLastRetval.RtcValue.isType=rtc_Record) then
+      if (FLastRetval.Result.isType = rtc_Record) then
       begin
-        ret := FLastRetval.RtcValue.asRecord.asRecord['RESULT']; //.asRecord['RESULT']);
-        for i:=0  to ret.FieldCount-1 do
+        ret := FLastRetval.Result.asRecord.asRecord['RESULT'];
+        // .asRecord['RESULT']);
+        for i := 0 to ret.FieldCount - 1 do
         begin
           DocVariableList.VarByName(ret.FieldName[i]).Value :=
-                      ret.asValue[ret.FieldName[i]];
+            ret.asValue[ret.FieldName[i]];
         end;
       end;
     end;
@@ -712,7 +760,8 @@ begin
     for i := 0 to FieldCount - 1 do
     begin
       Fields[i].Visible := false;
-      if not Assigned(FDocSqlManager.DocVariableList.FindVkVariable(Fields[i].FieldName)) then
+      if not Assigned(FDocSqlManager.DocVariableList.FindVkVariable
+        (Fields[i].FieldName)) then
         FDocSqlManager.DocVariableList.CreateVkVariable
           (Fields[i].FieldName, null);
     end;
@@ -792,18 +841,19 @@ end;
 
 procedure TDocDm.MemTableEhDocBeforeDelete(DataSet: TDataSet);
 begin
-  if FDocSqlManager.DocVariableList.Count=0 then
-    Exit;
+  if FDocSqlManager.DocVariableList.Count = 0 then
+    exit;
 
   DirectDeleteDoc;
 
 end;
 
 procedure TDocDm.MemTableEhDocBeforePost(DataSet: TDataSet);
-var st: TUpdateStatus;
+var
+  st: TUpdateStatus;
 begin
-  if FDocSqlManager.DocVariableList.Count=0 then
-    Exit;
+  if FDocSqlManager.DocVariableList.Count = 0 then
+    exit;
 
   if (DataSet.State = dsEdit) then
     st := usModified
@@ -811,18 +861,18 @@ begin
     st := usInserted;
 
   if Assigned(FOnStoreVariables) then
-    FOnStorevariables(Self, st);
+    FOnStoreVariables(Self, st);
 
   if (DataSet.State = dsInsert) then
     DirectInsertDoc
-  else
-  if (DataSet.State = dsEdit) then
+  else if (DataSet.State = dsEdit) then
   begin
     if not FDocSqlManager.DocVariableList.IsChanged then
-      FDocSqlManager.UpdateVariablesOnDeltaDs(MemTableEhDoc, FDocSqlManager.DocVariableList);
+      FDocSqlManager.UpdateVariablesOnDeltaDs(MemTableEhDoc,
+        FDocSqlManager.DocVariableList);
     DirectEditDoc;
   end;
-//  else if (DataSet.State = dsInsert) then
+  // else if (DataSet.State = dsInsert) then
 
 end;
 
@@ -886,8 +936,8 @@ begin
   with FRtcQueryDataSet do
   begin
     DsMemTableEh := MemTableEhDoc;
-    //InitAllSQL(FDocSqlManager.TableName, FDocSqlManager.KeyFields,
-    //  FDocSqlManager.GenId);
+    // InitAllSQL(FDocSqlManager.TableName, FDocSqlManager.KeyFields,
+    // FDocSqlManager.GenId);
     SelectSQL.Clear;
     SelectSQL.Text := FDocSqlManager.SelectSQL.Text;
     Params.AssignValues(FDocSqlManager.Params);
@@ -910,7 +960,7 @@ begin
     FOnSetFilter(nIndex, Sender);
 end;
 
-procedure TDocDm.SetLastRetval(const Value: IRtcFuncResult);
+procedure TDocDm.SetLastRetval(const Value: IRtcResult);
 begin
   if (Assigned(FLastRetval)) then
     FLastRetval := nil;
@@ -934,8 +984,8 @@ end;
 
 procedure TDocDm.SetParams(const AParams: TVkVariableCollection);
 begin
-  if Assigned(FOnsetParams) then
-    FOnSetParams(self, AParams);
+  if Assigned(FOnSetParams) then
+    FOnSetParams(Self, AParams);
 end;
 
 procedure TDocDm.SetParamsPrepared(const Value: Boolean);
@@ -943,21 +993,21 @@ begin
   FParamsPrepared := Value;
 end;
 
-class procedure TDocDm.SetParamValues(AQuery: TpFIBQueryVk;
+{ /*class procedure TDocDm.SetParamValues(AQuery: TpFIBQueryVk;
   AVarList: TVkVariableCollection);
-var
+  var
   i: Integer;
   _Name: String;
-begin
+  begin
   for i := 0 to AQuery.Params.Count - 1 do
   begin
-    _Name := AQuery.Params[i].Name;
-    if AVarList.VarExists(_Name) then
-      AQuery.ParamByName(_Name).AsVariant := AVarList.VarByName(_Name).Value
-    else
-      raise Exception.CreateFmt('Param %s not found', [_Name]);
+  _Name := AQuery.Params[i].Name;
+  if AVarList.VarExists(_Name) then
+  AQuery.ParamByName(_Name).AsVariant := AVarList.VarByName(_Name).Value
+  else
+  raise Exception.CreateFmt('Param %s not found', [_Name]);
   end;
-end;
+  end; }
 
 procedure TDocDm.SetPrepared(const Value: Boolean);
 begin

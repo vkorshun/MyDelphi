@@ -17,6 +17,7 @@ type
   public
     constructor create(aOwner: TComponent);override;
     procedure ShowDocument(const AFrameDocClassName: String; AParams:TVkVariableCollection = nil);
+//    procedure ShowFrame(const AFrameDocClassName: String;  AParams:TVkVariableCollection = nil);
 //    procedure ShowDocument(AFrameDocClass: TDocFrameClass);
   end;
 
@@ -94,6 +95,40 @@ begin
 //     docFrame.checkParams(AParams);
 end;
 
+
+{procedure TDocManagerPanel.ShowFrame(const AFrameDocClassName: String;
+  AParams: TVkVariableCollection);
+var _FrameDocClass : TFrameClass;
+    docFrame : TFrame;
+    i: Integer;
+    control: TWinControl;
+begin
+   _FrameDocClass := TFrameClass(FindClass(AFrameDocClassName));
+   for I := 0 to FDocFrameTabs.Tabs.Count-1 do
+   begin
+      docFrame := TFrame(FDocFrameTabs.GetTabData(i).TabObject);
+      if Assigned(docFrame) then
+      begin
+        if (docFrame.ClassType = _FrameDocClass) ) then
+        begin
+          SetVisible(docFrame);
+          exit;
+        end;
+      end;
+   end;
+
+   docFrame := CreateFrameDoc(_FrameDocClass, AParams);
+   docFrame.CheckParams(AParams);
+   control := docFrame.getActiveControl;
+   FDocFrameTabs.AddTab(FDocFrameTabs.TabCount,docFrame.GetCaption, docFrame);
+   if (Assigned(control) and  control.visible and control.Enabled) then
+   try
+     // PostMessage(WM_SETFOCUS,control.Handle,0,0);
+     TForm(Owner).ActiveControl := control;
+   except
+
+   end;
+end;}
 
 {*procedure TDocManagerPanel.ShowDocument(AFrameDocClass: TDocFrameClass);
 begin
