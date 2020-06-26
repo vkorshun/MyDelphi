@@ -63,7 +63,8 @@ public class QueryDAO {
                 fieldDefine.setName(name);
                 fieldDefine.setPrecision(rsm.getPrecision(i));
                 fieldDefine.setScale(rsm.getScale(i));
-                switch (rsm.getColumnType(i)) {
+                fieldDefine.setFieldType(rsm.getColumnType(i));
+                /*switch (rsm.getColumnType(i)) {
                     case Types.DATE: {
                         fieldDefine.setType("D");
                         break;
@@ -110,7 +111,7 @@ public class QueryDAO {
                         fieldDefine.setType("C");
                         fieldDefine.setPrecision(rsm.getPrecision(i));
                     }
-                }
+                }*/
                 fieldDefs.add(fieldDefine);
             }
             return fieldDefs;
