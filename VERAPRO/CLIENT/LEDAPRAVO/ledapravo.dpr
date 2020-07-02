@@ -8,8 +8,6 @@ uses
   uLog in '..\..\..\LIB\uLog.pas',
   commoninterface in '..\..\SERVER\COMMON\INTERFACE\commoninterface.pas',
   DmMainRtc in '..\COMMON\DmMainRtc.pas' {MainRtcDm: TDataModule},
-  RtcQueryDataSet in '..\COMMON\RTC\RtcQueryDataSet.pas',
-  RtcSqlQuery in '..\COMMON\RTC\RtcSqlQuery.pas',
   FrameTab in '..\COMMON\TABS\FrameTab.pas' {TabFrame: TFrame},
   tabManagerPanel in '..\COMMON\TABS\tabManagerPanel.pas',
   systemconsts in '..\COMMON\systemconsts.pas',
@@ -25,7 +23,6 @@ uses
   DocSqlManager in '..\COMMON\DOCS\DocSqlManager.pas',
   uDocDescription in '..\COMMON\DOCS\uDocDescription.pas',
   fmSetupForm in '..\COMMON\DOCS\fmSetupForm.pas' {SetUpFormFm},
-  RtcFuncResult in '..\COMMON\RTC\RtcFuncResult.pas',
   docManagerPanel in '..\COMMON\DOCS\docManagerPanel.pas',
   ClientDocSqlManager in '..\..\SERVER\COMMON\INTERFACE\ClientDocSqlManager.pas',
   dmAttributes in '..\COMMON\DOCS\ATTRIBUTES\dmAttributes.pas' {AttributesDm: TDataModule},
@@ -42,7 +39,13 @@ uses
   DmMenuStru in '..\COMMON\DOCS\MENUSTRU\DmMenuStru.pas' {MenuStruDm: TDataModule},
   frameMenuStru in '..\COMMON\DOCS\MENUSTRU\frameMenuStru.pas' {MenuStruFrame: TFrame},
   DmUserList in '..\COMMON\DOCS\ACCESS\DmUserList.pas' {UserListDm: TDataModule},
-  FrameUserList in '..\COMMON\DOCS\ACCESS\FrameUserList.pas' {DocFrame2: TFrame};
+  FrameUserList in '..\COMMON\DOCS\ACCESS\FrameUserList.pas' {DocFrame2: TFrame},
+  RtcDataSetUtils in '..\..\..\LIB\COMPONENTS\VKRTC\RtcDataSetUtils.pas',
+  RtcFuncResult in '..\..\..\LIB\COMPONENTS\VKRTC\RtcFuncResult.pas',
+  RtcQueryDataSet in '..\..\..\LIB\COMPONENTS\VKRTC\RtcQueryDataSet.pas',
+  RtcResult in '..\..\..\LIB\COMPONENTS\VKRTC\RtcResult.pas',
+  RtcService in '..\..\..\LIB\COMPONENTS\VKRTC\RtcService.pas',
+  RtcSqlQuery in '..\..\..\LIB\COMPONENTS\VKRTC\RtcSqlQuery.pas';
 
 {$R *.res}
 
@@ -51,7 +54,6 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TMainRtcDm, MainRtcDm);
   Application.CreateForm(TMainFm, MainFm);
-  Application.CreateForm(TUserListDm, UserListDm);
   //  Application.CreateForm(TTestDocDm, TestDocDm);
   if TLoginFm.Login then
   begin

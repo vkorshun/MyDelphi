@@ -21,12 +21,12 @@
     <Transaction>1899.12.30 00:00:00.000.584,D:\DELPHI_XE6\MyDelphi\VERAPRO\COMPONENTS\FIBPROVIDER\fibdatabase.pas=D:\DELPHI_XE6\MyDelphi\VERAPRO\COMPONENTS\FIBPROVIDER\fibproviderdatabase.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.986,D:\DELPHI_XE6\MyDelphi\VERAPRO\COMPONENTS\FIBPROVIDER\fibproviderdatabse.pas=D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.791,=D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.107,=D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.818,=D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\Unit2.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.873,D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\Unit2.pas=D:\DELPHI_XE6\MyDelphi\VERAPRO\COMPONENTS\DmFibApi.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.488,=D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.107,=D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\Unit2.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.572,=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.862,C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit5.pas=D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\FmTest.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.818,=D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.488,=D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\Unit2.pas</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="..\..\VERAPRO"/>

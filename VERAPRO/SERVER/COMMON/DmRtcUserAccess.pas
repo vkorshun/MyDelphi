@@ -15,8 +15,8 @@ type
     { Private declarations }
   public
     { Public declarations }
-    procedure RtcGetSqltableProperties(Sender: TRtcConnection; FnParams: TRtcFunctionInfo;
-      Result: TRtcValue);
+//    procedure RtcGetSqltableProperties(Sender: TRtcConnection; FnParams: TRtcFunctionInfo;
+//      Result: TRtcValue);
   end;
 
 var

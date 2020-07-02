@@ -1,4 +1,5 @@
 inherited RtcUserAccessDm: TRtcUserAccessDm
+  OldCreateOrder = True
   object RtcDataServerLinkUserAccess: TRtcDataServerLink
     Left = 80
     Top = 184

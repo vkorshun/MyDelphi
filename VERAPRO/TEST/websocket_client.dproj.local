@@ -2,8 +2,8 @@
 <BorlandProject>
 	<Transactions>
     <Transaction>1899.12.30 00:00:00.000.172,D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\FmWebSocketTest.dfm=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit6.dfm</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.172,D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\FmWebSocketTest.pas=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.411,D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\websocket_client.dproj=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Project5.dproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.902,=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.411,D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\websocket_client.dproj=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Project5.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.172,D:\DELPHI_XE6\MyDelphi\VERAPRO\TEST\FmWebSocketTest.pas=C:\Users\Vkors\OneDrive\Documents\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
   </Transactions>
 </BorlandProject>

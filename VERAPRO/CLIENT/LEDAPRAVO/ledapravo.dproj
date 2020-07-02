@@ -103,25 +103,20 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\COMMON\RTC\RtcQueryDataSet.pas"/>
-        <DCCReference Include="..\COMMON\RTC\RtcSqlQuery.pas"/>
         <DCCReference Include="..\COMMON\TABS\FrameTab.pas">
             <Form>TabFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\COMMON\TABS\tabManagerPanel.pas"/>
         <DCCReference Include="..\COMMON\systemconsts.pas"/>
         <DCCReference Include="..\COMMON\DOCS\RTC\rtc.dmDoc.pas">
             <Form>DocDm</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="..\COMMON\DOCS\RTC\rtc.docbinding.pas"/>
         <DCCReference Include="..\COMMON\DOCS\RTC\rtc.fmCustomDoc.pas"/>
         <DCCReference Include="..\COMMON\DOCS\RTC\rtc.framedoc.pas">
             <Form>DocFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\..\..\LIB\FORMS\fmhopedialogform.pas">
@@ -140,84 +135,74 @@
         <DCCReference Include="..\COMMON\DOCS\fmSetupForm.pas">
             <Form>SetUpFormFm</Form>
         </DCCReference>
-        <DCCReference Include="..\COMMON\RTC\RtcFuncResult.pas"/>
         <DCCReference Include="..\COMMON\DOCS\docManagerPanel.pas"/>
         <DCCReference Include="..\..\SERVER\COMMON\INTERFACE\ClientDocSqlManager.pas"/>
         <DCCReference Include="..\COMMON\DOCS\ATTRIBUTES\dmAttributes.pas">
             <Form>AttributesDm</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="..\COMMON\DOCS\ATTRIBUTES\dmAttributesOfGroup.pas">
             <Form>AttributesOfGroupDm</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="..\COMMON\DOCS\ATTRIBUTES\dmAttributesSet.pas">
             <Form>AttributesSetDm</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="..\COMMON\DOCS\ATTRIBUTES\frameAttributes.pas">
             <Form>AttributesFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\COMMON\DOCS\ATTRIBUTES\frameAttributesOfGroup.pas">
             <Form>AttributesOfGroupFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\COMMON\DOCS\ATTRIBUTES\frameAttributesSet.pas">
             <Form>AttributesSetFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\COMMON\DOCS\OBJECTS\dmObjects.pas">
             <Form>ObjectsDm</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="..\COMMON\DOCS\OBJECTS\frameobjectsgr.pas">
             <Form>ObjectsGrFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\COMMON\DOCS\OBJECTS\frameObjectsItems.pas">
             <Form>ObjectsItemsFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="DOCS\TESTDOC\DmTestDoc.pas">
             <Form>TestDocDm</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="DOCS\TESTDOC\FrameTestDoc.pas">
             <Form>TestDocFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\COMMON\DOCS\MENUSTRU\DmMenuStru.pas">
             <Form>MenuStruDm</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="..\COMMON\DOCS\MENUSTRU\frameMenuStru.pas">
             <Form>MenuStruFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\COMMON\DOCS\ACCESS\DmUserList.pas">
             <Form>UserListDm</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="..\COMMON\DOCS\ACCESS\FrameUserList.pas">
             <Form>DocFrame2</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
+        <DCCReference Include="..\..\..\LIB\COMPONENTS\VKRTC\RtcDataSetUtils.pas"/>
+        <DCCReference Include="..\..\..\LIB\COMPONENTS\VKRTC\RtcFuncResult.pas"/>
+        <DCCReference Include="..\..\..\LIB\COMPONENTS\VKRTC\RtcQueryDataSet.pas"/>
+        <DCCReference Include="..\..\..\LIB\COMPONENTS\VKRTC\RtcResult.pas"/>
+        <DCCReference Include="..\..\..\LIB\COMPONENTS\VKRTC\RtcService.pas"/>
+        <DCCReference Include="..\..\..\LIB\COMPONENTS\VKRTC\RtcSqlQuery.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
