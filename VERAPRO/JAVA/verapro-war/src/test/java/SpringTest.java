@@ -51,7 +51,7 @@ public class SpringTest {
     public void testQuetyDao(){
         QueryRequest qr = new QueryRequest();
         qr.setQuery("SELECT * FROM TESTDOC");
-        qr.setParams(new HashMap<>());
+        //qr.setParams(new HashMap<>());
 
         Map<String, Object> retval =  queryDAO.execute(qr);
         System.out.println(retval.toString());
