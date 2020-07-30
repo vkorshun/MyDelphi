@@ -14,7 +14,9 @@ public class QueryRequest {
 
     public Map<String,Object> getParams(){
         Map<String,Object> map = new HashMap<>();
-        params.forEach(item->map.putAll(item));
+        if (params != null) {
+            params.forEach(item -> map.putAll(item));
+        }
         return map;
     }
 }
