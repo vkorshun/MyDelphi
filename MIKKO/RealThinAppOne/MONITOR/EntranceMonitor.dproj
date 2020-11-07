@@ -1,0 +1,121 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{BB1EE322-4488-4C77-BE49-687A23D31C8D}</ProjectGuid>
+        <ProjectVersion>15.4</ProjectVersion>
+        <FrameworkType>VCL</FrameworkType>
+        <MainSource>EntranceMonitor.dpr</MainSource>
+        <Base>True</Base>
+        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <TargetedPlatforms>1</TargetedPlatforms>
+        <AppType>Application</AppType>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+        <Cfg_1_Win32>true</Cfg_1_Win32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <SanitizedProjectName>EntranceMonitor</SanitizedProjectName>
+        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
+        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
+        <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
+        <DCC_E>false</DCC_E>
+        <DCC_N>false</DCC_N>
+        <DCC_S>false</DCC_S>
+        <DCC_F>false</DCC_F>
+        <DCC_K>false</DCC_K>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <DCC_UsePackage>frxe20;frxIBX20;FireDACSqliteDriver;xf40_d_xe6;FireDACDSDriver;FlexCel_Core;DBXSqliteDriver;FMXfs20;FireDACPgDriver;xdata;fmx;DCPcrypt;IndySystem;TeeDB;tethering;inetdbbde;vclib;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;FMXfsDB20;FMXfsADO20;VCL_FlexCel_Components_DESIGN;SynEdit_R;DbxCommonDriver;VCL_FlexCel_Components;vclimg;dbxcds;MetropolisUILiveTile;vklib_xe6;vcldb;FMXfsTee20;vcldsnap;EhLibADODataDrivers200;fmxFireDAC;CustomIPTransport;vclribbon;OverbyteIcsDXE6Run;dsnap;IndyIPServer;fbintf;EhLibBDEDataDrivers200;fmxase;vcl;IndyCore;dbgridehvkd_xe6;IndyIPCommon;CloudService;CodeSiteExpressPkg;FmxTeeUI;FireDACIBDriver;DataSnapFireDAC;FireDACDBXDriver;soapserver;inetdbxpress;fsTee20;OmniThreadLibraryRuntime;fsIBX20;dsnapxml;frxTee20;FireDACInfxDriver;FireDACDb2Driver;EhLib200;UIBD_XE6R;EhLibIBXDataDrivers200;adortl;frxDB20;FIBPlus_XE6;FireDACASADriver;superobjects_xe6;rtcSDKXE6;bindcompfmx;frx20;fsADO20;vcldbx;frxIntIO20;FireDACODBCDriver;RESTBackendComponents;rtl;dbrtl;DbxClientDriver;sparkle;FireDACCommon;bindcomp;inetdb;Tee;ControlsCepEx_xe6;vclFireDAC;FlexCel_Render;frxDBX20;xmlrtl;svnui;ibxpress;IndyProtocols;DBXMySQLDriver;attabs_package_delphi;FireDACCommonDriver;adsdxe6studio;bindcompdbx;bindengine;vclactnband;soaprtl;FMXTee;TeeUI;bindcompvcl;vkdialogs_xe6;VCL_FlexCel_Core;FlexCel_Pdf;vclie;FMXfsIBX20;FireDACADSDriver;vcltouch;aurelius;VclSmp;FireDACMSSQLDriver;FireDAC;VCLRESTComponents;rtcSDK_DBAXE6;vkcomponents_xe6;frxIntIOIndy20;remotedb;dsnapcon;fsDB20;inet;fmxobj;FireDACMySQLDriver;soapmidas;vclx;fs20;svn;FireDACOracleDriver;fmxdae;RESTComponents;synapseXE6;FlexCel_XlsAdapter;bdertl;EhLibDBXDataDrivers200;VirtualTreesR;tmsbcl;FireDACMSAccDriver;dbexpress;frxADO20;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <DCC_UsePackage>FireDACSqliteDriver;xf40_d_xe6;FireDACDSDriver;FlexCel_Core;DBXSqliteDriver;FireDACPgDriver;xdata;fmx;DCPcrypt;IndySystem;TeeDB;tethering;vclib;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;VCL_FlexCel_Components_DESIGN;DbxCommonDriver;VCL_FlexCel_Components;vclimg;dbxcds;MetropolisUILiveTile;vklib_xe6;vcldb;vcldsnap;EhLibADODataDrivers200;fmxFireDAC;CustomIPTransport;vclribbon;OverbyteIcsDXE6Run;dsnap;IndyIPServer;fbintf;EhLibBDEDataDrivers200;fmxase;vcl;IndyCore;dbgridehvkd_xe6;IndyIPCommon;CloudService;FmxTeeUI;FireDACIBDriver;DataSnapFireDAC;FireDACDBXDriver;soapserver;inetdbxpress;OmniThreadLibraryRuntime;dsnapxml;FireDACInfxDriver;FireDACDb2Driver;EhLib200;UIBD_XE6R;EhLibIBXDataDrivers200;adortl;FIBPlus_XE6;FireDACASADriver;rtcSDKXE6;bindcompfmx;FireDACODBCDriver;RESTBackendComponents;rtl;dbrtl;DbxClientDriver;sparkle;FireDACCommon;bindcomp;inetdb;Tee;vclFireDAC;FlexCel_Render;xmlrtl;ibxpress;IndyProtocols;DBXMySQLDriver;FireDACCommonDriver;bindcompdbx;bindengine;vclactnband;soaprtl;FMXTee;TeeUI;bindcompvcl;vkdialogs_xe6;VCL_FlexCel_Core;FlexCel_Pdf;vclie;FireDACADSDriver;vcltouch;aurelius;VclSmp;FireDACMSSQLDriver;FireDAC;VCLRESTComponents;vkcomponents_xe6;remotedb;dsnapcon;inet;fmxobj;FireDACMySQLDriver;soapmidas;vclx;FireDACOracleDriver;fmxdae;RESTComponents;FlexCel_XlsAdapter;EhLibDBXDataDrivers200;VirtualTreesR;tmsbcl;FireDACMSAccDriver;dbexpress;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+        <DCC_DebugDCUs>true</DCC_DebugDCUs>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
+        <DCC_RemoteDebug>true</DCC_RemoteDebug>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <DCC_RemoteDebug>false</DCC_RemoteDebug>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+        <DCC_DebugInformation>0</DCC_DebugInformation>
+    </PropertyGroup>
+    <ItemGroup>
+        <DelphiCompile Include="$(MainSource)">
+            <MainSource>MainSource</MainSource>
+        </DelphiCompile>
+        <DCCReference Include="AppEntranceMonitor.pas">
+            <Form>Form1</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Source>
+                    <Source Name="MainSource">EntranceMonitor.dpr</Source>
+                </Source>
+            </Delphi.Personality>
+            <Deployment/>
+            <Platforms>
+                <Platform value="Win32">True</Platform>
+                <Platform value="Win64">False</Platform>
+            </Platforms>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
+</Project>

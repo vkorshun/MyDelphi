@@ -1,11 +1,6 @@
 program mikko_entrance2;
 
 uses
-  madExcept,
-  madLinkDisAsm,
-  madListHardware,
-  madListProcesses,
-  madListModules,
   Windows,
   Forms,
   SysUtils,

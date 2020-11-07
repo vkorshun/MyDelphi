@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.261,=C:\Users\Vkors\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020.11.07 18:44:39.989,=C:\Users\Vkors\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020.11.07 18:45:28.786,D:\DELPHI_XE6\MyDelphi\MIKKO\RealThinAppOne\MONITOR\AppEntranceMonitor.pas=C:\Users\Vkors\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020.11.07 18:45:28.786,D:\DELPHI_XE6\MyDelphi\MIKKO\RealThinAppOne\MONITOR\AppEntranceMonitor.dfm=C:\Users\Vkors\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2020.11.07 18:45:46.638,D:\DELPHI_XE6\MyDelphi\MIKKO\RealThinAppOne\MONITOR\EntranceMonitor.dproj=C:\Users\Vkors\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+  </Transactions>
+</BorlandProject>
